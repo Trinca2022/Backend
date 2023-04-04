@@ -22,24 +22,6 @@ class ProductManager {
                 product.id = i
             }
         }
-
-        //Validación de campos obligatorios + validación de código
-        /*if ((product.title && product.description && product.price && product.thumbnail && product.code && product.stock) !== undefined) {
-            if (this.products.find(product => product.code === code)) {
-                console.log(`El código ${product.code} ya existe`)
-            }
-            //Pusheo productos
-            else {
-                this.products.push(product)
-                //Genero ID autoincrementable
-                for (let i = 1; i <= this.products.length; i++) {
-                    product.id = i
-                }
-            }
-        }
-        else {
-            console.log("Error al cargar producto: falta campo")
-        }*/
     }
 
     //Método getProducts --> devuelve el array
