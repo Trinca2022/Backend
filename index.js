@@ -132,7 +132,7 @@ await productManager.getProducts() //Array lleno
 
 //Instancio método getProductById
 await productManager.getProductById(4) //Not found
-productManager.getProductById(3) //Encuentra producto
+await productManager.getProductById(3) //Encuentra producto
 
 //Instancio método updateProduct
 await productManager.updateProduct(2,
