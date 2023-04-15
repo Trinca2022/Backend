@@ -1,9 +1,8 @@
-//SEGUNDO ENTREGABLE
 
 import { promises as fs } from 'fs'
 
 //Genero una clase ProductManager con el elemento products que es un array vacío y la ruta a info.txt
-class ProductManager {
+export class ProductManager {
     constructor(path) {
         this.path = path
         this.products = []
@@ -43,16 +42,18 @@ class ProductManager {
     //Método getProducts --> devuelve el array
     async getProducts() {
         const products = await fs.readFile(this.path, 'utf-8')
-        const prods = JSON.parse(products)
-        console.log(prods);
+        return JSON.parse(products);
     }
 
     //Método getProductById --> busca un producto por su ID
     async getProductById(id) {
         const products = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(products)
-        const productFound = prods.find(product => product.id === id)
-        productFound ? console.log(productFound) : console.log('Not found')
+        const productFound = prods.find(product => product.id === parseInt(id))
+        if (productFound) {
+            return productFound
+        }
+        else return "Producto no encontrado"
     }
 
     //Método updateProduct --> actualiza campo de un producto con un ID existente
@@ -93,7 +94,7 @@ class ProductManager {
 }
 
 //Genero otra clase que contiene las propiedades de los productos
-class Product {
+export class Product {
     constructor(title, description, price, thumbnail, code, stock) {
         this.title = title;
         this.description = description;
@@ -105,18 +106,19 @@ class Product {
 }
 
 //Genero cada producto
-const product1 = new Product("Café Colombiano", "Intensidad suave", 1200, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 1, 10)
-const product2 = new Product("Café Brasilero", "Intensidad media", 1000, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 2, 10)
-const product3 = new Product("Café Italiano", "Intensidad fuerte", 1500, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 3, 10)
+//const product1 = new Product("Café Colombiano", "Intensidad suave", 1200, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 1, 10)
+//const product2 = new Product("Café Brasilero", "Intensidad media", 1000, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 2, 10)
+//const product3 = new Product("Café Italiano", "Intensidad fuerte", 1500, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 3, 10)
 //Producto de pueba al que le falta la descripción
-const product4 = new Product("Café PRUEBA", 1500, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 4, 10)
+//const product4 = new Product("Café PRUEBA", 1500, "https://img.freepik.com/psd-premium/bolsa-papel-maqueta-cafe_23-2148884499.jpg?w=740", 4, 10)
+
 
 //Instancio ProductManager CON LA RUTA
-const productManager = new ProductManager('./info.txt')
+//const productManager = new ProductManager('./info.txt')
 
 //Instancio método para generar TXT con array vacío por única vez
-await productManager.createTXT()
-
+//await productManager.createTXT()
+/*
 //Instancio método getProducts
 await productManager.getProducts() //Array vacío
 
@@ -147,3 +149,4 @@ await productManager.updateProduct(2,
 
 //Instancio método deleteProduct
 await productManager.deleteProduct(1) //Borra producto de id=1
+*/
