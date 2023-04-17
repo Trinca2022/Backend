@@ -2,12 +2,11 @@ import express from 'express'
 
 import { ProductManager, Product } from './productManager.js'
 
+//Configuro express
 const app = express()
 const PORT = 4000
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 
 const productManager = new ProductManager('./product.txt')
 
@@ -21,29 +20,32 @@ await productManager.addProduct(product1, product1.code);
 await productManager.addProduct(product2, product2.code);
 await productManager.addProduct(product3, product3.code);
 
-
-
-app.get("/product", async (req, res) => {
-    const products = await productManager.getProducts()
-    res.send(products)
+//Consulto todos los productos
+app.get("/products", async (req, res, next) => {
+    try {
+        const { limit } = req.query
+        const products = await productManager.getProducts()
+        if (limit) {
+            res.send(JSON.stringify(products.slice(0, limit)))
+        } else {
+            res.send(JSON.stringify(products))
+        }
+    }
+    catch (error) {
+        next(error)
+    }
 })
 
-app.get('/', (req, res) => {
+
+/*app.get('/', (req, res) => {
     res.send("Mi primer servidor")
-})
+})*/
 
-
-
-
-
-app.get("/product/:id", async (req, res) => {
+//Consulto productos por id
+app.get("/products/:id", async (req, res) => {
     const product = await productManager.getProductById(req.params.id)
     res.send(product)
 })
-
-
-
-
 
 app.listen(PORT, () => {
     console.log(`Server on port ${PORT}`)
