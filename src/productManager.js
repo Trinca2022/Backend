@@ -5,13 +5,13 @@ import { promises as fs } from 'fs'
 export class ProductManager {
     constructor(path) {
         this.path = path
-        this.products = []
+        //this.products = []
     }
 
-    //Método createTXT --> crea el TXT y guarda el array vacío
+    /*//Método createTXT --> crea el TXT y guarda el array vacío
     async createTXT() {
         await fs.writeFile(this.path, JSON.stringify(this.products))
-    }
+    }*/
 
     //Método addProduct --> consulta el TXT, valida y pushea productos en TXT
     async addProduct(product, code) {
@@ -20,7 +20,7 @@ export class ProductManager {
             const products = await fs.readFile(this.path, 'utf-8')
             const prods = JSON.parse(products)
             //Validación de campo faltante
-            if ((product.title && product.description && product.price && product.thumbnail && product.code && product.stock) === undefined)
+            if ((product.title && product.description && product.price && product.code && product.stock && product.status) === undefined)
                 console.log("Error: falta campo")
             //Validación de code repetido
             else if (prods.find(product => product.code === code))
@@ -32,6 +32,7 @@ export class ProductManager {
                     product.id = i
                 }
                 await fs.writeFile(this.path, JSON.stringify(prods))
+                return "Producto creado"
             }
         }
         catch (error) {
@@ -57,10 +58,10 @@ export class ProductManager {
     }
 
     //Método updateProduct --> actualiza campo de un producto con un ID existente
-    async updateProduct(id, { title, description, price, thumbnail, code, stock }) {
+    async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {
         const products = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(products)
-        const productFound = prods.find(product => product.id === id)
+        const productFound = prods.find(product => product.id === parseInt(id))
         if (productFound) {
             productFound.title = title;
             productFound.description = description;
@@ -68,40 +69,30 @@ export class ProductManager {
             productFound.thumbnail = thumbnail;
             productFound.code = code;
             productFound.stock = stock;
+            productFound.status = status;
             await fs.writeFile(this.path, JSON.stringify(prods))
-            console.log(`El producto cuyo id es ${productFound.id} se ha actualizado`)
+            return (`El producto cuyo id es ${productFound.id} se ha actualizado`)
         }
         else
-            console.log('Not found')
-
+            return 'Not found'
     }
+
+
 
     //Método deleteProduct --> elimina producto con un ID existente
     async deleteProduct(id) {
         const products = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(products)
-        const productFound = prods.find(product => product.id === id)
+        const productFound = prods.find(product => product.id === parseInt(id))
         if (productFound) {
             const deleteIndex = prods.indexOf(productFound)
             prods.splice(deleteIndex, 1)
             await fs.writeFile(this.path, JSON.stringify(prods))
-            console.log(`El producto cuyo id es ${productFound.id} se ha eliminado`)
+            return (`El producto cuyo id es ${productFound.id} se ha eliminado`)
         }
         else {
-            console.log('Not found')
+            return productFound
         }
-    }
-}
-
-//Genero otra clase que contiene las propiedades de los productos
-export class Product {
-    constructor(title, description, price, thumbnail, code, stock) {
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.thumbnail = thumbnail;
-        this.code = code;
-        this.stock = stock;
     }
 }
 
