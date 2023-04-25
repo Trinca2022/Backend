@@ -5,13 +5,10 @@ import { promises as fs } from 'fs'
 export class ProductManager {
     constructor(path) {
         this.path = path
-        //this.products = []
+
     }
 
-    /*//Método createTXT --> crea el TXT y guarda el array vacío
-    async createTXT() {
-        await fs.writeFile(this.path, JSON.stringify(this.products))
-    }*/
+
 
     //Método addProduct --> consulta el TXT, valida y pushea productos en TXT
     async addProduct(product, code) {
