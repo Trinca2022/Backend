@@ -5,6 +5,7 @@ import cartRouter from './routes/cart.routes.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import * as path from 'path'
+import { Server } from 'socket.io'
 
 //Configuro express
 const app = express()
@@ -17,18 +18,34 @@ const storage = multer.diskStorage({
         cb(null, `${file.originalname}`)
     }
 })
+
+//Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
+const server = app.listen(PORT, () => {
+    console.log(`Server on port ${PORT}`)
+})
+
+//Configuro handlebars
 app.engine('handlebars', engine())//Para trabajar con handlebars
 app.set('view engine', 'handlebars')//Vistas de handlebars
 app.set('views', path.resolve(__dirname, './views'))//Ubicación de las vistas
 
-//Middleware
+//Configuro middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const upload = (multer({ storage: storage }))
 
+//Server de socket.io
+const io = new Server(server)
 
+io.on('connection', (socket) => {
+    console.log('Cliente conectado')
 
-//Rutas
+    socket.on('mensaje', info => {
+        console.log(info)
+    })
+})
+
+//Configuro rutas
 app.use('/product', productRouter)
 app.use('/cart', cartRouter)
 app.use('/', express.static(__dirname + '/public'))//La carpeta pública está en static pero después la defino en la ruta ppal
@@ -36,8 +53,7 @@ app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
 
-//HBS
-
+//Uso HBS
 app.get('/', (req, res) => {
     const tutor = {
         nombre: "Luciana",
@@ -61,8 +77,5 @@ app.get('/', (req, res) => {
 })
 
 
-app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`)
-})
 
 
