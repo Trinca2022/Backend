@@ -1,6 +1,16 @@
 <h1>Hola, {{user.nombre}}</h1>
 
-{{#if isTutor}}
+
+{{#each products}}
+<div>
+    <p>{{this.title}}</p>
+    <p>{{this.nombre}}</p>
+    <p>{{this.dia}}</p>
+</div>
+{{/each}}
+
+
+<!--{{#if isTutor}}
 <p>Sos tutor</p>
 {{#each cursos}}
 <div>
@@ -11,4 +21,4 @@
 {{/each}}
 {{else}}
 <p>No sos tutor</p>
-{{/if}}
+{{/if}}-->

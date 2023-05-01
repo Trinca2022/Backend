@@ -28,7 +28,11 @@ productRouter.get("/:id", async (req, res) => {
     //res.send(product)
     res.render('product', {
         title: product.title,
-        price: product.price
+        description: product.description,
+        price: product.price,
+        code: product.code,
+        stock: product.stock
+
     })
 })
 
