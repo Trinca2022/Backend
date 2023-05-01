@@ -6,6 +6,10 @@ import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import * as path from 'path'
 import { Server } from 'socket.io'
+import { ProductManager } from './productManager.js'
+
+
+const productManager = new ProductManager('./product.txt')
 
 //Configuro express
 const app = express()
@@ -36,16 +40,17 @@ const upload = (multer({ storage: storage }))
 
 //Server de socket.io
 const io = new Server(server)
+const products = []
 
 io.on('connection', (socket) => {
     console.log('Cliente conectado')
 
-    socket.on('mensaje', info => {
-        console.log(info)
-    })
-
     socket.on("newProduct", (prod) => {
         console.log(prod)
+        products.push(prod)
+        io.emit("newProduct", products)
+
+
     })
 })
 
@@ -58,28 +63,14 @@ app.post('/upload', upload.single('product'), (req, res) => {
 })
 
 //Uso HBS
-/*
-app.get('/', (req, res) => {
-    const tutor = {
-        nombre: "Luciana",
-        email: "lu@lu.com",
-        rol: "Tutor"
-    }
 
-    const cursos = [
-        { numero: 123, nombre: "Programacion Backend", dia: "LyM", horario: "Noche" },
-        { numero: 456, nombre: "React", dia: "S", horario: "Mañana" },
-        { numero: 789, nombre: "Angular", dia: "MyJ", horario: "Tarde" }
-    ]
-
-    res.render('home', {//Primer parametro indico la vista a utilizar
-        title: "51225 Backend",
-        mensaje: "Hola, buenos dias",
-        user: tutor,
-        isTutor: tutor.rol === "Tutor", //V o F
-        cursos: cursos
+app.get('/', async (req, res) => {
+    const products = await productManager.getProducts()
+    res.render('home', {
+        products: products
     })
-})*/
+
+})
 
 
 
