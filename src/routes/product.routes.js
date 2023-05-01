@@ -21,6 +21,18 @@ productRouter.get("/", async (req, res, next) => {
     }
 })
 
+productRouter.get("/realtimeproducts", async (req, res, next) => {
+    try {
+        const products = await productManager.getProducts()
+        res.render('realtimeproducts', { products })
+    }
+    catch (error) {
+        next(error)
+    }
+})
+
+
+
 
 //Consulta de productos por id
 productRouter.get("/:id", async (req, res) => {

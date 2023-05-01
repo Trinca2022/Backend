@@ -43,17 +43,22 @@ io.on('connection', (socket) => {
     socket.on('mensaje', info => {
         console.log(info)
     })
+
+    socket.on("newProduct", (prod) => {
+        console.log(prod)
+    })
 })
 
 //Configuro rutas
 app.use('/product', productRouter)
 app.use('/cart', cartRouter)
-app.use('/', express.static(__dirname + '/public'))//La carpeta pública está en static pero después la defino en la ruta ppal
+app.use('/product', express.static(__dirname + '/public'))//La carpeta pública está en static pero después la defino en la ruta ppal
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
 
 //Uso HBS
+/*
 app.get('/', (req, res) => {
     const tutor = {
         nombre: "Luciana",
@@ -74,7 +79,7 @@ app.get('/', (req, res) => {
         isTutor: tutor.rol === "Tutor", //V o F
         cursos: cursos
     })
-})
+})*/
 
 
 
