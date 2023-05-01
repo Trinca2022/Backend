@@ -25,7 +25,11 @@ productRouter.get("/", async (req, res, next) => {
 //Consulta de productos por id
 productRouter.get("/:id", async (req, res) => {
     const product = await productManager.getProductById(req.params.id)
-    res.send(product)
+    //res.send(product)
+    res.render('product', {
+        title: product.title,
+        price: product.price
+    })
 })
 
 //Agrego productos con método POST
