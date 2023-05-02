@@ -1,10 +1,10 @@
+import * as path from 'path'
 import express from 'express'
 import multer from 'multer'
 import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
-import * as path from 'path'
 import { Server } from 'socket.io'
 import { ProductManager } from './productManager.js'
 
@@ -40,30 +40,36 @@ const upload = (multer({ storage: storage }))
 
 //Server de socket.io
 const io = new Server(server)
-const products = []
 
-io.on('connection', (socket) => {
+//Conecto con cliente
+io.on('connection', async (socket) => {
     console.log('Cliente conectado')
-
-    socket.on("newProduct", (prod) => {
+    //Leo los productos del TXT
+    const products = await productManager.getProducts()
+    //Emito el array con todos los productos
+    socket.emit("allProducts", products)
+    //Recibo los campos cargados form y los guardo en array products
+    socket.on("newProduct", async (prod) => {
         console.log(prod)
-        products.push(prod)
-        io.emit("newProduct", products)
-
-
+        //Desestructuración de las propiedades del objeto prod
+        const { title, description, price, thumbnail, code, stock } = prod
+        //Ejecuto el método addProduct de productoManager y agrega el producto a los productos
+        //Escribe el archivo TXT con un nuevo producto
+        await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true })
+        const products = await productManager.getProducts()
+        io.emit("allProducts", products)
     })
 })
 
 //Configuro rutas
 app.use('/product', productRouter)
 app.use('/cart', cartRouter)
-app.use('/product', express.static(__dirname + '/public'))//La carpeta pública está en static pero después la defino en la ruta ppal
+app.use('/product', express.static(__dirname + '/public'))
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
 
-//Uso HBS
-
+//Uso HBS para mostrar en home todos los productos
 app.get('/', async (req, res) => {
     const products = await productManager.getProducts()
     res.render('home', {
@@ -71,6 +77,8 @@ app.get('/', async (req, res) => {
     })
 
 })
+
+
 
 
 

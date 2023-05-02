@@ -8,12 +8,10 @@ export class ProductManager {
 
     }
 
-
-
     //Método addProduct --> consulta el TXT, valida y pushea productos en TXT
     async addProduct(product, code) {
         try {
-            //Consulto TXT para poder validar
+            //Lee TXT con todos los productos
             const products = await fs.readFile(this.path, 'utf-8')
             const prods = JSON.parse(products)
             //Validación de campo faltante
@@ -22,12 +20,13 @@ export class ProductManager {
             //Validación de code repetido
             else if (prods.find(product => product.code === code))
                 console.log(`Error: el código ${product.code} ya existe`)
-            //Carga de productos
+            //Carga el nuevo producto
             else {
                 prods.push(product)
                 for (let i = 1; i <= prods.length; i++) {
                     product.id = i
                 }
+                //Vuelve a escribir todos los productos en el txt
                 await fs.writeFile(this.path, JSON.stringify(prods))
                 return "Producto creado"
             }
@@ -73,8 +72,6 @@ export class ProductManager {
         else
             return 'Not found'
     }
-
-
 
     //Método deleteProduct --> elimina producto con un ID existente
     async deleteProduct(id) {

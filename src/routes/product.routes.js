@@ -21,18 +21,17 @@ productRouter.get("/", async (req, res, next) => {
     }
 })
 
+//Envío el array de productos inicial al cliente a través de socket
 productRouter.get("/realtimeproducts", async (req, res, next) => {
     try {
         const products = await productManager.getProducts()
-        res.render('realtimeproducts', { products })
+        //Envío array al cliente para renderizar
+        res.render('realtimeproducts', { products: products, layout: 'mainrealtime' })
     }
     catch (error) {
         next(error)
     }
 })
-
-
-
 
 //Consulta de productos por id
 productRouter.get("/:id", async (req, res) => {
