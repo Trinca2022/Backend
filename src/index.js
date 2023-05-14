@@ -8,6 +8,17 @@ import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
 import { ProductManager } from './productManager.js'
 
+//Config mongoose
+import mongoose from 'mongoose'
+import { userModel } from './models/user.js'
+
+mongoose.connect("mongodb+srv://catrincavelli:Trinca09@cluster0.9vm5irb.mongodb.net/?retryWrites=true&w=majority")
+    .then(() => console.log("DB is connected"))
+    .catch((error) => console.log("Errror en MongoDB Atlas :", error))
+
+
+//app.listen(4000, () => console.log("Server on port 4000"))
+
 
 const productManager = new ProductManager('./product.txt')
 
