@@ -1,3 +1,4 @@
+import 'dotenv/config.js'
 import * as path from 'path'
 import express from 'express'
 import multer from 'multer'
@@ -11,20 +12,23 @@ import { ProductManager } from './productManager.js'
 //Config mongoose
 import mongoose from 'mongoose'
 import { userModel } from './models/user.js'
+import { productModel } from './models/Products.js'
+import { cartModel } from './models/Cart.js'
+import { messageModel } from './models/Messages.js'
 
-mongoose.connect("mongodb+srv://catrincavelli:Trinca09@cluster0.9vm5irb.mongodb.net/?retryWrites=true&w=majority")
+//Conexión con mongoose
+mongoose.connect(process.env.URL_MONGODB_ATLAS)
     .then(() => console.log("DB is connected"))
     .catch((error) => console.log("Errror en MongoDB Atlas :", error))
 
+const productManager = new ProductManager()//ESTA RUTA?? './product.txt'
 
-//app.listen(4000, () => console.log("Server on port 4000"))
-
-
-const productManager = new ProductManager('./product.txt')
+//Creo y guardo productos en mongoose
+await productManager.createProducts()
 
 //Configuro express
 const app = express()
-const PORT = 4000
+//const PORT = 4000
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'src/public/img')
@@ -35,8 +39,8 @@ const storage = multer.diskStorage({
 })
 
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
-const server = app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`)
+const server = app.listen(process.env.PORT, () => {
+    console.log("Server on port", process.env.PORT)
 })
 
 //Configuro handlebars
@@ -55,13 +59,13 @@ const io = new Server(server)
 //Conecto con cliente
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
-    //Leo los productos del TXT
+    //Leo los productos de mongoose
     const products = await productManager.getProducts()
     //Emito el array con todos los productos
     socket.emit("allProducts", products)
     //Recibo los campos cargados form y los guardo en array products
     socket.on("newProduct", async (prod) => {
-        console.log(prod)
+        console.log(prod)//HASTA ACÁ FUNCIONA
         //Desestructuración de las propiedades del objeto prod
         const { title, description, price, thumbnail, code, stock } = prod
         //Ejecuto el método addProduct de productoManager y agrega el producto a los productos

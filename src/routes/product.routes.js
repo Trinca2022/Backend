@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ProductManager } from "../productManager.js";
 
-const productManager = new ProductManager('./product.txt')
+const productManager = new ProductManager()//Esta ruta?'./product.txt'
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
