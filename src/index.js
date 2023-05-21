@@ -28,6 +28,7 @@ const chatManager = new ChatManager()
 
 //Creo y guardo productos en mongoose
 await productManager.createProducts()
+await chatManager.createChats()
 
 //Configuro express
 const app = express()
@@ -67,7 +68,7 @@ io.on('connection', async (socket) => {
     const messages = await chatManager.getMessages()
     //Emito el array con todos los productos
     socket.emit("allProducts", products)
-    socket.emit("allChats", messages)
+    socket.emit("allChats", chats)
     //Recibo los campos cargados form y los guardo en array products
     socket.on("newProduct", async (prod) => {
         console.log(prod)//HASTA ACÁ FUNCIONA
@@ -79,8 +80,8 @@ io.on('connection', async (socket) => {
         const products = await productManager.getProducts()
         io.emit("allProducts", products)
     })
-    socket.on("newChat", async (msg) => {
-        console.log(msg)//HASTA ACÁ FUNCIONA
+    socket.on("newChat", async (chat) => {
+        console.log(chat)//HASTA ACÁ FUNCIONA
         //Desestructuración de las propiedades del objeto prod
         //const { title, description, price, thumbnail, code, stock } = prod
         //Ejecuto el método addProduct de productoManager y agrega el producto a los productos

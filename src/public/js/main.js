@@ -49,10 +49,11 @@ chatForm.addEventListener('submit', (e) => {
     //Transformo de un objeto Iterator a un objeto Simple
     const chat = Object.fromEntries(chatsIterator)
     socket.emit("newChat", {
-        mail: prod.mail,
-        message: prod.message,
+        mail: chat.mail,
+        message: chat.message,
 
     })
+
 })
 
 //Recibo los prods guardados en el servidor y los renderizo

@@ -4,7 +4,23 @@ import { messageModel } from './models/Messages.js'
 export class ChatManager {
     constructor(path) {
         this.path = path
+    }
 
+    //Genero nuevo método createProduct que carga productos a mongodb
+    async createChats() {
+        try {
+            const chats = await messageModel.find()
+            if (chats.length === 0)
+                await messageModel.create([
+                    { mail: "asd@asd", message: "Hola" }
+                ])
+            else
+                return
+
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
     async addChat(chat) {
