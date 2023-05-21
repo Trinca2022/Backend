@@ -1,7 +1,6 @@
 
 import { promises as fs } from 'fs'
 import { productModel } from './models/Products.js'
-import { ObjectId } from 'bson'
 
 //Genero una clase ProductManager con el elemento products que es un array vacío y la ruta a info.txt
 export class ProductManager {
