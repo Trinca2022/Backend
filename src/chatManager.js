@@ -1,12 +1,12 @@
 import { messageModel } from './models/Messages.js'
 
-//Genero una clase ProductManager con el elemento products que es un array vacío y la ruta a info.txt
+//Genero una clase ChatManager con la ruta
 export class ChatManager {
     constructor(path) {
         this.path = path
     }
 
-    //Genero nuevo método createProduct que carga productos a mongodb
+    //Genero nuevo método createChats que carga msjs a mongodb
     async createChats() {
         try {
             const chats = await messageModel.find()
@@ -29,7 +29,7 @@ export class ChatManager {
             //Validación de campo faltante
             if ((chat.mail && chat.message) === undefined)
                 console.log("Error: falta campo")
-            //Carga el nuevo producto
+            //Carga el nuevo chat
             else {
                 msg.push(chat)
             }
@@ -41,7 +41,7 @@ export class ChatManager {
         }
     }
 
-    //Método getProducts --> con mongoose
+    //Método getMessages --> con mongoose
     async getMessages() {
         const chat = await messageModel.find()
         return chat

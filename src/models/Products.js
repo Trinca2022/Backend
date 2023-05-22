@@ -13,7 +13,7 @@ const productSchema = new Schema({
         type: Number,
         required: true
     },
-    thumbnail: [],
+    thumbnail: String,
     code: {
         type: Number,
         required: true

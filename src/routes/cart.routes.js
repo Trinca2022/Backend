@@ -1,19 +1,26 @@
 import { Router } from "express";
 import { CartManager } from "../cartManager.js";
 
-const cartManager = new CartManager('./cart.txt')
+const cartManager = new CartManager()
 
 const cartRouter = Router()
 
 //Creo carrito mediante método POST
 cartRouter.post("/", async (req, res) => {
-    const { cid, products } = req.body
-    await cartManager.createCarrito({ cid, products })
+    const products = req.body
+    await cartManager.createCarrito(products)
     res.send("Producto creado")
 })
 
+/*//Creo carrito mediante método POST
+cartRouter.post("/", async (req, res) => {
+    const { cid, products } = req.body
+    await cartManager.createCarrito({ cid, products })
+    res.send("Producto creado")
+})*/
+
 //Consulta de productos
-cartRouter.get("/:cid", async (req, res, next) => {
+cartRouter.get("/cid", async (req, res, next) => {
     try {
         const cart = await cartManager.getCartById(req.params.cid)
         res.send(cart)
@@ -23,10 +30,10 @@ cartRouter.get("/:cid", async (req, res, next) => {
     }
 })
 
-cartRouter.post("/:cid/product/:pid", async (req, res) => {
-    const cid = req.params.cid;
-    const pid = req.params.pid;
-    const message = await cartManager.addProductCart(cid, pid)
+cartRouter.post("/id/product/id_prod", async (req, res) => {
+    const id = req.params.id;
+    const id_prod = req.params.id_prod;
+    const message = await cartManager.addProductCart(id, id_prod)
     res.send(message)
 })
 

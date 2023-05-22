@@ -1,48 +1,43 @@
-import { promises as fs } from 'fs'
+import { cartModel } from './models/Cart.js'
+import { productModel } from './models/Products.js'
 
 export class CartManager {
     constructor(path) {
         this.path = path
     }
 
-    static incrementarID() {
-        if (this.idIncrement) {
-            this.idIncrement++
-        } else {
-            this.idIncrement = 1
-        }
-        return this.idIncrement
-    }
-
     async createCarrito() {
-        const cartsJSON = await fs.readFile(this.path, 'utf-8')
-        const carts = JSON.parse(cartsJSON)
-        const carrito = {
-            cid: CartManager.incrementarID(),
-            products: []
+        try {
+            const carts = await cartModel.find()
+            if (carts.length === 0) {
+                await cartModel.create([
+                    { "products": [{ id_prod: "646aca7bea45f354ebd46cdf", "quantity": "1" }, { id_prod: "646aca7bea45f354ebd46ce3", "quantity": "1" }] }
+                ])
+                return "Carrito creado"
+            }
+            else return
         }
-        carts.push(carrito)
-        await fs.writeFile(this.path, JSON.stringify(carts))
-        return "Carrito creado"
+        catch (error) {
+            console.log(error)
+        }
     }
-
 
     async getCartById(cid) {
-        const cartsJSON = await fs.readFile(this.path, 'utf-8')
-        const carts = JSON.parse(cartsJSON)
-        const cartFound = carts.find(cart => cart.cid === parseInt(cid))
-        if (cartFound) { return cartFound } else {
+        const cartFound = await cartModel.findById(cid)
+        if (cartFound) {
+            return cartFound
+        }
+        else {
             return "Carrito no encontrado"
         }
     }
 
 
-    async addProductCart(cid, pid) {
-        const cartsJSON = await fs.readFile(this.path, 'utf-8')
-        const carts = JSON.parse(cartsJSON)
-        const cart = carts.find(cart => cart.cid === parseInt(cid))
+    async addProductCart(id, id_prod) {
+        const carts = await cartModel.find()
+        const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
-        const product = cart.products.find(product => product.pid === parseInt(pid))
+        const product = await productModel.findById(id_prod)
         //Me fijo si existe el producto en el carrito
         if (product) {
             //Existe el prodcuto -> Agrego +1 a la cantidad
@@ -50,11 +45,17 @@ export class CartManager {
         }
         else {
             //No existe el producto -> agrego el producto nuevo
-            cart.products.push({ pid, quantity: 1 })
+            cart.products.push({ id_prod, quantity: 1 })
         }
-        await fs.writeFile(this.path, JSON.stringify(carts))
+        await cartModel.create(carts)
         return "Producto agregado"
     }
 
 }
 
+/*await cartModel.create(
+         [
+         { "products": [{ "id_prod": "646aca7bea45f354ebd46cdf", "quantity": "1" }, { id_prod: "646aca7bea45f354ebd46ce3", "quantity": "1" }] }
+     ])
+     
+     {"products": [{ "id_prod": "646aca7bea45f354ebd46cdf", "quantity": "1"]}*/

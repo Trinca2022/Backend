@@ -3,8 +3,6 @@ const socket = io()
 //Obtengo elementos del DOM por el ID
 const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
-const chatForm = document.getElementById("chatForm")
-const chatList = document.getElementById("chatList")
 
 //Cuando se escucha el evento envío información de los prods al servidor
 productForm.addEventListener('submit', (e) => {
@@ -21,6 +19,7 @@ productForm.addEventListener('submit', (e) => {
         code: prod.code,
         stock: prod.stock
     })
+
 })
 
 //Recibo los prods guardados en el servidor y los renderizo
@@ -41,30 +40,4 @@ socket.on("allProducts", products => {
     })
 })
 
-//Cuando se escucha el evento envío información de los mensajes al servidor
-chatForm.addEventListener('submit', (e) => {
-    e.preventDefault()
-    //Transformo un objeto HTML a un objeto Iterator
-    const chatsIterator = new FormData(e.target)
-    //Transformo de un objeto Iterator a un objeto Simple
-    const chat = Object.fromEntries(chatsIterator)
-    socket.emit("newChat", {
-        mail: chat.mail,
-        message: chat.message,
 
-    })
-
-})
-
-//Recibo los prods guardados en el servidor y los renderizo
-socket.on("allChats", chats => {
-    chatList.innerHTML = ""
-    chats.forEach(chat => {
-        chatList.innerHTML += `
-        <div>
-        <p>${chat.mail}</p>
-        <p>${chat.message}</p>
-        <hr>
-        </div>`
-    })
-}) 
