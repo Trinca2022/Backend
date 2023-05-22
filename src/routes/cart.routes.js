@@ -7,22 +7,16 @@ const cartRouter = Router()
 
 //Creo carrito mediante método POST
 cartRouter.post("/", async (req, res) => {
-    const products = req.body
-    await cartManager.createCarrito(products)
+    const [products] = req.body
+    await cartManager.createCarrito([products])
     res.send("Producto creado")
 })
 
-/*//Creo carrito mediante método POST
-cartRouter.post("/", async (req, res) => {
-    const { cid, products } = req.body
-    await cartManager.createCarrito({ cid, products })
-    res.send("Producto creado")
-})*/
 
 //Consulta de productos
-cartRouter.get("/cid", async (req, res, next) => {
+cartRouter.get("/:id", async (req, res, next) => {
     try {
-        const cart = await cartManager.getCartById(req.params.cid)
+        const cart = await cartManager.getCartById(req.params.id)
         res.send(cart)
     }
     catch (error) {
@@ -30,7 +24,7 @@ cartRouter.get("/cid", async (req, res, next) => {
     }
 })
 
-cartRouter.post("/id/product/id_prod", async (req, res) => {
+cartRouter.post("/:id/product/:id_prod", async (req, res) => {
     const id = req.params.id;
     const id_prod = req.params.id_prod;
     const message = await cartManager.addProductCart(id, id_prod)

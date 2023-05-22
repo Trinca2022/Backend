@@ -9,21 +9,23 @@ export class CartManager {
     async createCarrito() {
         try {
             const carts = await cartModel.find()
-            if (carts.length === 0) {
-                await cartModel.create([
-                    { "products": [{ id_prod: "646aca7bea45f354ebd46cdf", "quantity": "1" }, { id_prod: "646aca7bea45f354ebd46ce3", "quantity": "1" }] }
-                ])
-                return "Carrito creado"
-            }
-            else return
+            const carrito = { products: [] }
+            carts.push(carrito)
+            await cartModel.create(
+
+                /*[{ "products": [{ id_prod: "646aca7bea45f354ebd46cdf", "quantity": "1" }, { id_prod: "646aca7bea45f354ebd46ce3", "quantity": "1" }] }]*/
+            )
+            return "Carrito creado"
+
+
         }
         catch (error) {
             console.log(error)
         }
     }
 
-    async getCartById(cid) {
-        const cartFound = await cartModel.findById(cid)
+    async getCartById(id) {
+        const cartFound = await cartModel.findById(id)
         if (cartFound) {
             return cartFound
         }
@@ -52,3 +54,5 @@ export class CartManager {
     }
 
 }
+
+/*[{"cid":2,"products":[{"pid":1,"quantity":12},{"pid":"3","quantity":1}]}]*/
