@@ -52,10 +52,3 @@ export class CartManager {
     }
 
 }
-
-/*await cartModel.create(
-         [
-         { "products": [{ "id_prod": "646aca7bea45f354ebd46cdf", "quantity": "1" }, { id_prod: "646aca7bea45f354ebd46ce3", "quantity": "1" }] }
-     ])
-     
-     {"products": [{ "id_prod": "646aca7bea45f354ebd46cdf", "quantity": "1"]}*/
