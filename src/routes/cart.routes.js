@@ -7,13 +7,13 @@ const cartRouter = Router()
 
 //Creo carrito mediante método POST
 cartRouter.post("/", async (req, res) => {
-    const [products] = req.body
-    await cartManager.createCarrito([products])
-    res.send("Producto creado")
+    const products = req.body
+    await cartManager.createCarrito(products)
+    res.send("Carrito creado")
 })
 
 
-//Consulta de productos
+//Consulta de carrito
 cartRouter.get("/:id", async (req, res, next) => {
     try {
         const cart = await cartManager.getCartById(req.params.id)
