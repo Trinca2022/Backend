@@ -34,7 +34,6 @@ socket.on("allProducts", products => {
         <p>${prod.thumbnail}</p>
         <p>${prod.code}</p>
         <p>${prod.stock}</p>
-        <p>${prod.id}</p>
         <hr>
         </div>`
     })
