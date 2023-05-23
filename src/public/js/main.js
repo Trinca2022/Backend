@@ -19,6 +19,7 @@ productForm.addEventListener('submit', (e) => {
         code: prod.code,
         stock: prod.stock
     })
+
 })
 
 //Recibo los prods guardados en el servidor y los renderizo
@@ -37,4 +38,6 @@ socket.on("allProducts", products => {
         <hr>
         </div>`
     })
-}) 
+})
+
+

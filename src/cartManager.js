@@ -1,48 +1,34 @@
-import { promises as fs } from 'fs'
+import { cartModel } from './models/Cart.js'
 
 export class CartManager {
     constructor(path) {
         this.path = path
     }
 
-    static incrementarID() {
-        if (this.idIncrement) {
-            this.idIncrement++
-        } else {
-            this.idIncrement = 1
-        }
-        return this.idIncrement
-    }
-
     async createCarrito() {
-        const cartsJSON = await fs.readFile(this.path, 'utf-8')
-        const carts = JSON.parse(cartsJSON)
-        const carrito = {
-            cid: CartManager.incrementarID(),
-            products: []
+        try {
+            await cartModel.create({})
+            return "Carrito creado"
         }
-        carts.push(carrito)
-        await fs.writeFile(this.path, JSON.stringify(carts))
-        return "Carrito creado"
+        catch (error) {
+            console.log(error)
+        }
     }
 
-
-    async getCartById(cid) {
-        const cartsJSON = await fs.readFile(this.path, 'utf-8')
-        const carts = JSON.parse(cartsJSON)
-        const cartFound = carts.find(cart => cart.cid === parseInt(cid))
-        if (cartFound) { return cartFound } else {
+    async getCartById(id) {
+        const cartFound = await cartModel.findById(id)
+        if (cartFound) {
+            return cartFound
+        }
+        else {
             return "Carrito no encontrado"
         }
     }
 
-
-    async addProductCart(cid, pid) {
-        const cartsJSON = await fs.readFile(this.path, 'utf-8')
-        const carts = JSON.parse(cartsJSON)
-        const cart = carts.find(cart => cart.cid === parseInt(cid))
+    async addProductCart(id, id_prod) {
+        const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
-        const product = cart.products.find(product => product.pid === parseInt(pid))
+        const product = cart.products.find(product => product.id_prod.toString() === id_prod)
         //Me fijo si existe el producto en el carrito
         if (product) {
             //Existe el prodcuto -> Agrego +1 a la cantidad
@@ -50,11 +36,11 @@ export class CartManager {
         }
         else {
             //No existe el producto -> agrego el producto nuevo
-            cart.products.push({ pid, quantity: 1 })
+            cart.products.push({ id_prod, quantity: 1 })
         }
-        await fs.writeFile(this.path, JSON.stringify(carts))
-        return "Producto agregado"
+        await cartModel.updateOne({ "_id": id }, {
+            $set: { "products": cart.products }
+        })
+        return
     }
-
 }
-
