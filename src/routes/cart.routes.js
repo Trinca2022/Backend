@@ -32,4 +32,13 @@ cartRouter.post("/:id/product/:id_prod", async (req, res) => {
 })
 
 
+//Elimino producto según ID_PROD con método DELETE
+cartRouter.delete("/:id/product/:id_prod", async (req, res) => {
+    const id = req.params.id;
+    const id_prod = req.params.id_prod;
+    const message = await cartManager.deleteProductCart(id, id_prod)
+    res.send(message)
+})
+
+
 export default cartRouter

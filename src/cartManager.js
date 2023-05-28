@@ -44,4 +44,24 @@ export class CartManager {
         })
         return
     }
+
+    //Método deleteProduct --> elimina producto con un ID existente
+    async deleteProductCart(id, id_prod) {
+        const cart = await cartModel.findById(id)
+        if (!cart) { return "Carrito inexistente" }
+        const product = cart.products.find(product => product.id_prod.toString() === id_prod)
+        if (product) {
+            const deleteIndex = cart.products.indexOf(product)
+            cart.products.splice(deleteIndex, 1)
+            await cartModel.updateOne({ "_id": id }, {
+                $set: { "products": cart.products }
+            })
+            return (`El producto cuyo id es ${id_prod
+                } se ha eliminado`)
+        }
+        else {
+            return ("Producto inexistente")
+
+        }
+    }
 }
