@@ -16,9 +16,10 @@ export class CartManager {
     }
 
     async getCartById(id) {
-        const cartFound = await cartModel.findById(id)
-        if (cartFound) {
-            return cartFound
+        const cartFound = await cartModel.findById(id).populate("products.id_prod")
+        const cartFoundJSON = JSON.stringify(cartFound)
+        if (cartFoundJSON) {
+            return cartFoundJSON
         }
         else {
             return "Carrito no encontrado"
