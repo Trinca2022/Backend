@@ -23,6 +23,8 @@ export class ProductManager {
                     { title: "Molinillo", description: "Con manija giratoria. Hecho en acrílico y acero inoxidable", price: 8000, thumbnail: "https://img.freepik.com/photo-gratis/granos-cafe-tazon-molinillo-cafe_23-2147711002.jpg?w=740&t=st=1675384446~exp=1675385046~hmac=dc160716b950665f92fd6202850f38d6bd2edcd85dfabb099a936b06f13342b3", code: 9, stock: 10, status: true },
                     { title: "Espumador", description: "A pila", price: 4000, thumbnail: "https://d3ugyf2ht6aenh.cloudfront.net/stores/001/180/130/products/whatsapp-image-2022-06-22-at-4-27-38-pm-11-d5790e6dc54be58ea316559355459674-640-0.jpeg", code: 10, stock: 10, status: true }
                 ])
+
+
             else
                 return
 
@@ -58,7 +60,11 @@ export class ProductManager {
 
     //Método getProducts --> con mongoose
     async getProducts() {
-        const products = await productModel.find()
+
+        const products = await productModel.paginate({}, { limit: 5, page: 3 })
+        //console.log(prodspag)
+
+        //const products = await productModel.find()
         return products
     }
 
