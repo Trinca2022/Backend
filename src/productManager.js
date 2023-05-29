@@ -90,7 +90,7 @@ export class ProductManager {
                 }
             })
 
-            await productModel.create(prods)
+            await productModel.create()
             return (`El producto cuyo id es ${productFound.id} se ha actualizado`)
         }
         else
