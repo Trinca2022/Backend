@@ -6,20 +6,33 @@ const productManager = new ProductManager()
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
-/*const prodspag = await productModel.paginate({}, { limit: 5, page: 1 })
-console.log(prodspag)*/
 
 //Consulta de productos
 productRouter.get("/", async (req, res, next) => {
+
     try {
-        //const { limit } = req.query
-        const products = await productManager.getProducts()
+
+        let { limit, page, price, order } = req.query
+        // const products = await productManager.getProducts()
+        //const products = await productModel.paginate({ price: price }, { limit: limit, page: page, sort: sort })
+
+        limit = limit ?? 10
+        page = page ?? 1
+        //price = price ?? ">0"
+        order = order ?? 0
+        if (!price) { const filter = undefined }
+        else { const filter = `price: ${price}` }
+
+        /* if (limit ?? page ?? price ?? sort) {
+             const products = await productModel.paginate({ price: price }, { limit: limit, page: page, sort: sort })
+             res.send(JSON.stringify(products))
+ 
+         } else {*/
+
+        const products = await productModel.paginate({}, { limit: limit, page: page, sort: { price: order } })
+
         res.send(JSON.stringify(products))
-        /*if (limit) {
-            res.send(JSON.stringify(products.slice(0, limit)))
-        } else {
-            res.send(JSON.stringify(products.slice(0, 9)))
-        }*/
+
     }
     catch (error) {
         next(error)
