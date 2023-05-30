@@ -1,20 +1,38 @@
 import { Router } from "express";
 import { ProductManager } from "../productManager.js";
+import { productModel } from "../models/Products.js";
 
 const productManager = new ProductManager()
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
+
 //Consulta de productos
 productRouter.get("/", async (req, res, next) => {
+
     try {
-        const { limit } = req.query
-        const products = await productManager.getProducts()
-        if (limit) {
-            res.send(JSON.stringify(products.slice(0, limit)))
-        } else {
-            res.send(JSON.stringify(products))
-        }
+
+        let { limit, page, price, order } = req.query
+        // const products = await productManager.getProducts()
+        //const products = await productModel.paginate({ price: price }, { limit: limit, page: page, sort: sort })
+
+        limit = limit ?? 10
+        page = page ?? 1
+        //price = price ?? ">0"
+        order = order ?? 0
+        if (!price) { const filter = undefined }
+        else { const filter = `price: ${price}` }
+
+        /* if (limit ?? page ?? price ?? sort) {
+             const products = await productModel.paginate({ price: price }, { limit: limit, page: page, sort: sort })
+             res.send(JSON.stringify(products))
+ 
+         } else {*/
+
+        const products = await productModel.paginate({}, { limit: limit, page: page, sort: { price: order } })
+
+        res.send(JSON.stringify(products))
+
     }
     catch (error) {
         next(error)
@@ -70,5 +88,7 @@ productRouter.delete("/:id", async (req, res) => {
     const mensaje = await productManager.deleteProduct(id)
     res.send(mensaje)
 })
+
+
 
 export default productRouter
