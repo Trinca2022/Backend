@@ -7,25 +7,44 @@ const productManager = new ProductManager()
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
 
-//Consulta de productos
+//Consulta de productos con filtros
 productRouter.get("/", async (req, res, next) => {
-
     try {
-
-        let { limit, page, price, order } = req.query
-
+        let { limit, page, status, sort } = req.query
+        let hasPrevPage = true
+        let hasNextPage = true
 
         limit = limit ?? 10
         page = page ?? 1
-        //price = price ?? ">0"
-        order = order ?? 0
-        if (!price) { const filter = undefined }
-        else { const filter = `price: ${price}` }
+        status = status ?? true
+        sort = sort ?? 0
+
+        const products = await productModel.paginate({ status: status }, { limit: limit, page: page, sort: { price: sort } })
 
 
-        const products = await productModel.paginate({}, { limit: limit, page: page, sort: { price: order } })
+        if (page <= 1)
+            hasPrevPage = false
+        /*if (page = totalPages)
+            hasNextPage = false*/
 
+
+        const response = {
+            status: "success",
+            docs: products,
+            totalPages: 3,
+            page: page,
+            prevPage: Number(page) - 1,
+            nextPage: Number(page) + 1,
+            hasPrevPage: hasPrevPage,
+            //hasNextPage: hasNextPage
+        }
+
+        res.send(response)
         res.send(JSON.stringify(products))
+        //res.send(JSON.stringify(response))
+
+
+        //console.log(products)
 
     }
     catch (error) {
