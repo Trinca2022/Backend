@@ -66,7 +66,8 @@ const io = new Server(server)
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
     //Leo los productos/mensajes de mongodb
-    const products = await productManager.getProducts()
+    //const products = await productManager.getProducts()
+    const products = await productModel.find()
     const chats = await chatManager.getMessages()
     //Emito el array con todos los productos/mensajes
     socket.emit("allProducts", products)
@@ -79,7 +80,8 @@ io.on('connection', async (socket) => {
         //Ejecuto el método addProduct de productManager y agrega el producto a los productos
         //Cargo prods en mongoose
         await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true })
-        const products = await productManager.getProducts()
+        //const products = await productManager.getProducts()
+        const products = await productModel.find()
         io.emit("allProducts", products)
     })
     //Recibo los campos cargados en form y los guardo en chats
@@ -106,7 +108,8 @@ app.post('/upload', upload.single('product'), (req, res) => {
 
 //Uso HBS para mostrar en home todos los productos
 app.get('/', async (req, res) => {
-    const products = await productManager.getProducts()
+    //const products = await productManager.getProducts()
+    const products = await productModel.find()
     res.render('home', {
         products: products
     })
