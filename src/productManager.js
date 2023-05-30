@@ -56,20 +56,6 @@ export class ProductManager {
         }
     }
 
-
-
-    //Método getProducts --> con mongoose-->pasa a routes
-    /*async getProducts() {
-
-        const products = await productModel.paginate({}, { limit: 10, page: 1 })
-        //console.log(prodspag)
-
-        //const products = await productModel.find()
-        return products
-    }
-*/
-
-
     //Método getProductById --> busca un producto por su ID mongodb
     async getProductById(id) {
         const productFound = await productModel.findById(id)

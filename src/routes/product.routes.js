@@ -13,8 +13,7 @@ productRouter.get("/", async (req, res, next) => {
     try {
 
         let { limit, page, price, order } = req.query
-        // const products = await productManager.getProducts()
-        //const products = await productModel.paginate({ price: price }, { limit: limit, page: page, sort: sort })
+
 
         limit = limit ?? 10
         page = page ?? 1
@@ -23,11 +22,6 @@ productRouter.get("/", async (req, res, next) => {
         if (!price) { const filter = undefined }
         else { const filter = `price: ${price}` }
 
-        /* if (limit ?? page ?? price ?? sort) {
-             const products = await productModel.paginate({ price: price }, { limit: limit, page: page, sort: sort })
-             res.send(JSON.stringify(products))
- 
-         } else {*/
 
         const products = await productModel.paginate({}, { limit: limit, page: page, sort: { price: order } })
 
