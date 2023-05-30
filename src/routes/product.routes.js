@@ -24,8 +24,8 @@ productRouter.get("/", async (req, res, next) => {
 
         if (page <= 1)
             hasPrevPage = false
-        /*if (page = totalPages)
-            hasNextPage = false*/
+        if (page >= 3)
+            hasNextPage = false
 
 
         const response = {
@@ -36,15 +36,11 @@ productRouter.get("/", async (req, res, next) => {
             prevPage: Number(page) - 1,
             nextPage: Number(page) + 1,
             hasPrevPage: hasPrevPage,
-            //hasNextPage: hasNextPage
+            hasNextPage: hasNextPage
         }
 
         res.send(response)
         res.send(JSON.stringify(products))
-        //res.send(JSON.stringify(response))
-
-
-        //console.log(products)
 
     }
     catch (error) {
@@ -55,7 +51,6 @@ productRouter.get("/", async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 productRouter.get("/realtimeproducts", async (req, res, next) => {
     try {
-        //const products = await productManager.getProducts()
         const products = await productModel.find()
         //Envío array al cliente para renderizar
         res.render('realtimeproducts', { products: products, layout: 'mainrealtime' })
@@ -68,7 +63,6 @@ productRouter.get("/realtimeproducts", async (req, res, next) => {
 //Consulta de productos por id
 productRouter.get("/:id", async (req, res) => {
     const product = await productManager.getProductById(req.params.id)
-    //res.send(product)
     res.render('product', {
         title: product.title,
         description: product.description,
