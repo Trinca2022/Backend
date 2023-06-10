@@ -6,9 +6,13 @@ const productManager = new ProductManager()
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
+const auth = (req, res, next) => {
+    if (req.session.user) return next()
+    return res.send("Error de autenticación")
+}
 
 //Consulta de productos con filtros
-productRouter.get("/", async (req, res, next) => {
+productRouter.get("/", auth, async (req, res, next) => {
     try {
         let { limit, page, status, sort } = req.query
         let hasPrevPage = true
@@ -49,7 +53,7 @@ productRouter.get("/", async (req, res, next) => {
 })
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproducts", async (req, res, next) => {
+productRouter.get("/realtimeproducts", auth, async (req, res, next) => {
     try {
         const products = await productModel.find()
         //Envío array al cliente para renderizar

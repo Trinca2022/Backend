@@ -1,10 +1,13 @@
 import 'dotenv/config.js'
 import * as path from 'path'
 import express from 'express'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
 import multer from 'multer'
 import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
+import sessionRouter from './routes/session.routes.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
@@ -17,6 +20,7 @@ import { productModel } from './models/Products.js'
 import { cartModel } from './models/Cart.js'
 import { messageModel } from './models/Messages.js'
 import { CartManager } from './cartManager.js'
+
 
 
 //Conexión con mongoose
@@ -68,9 +72,12 @@ io.on('connection', async (socket) => {
     //Leo los productos/mensajes de mongodb
     const products = await productModel.find()
     const chats = await chatManager.getMessages()
+    //Leo el nombre del usuario
+    const userName = await userModel.find()
     //Emito el array con todos los productos/mensajes
     socket.emit("allProducts", products)
     socket.emit("allChats", chats)
+    socket.emit("userName", userName)
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {
         console.log(prod)
@@ -94,23 +101,35 @@ io.on('connection', async (socket) => {
     })
 })
 
+//Configuro Sessions
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: process.env.URL_MONGODB_ATLAS,
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+        ttl: 210
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+}))
+
 //Configuro rutas
 app.use('/product', productRouter)
 app.use('/cart', cartRouter)
 app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
+app.use('/sessions', sessionRouter)
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
 
+
+
 //Uso HBS para mostrar en home todos los productos
 app.get('/', async (req, res) => {
     const products = await productModel.find()
-    res.render('home', {
-        products: products
-    })
-
+    res.render('sessions/login')
 })
 
 

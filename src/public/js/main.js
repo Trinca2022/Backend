@@ -3,6 +3,7 @@ const socket = io()
 //Obtengo elementos del DOM por el ID
 const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
+const userName = document.getElementById("userName")
 
 //Cuando se escucha el evento envío información de los prods al servidor
 productForm.addEventListener('submit', (e) => {
@@ -34,6 +35,17 @@ socket.on("allProducts", products => {
         <p>${prod.thumbnail}</p>
         <p>${prod.code}</p>
         <p>${prod.stock}</p>
+        <hr>
+        </div>`
+    })
+})
+
+//Recibo el nombre del usuario logueado y lo renderizo
+socket.on("userName", user => {
+    userName.innerHTML = ""
+    user.forEach(u => {
+        userName.innerHTML += `
+        <h1>Bienvenido/a ${u.nombre}</h1>
         <hr>
         </div>`
     })
