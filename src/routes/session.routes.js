@@ -24,10 +24,18 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
     const user = await userModel.findOne({ email, password }).lean().exec()
-    //if (email === "adminCoder@coder.com" && password === "adminCod3r123")
+    if (email === "adminCoder@coder.com" && password === "adminCod3r123" || user) {
+        req.session.login = true
+        res.redirect('/product/realtimeproducts')
+    }
+    else {
+        return res.status(401).render('errors/base', {
+            error: 'Email y/o contraseña incorrectos'
+        })
+    }
 
 
-    if (!user) {
+    /*if (!user) {
         return res.status(401).render('errors/base', {
             error: 'Email y/o contraseña incorrectos'
         })
@@ -35,9 +43,10 @@ router.post('/login', async (req, res) => {
     //Genero la Sesion de mi usuario
     req.session.user = user
     res.redirect('/product/realtimeproducts')
+    */
 })
 
-//
+//Método para destruir la sesión
 router.get('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) res.status(500).render('errors/base', {
