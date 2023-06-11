@@ -15,7 +15,7 @@ import { ProductManager } from './productManager.js'
 import { ChatManager } from './chatManager.js'
 //Config mongoose
 import mongoose from 'mongoose'
-import { userModel } from './models/user.js'
+import { userModel } from './models/Users.js'
 import { productModel } from './models/Products.js'
 import { cartModel } from './models/Cart.js'
 import { messageModel } from './models/Messages.js'
@@ -72,20 +72,16 @@ io.on('connection', async (socket) => {
     //Leo los productos/mensajes de mongodb
     const products = await productModel.find()
     const chats = await chatManager.getMessages()
-    //Leo el nombre del usuario
+    //Leo info del usuario logueado desde la colección sessions de mongodb
     const userData = await sessionModel.find()
     const data = JSON.parse(userData[0].session)
-
     const userDatos = data.user
-    /*const userDatos = {
-        userNombre: data.user.nombre,
-        userRol: data.user.rol
-    }*/
+    const userDatosCoder = data.coderUser
     //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)
     socket.emit("allChats", chats)
     socket.emit("userName", userDatos)
-    console.log(data);
+    socket.emit("userCoder", userDatosCoder)
     //socket.emit("userName", session)
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {

@@ -41,46 +41,19 @@ socket.on("allProducts", products => {
 })
 
 //Recibo el nombre y el rol del usuario logueado y los renderizo
-
-
-
+//Usuario de mongo
 socket.on("userName", userDatos => {
     userName.innerHTML = `
         <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
         <hr>
         `;
 });
-
-
-
-/*
-socket.on("userName", user => {
-    userName.innerHTML = ""
-    user.forEach(u => {
-        userName.innerHTML += `
-        <h1>Bienvenido/a ${u.rol} ${u.nombre}</h1>
+//Admin Coder
+socket.on("userCoder", userDatosCoder => {
+    userName.innerHTML = `
+        <h1>Bienvenido/a ${userDatosCoder.rol} ${userDatosCoder.nombre} </h1>
         <hr>
-        </div>`
-    })
-})*/
-
-/*
-socket.on('userName', sessionData => {
-  const { session } = sessionData;
-  const { user } = JSON.parse(session);
-
-  // Obtener el rol y el nombre de la sesión
-  const { rol, nombre } = user;
-
-  // Renderizar el rol y el nombre en pantalla
-  const rolElement = document.getElementById('rol');
-  const nombreElement = document.getElementById('nombre');
-
-  rolElement.textContent = `Rol: ${rol}`;
-  nombreElement.textContent = `Nombre: ${nombre}`;
-});*/
-
-
-
+        `;
+});
 
 

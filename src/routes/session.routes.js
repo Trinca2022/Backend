@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { userModel } from "../models/user.js";
+import { userModel } from "../models/Users.js";
 
 
 const router = Router()
@@ -29,17 +29,19 @@ router.post('/login', async (req, res) => {
     const user = await userModel.findOne({ email, password }).lean().exec()
     //Guardo en coderUser datos de Coder hardcodeados
     const coderUser = {
+        nombre: "CoderHouse",
         email: "adminCoder@coder.com",
         password: "adminCod3r123",
         rol: "Administrador"
     }
 
-    //Si email y pass son de coder o si user existe, doy acceso
+    //Si email y pass son de coder, doy acceso
     if (user) {
         //Sesión de user
         req.session.user = user
         res.redirect('/product/realtimeproducts')
     }
+    //Si user existe, doy acceso
     else if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
         //Sesión de coderUser
         req.session.coderUser = coderUser
@@ -50,31 +52,6 @@ router.post('/login', async (req, res) => {
             error: 'Email y/o contraseña incorrectos'
         })
     }
-
-    /*//Si email y pass son de coder o si user existe, doy acceso
-    if (email === "adminCoder@coder.com" && password === "adminCod3r123" || user) {
-        //Sesión de user
-        req.session.user = user
-        //Sesión de coderUser
-        req.session.coderUser = coderUser
-        res.redirect('/product/realtimeproducts')
-    }
-    else {
-        return res.status(401).render('errors/base', {
-            error: 'Email y/o contraseña incorrectos'
-        })
-    }*/
-
-
-    /*if (!user) {
-         return res.status(401).render('errors/base', {
-             error: 'Email y/o contraseña incorrectos'
-         })
-     }
-     //Genero la Sesion de mi usuario
-     req.session.user = user
-     res.redirect('/product/realtimeproducts')*/
-
 })
 
 //Método para destruir la sesión
