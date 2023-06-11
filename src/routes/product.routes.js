@@ -6,8 +6,9 @@ const productManager = new ProductManager()
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
+//Autenticación para poder acceder a la vista de productos
 const auth = (req, res, next) => {
-    if (req.session.user) return next()
+    if (req.session.user || req.session.coderUser) return next()
     return res.send("Error de autenticación")
 }
 
@@ -44,7 +45,7 @@ productRouter.get("/", auth, async (req, res, next) => {
         }
 
         res.send(response)
-        res.send(JSON.stringify(products))
+        // res.send(JSON.stringify(products))
 
     }
     catch (error) {

@@ -9,6 +9,7 @@ router.get('/register', (req, res) => {
     res.render('sessions/register')
 })
 
+//Genero nuevo usuario en mongodb
 router.post('/register', async (req, res) => {
     const userNew = req.body
     const user = new userModel(userNew)
@@ -21,11 +22,27 @@ router.get('/login', (req, res) => {
     res.render('sessions/login')
 })
 
+//Genero acceso a la vista productos
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
+    //Guardo en user el resultado de la búsqueda en mongodb
     const user = await userModel.findOne({ email, password }).lean().exec()
-    if (email === "adminCoder@coder.com" && password === "adminCod3r123" || user) {
-        req.session.login = true
+    //Guardo en coderUser datos de Coder hardcodeados
+    const coderUser = {
+        email: "adminCoder@coder.com",
+        password: "adminCod3r123",
+        rol: "Administrador"
+    }
+
+    //Si email y pass son de coder o si user existe, doy acceso
+    if (user) {
+        //Sesión de user
+        req.session.user = user
+        res.redirect('/product/realtimeproducts')
+    }
+    else if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+        //Sesión de coderUser
+        req.session.coderUser = coderUser
         res.redirect('/product/realtimeproducts')
     }
     else {
@@ -34,16 +51,30 @@ router.post('/login', async (req, res) => {
         })
     }
 
-
-    /*if (!user) {
+    /*//Si email y pass son de coder o si user existe, doy acceso
+    if (email === "adminCoder@coder.com" && password === "adminCod3r123" || user) {
+        //Sesión de user
+        req.session.user = user
+        //Sesión de coderUser
+        req.session.coderUser = coderUser
+        res.redirect('/product/realtimeproducts')
+    }
+    else {
         return res.status(401).render('errors/base', {
             error: 'Email y/o contraseña incorrectos'
         })
-    }
-    //Genero la Sesion de mi usuario
-    req.session.user = user
-    res.redirect('/product/realtimeproducts')
-    */
+    }*/
+
+
+    /*if (!user) {
+         return res.status(401).render('errors/base', {
+             error: 'Email y/o contraseña incorrectos'
+         })
+     }
+     //Genero la Sesion de mi usuario
+     req.session.user = user
+     res.redirect('/product/realtimeproducts')*/
+
 })
 
 //Método para destruir la sesión

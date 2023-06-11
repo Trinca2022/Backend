@@ -20,7 +20,7 @@ import { productModel } from './models/Products.js'
 import { cartModel } from './models/Cart.js'
 import { messageModel } from './models/Messages.js'
 import { CartManager } from './cartManager.js'
-
+import { sessionModel } from './models/sessions.js'
 
 
 //Conexión con mongoose
@@ -73,11 +73,20 @@ io.on('connection', async (socket) => {
     const products = await productModel.find()
     const chats = await chatManager.getMessages()
     //Leo el nombre del usuario
-    const userName = await userModel.find()
-    //Emito el array con todos los productos/mensajes
+    const userData = await sessionModel.find()
+    const data = JSON.parse(userData[0].session)
+
+    const userDatos = data.user
+    /*const userDatos = {
+        userNombre: data.user.nombre,
+        userRol: data.user.rol
+    }*/
+    //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)
     socket.emit("allChats", chats)
-    socket.emit("userName", userName)
+    socket.emit("userName", userDatos)
+    console.log(data);
+    //socket.emit("userName", session)
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {
         console.log(prod)
