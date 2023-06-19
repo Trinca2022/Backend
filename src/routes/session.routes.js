@@ -34,14 +34,13 @@ router.post('/login', async (req, res) => {
         password: "adminCod3r123",
         rol: "Administrador"
     }
-
-    //Si email y pass son de coder, doy acceso
+    //Si user existe, doy acceso
     if (user) {
         //Sesión de user
         req.session.user = user
         res.redirect('/product/realtimeproducts')
     }
-    //Si user existe, doy acceso
+    //Si email y pass son de coder, doy acceso 
     else if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
         //Sesión de coderUser
         req.session.coderUser = coderUser

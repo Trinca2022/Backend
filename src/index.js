@@ -66,6 +66,18 @@ const upload = (multer({ storage: storage }))
 //Server de socket.io
 const io = new Server(server)
 
+//Configuro Sessions
+app.use(session({
+    store: MongoStore.create({
+        mongoUrl: process.env.URL_MONGODB_ATLAS,
+        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+        // ttl: 210
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true
+}))
+
 //Conecto con cliente
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
@@ -82,7 +94,7 @@ io.on('connection', async (socket) => {
     socket.emit("allChats", chats)
     socket.emit("userName", userDatos)
     socket.emit("userCoder", userDatosCoder)
-    //socket.emit("userName", session)
+
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {
         console.log(prod)
@@ -106,17 +118,7 @@ io.on('connection', async (socket) => {
     })
 })
 
-//Configuro Sessions
-app.use(session({
-    store: MongoStore.create({
-        mongoUrl: process.env.URL_MONGODB_ATLAS,
-        mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-        ttl: 210
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true
-}))
+
 
 //Configuro rutas
 app.use('/product', productRouter)
@@ -130,8 +132,7 @@ app.post('/upload', upload.single('product'), (req, res) => {
 })
 
 
-
-//Uso HBS para mostrar en home todos los productos
+//Uso HBS para mostrar en home el login
 app.get('/', async (req, res) => {
     const products = await productModel.find()
     res.render('sessions/login')
