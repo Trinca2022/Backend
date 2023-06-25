@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { userModel } from "../models/Users.js";
+import { hashData, compareData } from "../index.js";
 
 
 const router = Router()
@@ -10,10 +11,19 @@ router.get('/register', (req, res) => {
 })
 
 //Genero nuevo usuario en mongodb
-router.post('/register', async (req, res) => {
+/*router.post('/register', async (req, res) => {
     const userNew = req.body
     const user = new userModel(userNew)
+    const hashPassword = await hashData(password)
     await user.save()
+    res.redirect('/sessions/login')
+})*/
+router.post('/register', async (req, res) => {
+    const { email, password } = req.body
+    const user = await userModel.findOne({ email })
+    if (user) { return res.redirect('errors/base') }
+    const hashPassword = await hashData(password)
+    await userModel.create({ ...req.body, password: hashPassword })
     res.redirect('/sessions/login')
 })
 
@@ -26,7 +36,7 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
     //Guardo en user el resultado de la búsqueda en mongodb
-    const user = await userModel.findOne({ email, password }).lean().exec()
+    const user = await userModel.findOne({ email }).lean().exec()
     //Guardo en coderUser datos de Coder hardcodeados
     const coderUser = {
         nombre: "CoderHouse",
@@ -34,8 +44,15 @@ router.post('/login', async (req, res) => {
         password: "adminCod3r123",
         rol: "Administrador"
     }
-    //Si user existe, doy acceso
+    //Si user existe, comparo contraseña hasheada antes de dar acceso
     if (user) {
+        //Comparo contraseña
+        const isPasswordValid = await compareData(password, user.password)
+        if (!isPasswordValid) {
+            return res.status(401).render('errors/base', {
+                error: 'Email y/o contraseña incorrectos'
+            })
+        }
         //Sesión de user
         req.session.user = user
         res.redirect('/product/realtimeproducts')

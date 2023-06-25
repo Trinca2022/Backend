@@ -4,6 +4,7 @@ import express from 'express'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import multer from 'multer'
+import bcrypt from 'bcrypt'
 import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
@@ -138,8 +139,13 @@ app.get('/', async (req, res) => {
     res.render('sessions/login')
 })
 
+//Bcrypt
+export const hashData = async (data) => {
+    return bcrypt.hash(data, 10)
+}
 
-
-
+export const compareData = async (data, hashData) => {
+    return bcrypt.compare(data, hashData)
+}
 
 
