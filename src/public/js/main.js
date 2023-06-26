@@ -45,14 +45,7 @@ socket.on("allProducts", products => {
 //Usuario de mongo
 socket.on("userName", userDatos => {
     userName.innerHTML = `
-        <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
-        <hr>
-        `;
-});
-//Admin Coder
-socket.on("userCoder", userDatosCoder => {
-    userName.innerHTML = `
-        <h1>Bienvenido/a ${userDatosCoder.rol} ${userDatosCoder.nombre} </h1>
+        <h1>Bienvenido/a <!--${userDatos.rol} ${userDatos.nombre}--> </h1>
         <hr>
         `;
 });

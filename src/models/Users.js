@@ -8,7 +8,10 @@ const userSchema = new Schema({ //Defino las propiedades de mi modelo user
         type: String,
         unique: true //El atributo email es unico en mi BDD
     },
-    edad: Number,
+    edad: {
+        type: Number,
+        default: 0
+    },
     rol: {
         type: String,
         default: "Usuario"

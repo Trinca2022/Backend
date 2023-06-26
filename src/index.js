@@ -10,6 +10,7 @@ import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
 import sessionRouter from './routes/session.routes.js'
+import './passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
@@ -22,7 +23,7 @@ import { productModel } from './models/Products.js'
 import { cartModel } from './models/Cart.js'
 import { messageModel } from './models/Messages.js'
 import { CartManager } from './cartManager.js'
-import { sessionModel } from './models/sessions.js'
+import { sessionModel } from './models/Sessions.js'
 
 
 //Conexión con mongoose
@@ -90,12 +91,11 @@ io.on('connection', async (socket) => {
     const userData = await sessionModel.find()
     const data = JSON.parse(userData[0].session)
     const userDatos = data.user
-    const userDatosCoder = data.coderUser
+
     //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)
     socket.emit("allChats", chats)
     socket.emit("userName", userDatos)
-    socket.emit("userCoder", userDatosCoder)
 
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {

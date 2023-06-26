@@ -8,7 +8,7 @@ const productRouter = Router() //Guardo todas las rutas en productRouter
 
 //Autenticación para poder acceder a la vista de productos
 const auth = (req, res, next) => {
-    if (req.session.user || req.session.coderUser) return next()
+    if (req.session.user) return next()
     return res.send("Error de autenticación")
 }
 
