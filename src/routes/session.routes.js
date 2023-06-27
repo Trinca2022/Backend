@@ -101,17 +101,20 @@ router.get(
     '/githubRegister',
     passport.authenticate('githubRegister', { scope: ['user:email'] })
 )
-
-router.get('/github',
-    passport.authenticate('githubRegister', { failureRedirect: '/sessions/login' }),
-    (req, res) => {
-        const { email } = req.body
-        //Guardo en user el resultado de la búsqueda en mongodb
-        const user = userModel.findOne({ email }).lean().exec()
-        //Sesión de user
-        req.session.user = user
-        // Successful authentication, redirect home.
+router.get('/github', passport.authenticate('githubRegister', { failureRedirect: '/sessions/login' }), async (req, res) => {
+    try {
+        const { email } = req.user;
+        // Busco en MongoDB
+        const user = await userModel.findOne({ email }).lean().exec();
+        // Sesión de usuario
+        req.session.user = user;
         res.redirect('/product/realtimeproducts');
-    });
+    } catch (error) {
+        console.error('Error al buscar en la base de datos:', error);
+        res.redirect('/sessions/login');
+    }
+});
+
+
 
 export default router
