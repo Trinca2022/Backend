@@ -2,6 +2,7 @@ import { Router } from "express";
 import { userModel } from "../models/Users.js";
 import { hashData, compareData } from "../index.js";
 import passport from "passport";
+import { cartModel } from "../models/Cart.js";
 
 const router = Router()
 
@@ -17,7 +18,12 @@ router.post('/register', async (req, res) => {
     const user = await userModel.findOne({ email })
     if (user) { return res.redirect('errors/base') }
     const hashPassword = await hashData(password)
-    await userModel.create({ ...req.body, password: hashPassword })
+    //Genero carrito
+    const cart = await cartModel.create({ product: [] })
+    //Guardo en cartUser el id del carrito
+    const cartUser = cart._id
+    //Genero user con la info pasada por body, la pass hasheada y el id guardado en cartUser
+    await userModel.create({ ...req.body, password: hashPassword, id_cart: cartUser })
     res.redirect('/sessions/login')
 })
 
@@ -103,6 +109,7 @@ router.get(
 )
 router.get('/github', passport.authenticate('githubRegister', { failureRedirect: '/sessions/login' }), async (req, res) => {
     try {
+
         const { email } = req.user;
         // Busco en MongoDB
         const user = await userModel.findOne({ email }).lean().exec();

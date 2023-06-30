@@ -16,7 +16,11 @@ const userSchema = new Schema({ //Defino las propiedades de mi modelo user
         type: String,
         default: "Usuario"
     },
-    password: String
+    password: String,
+    id_cart: {
+        type: Schema.Types.ObjectId,
+        ref: "carts",
+    }
 })
 
 export const userModel = model("users", userSchema)

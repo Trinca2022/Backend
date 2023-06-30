@@ -3,6 +3,7 @@ import { userModel } from '../src/models/Users.js'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as GithubStrategy } from 'passport-github2'
 import { compareData } from './index.js'
+import { cartModel } from "./models/Cart.js";
 
 
 
@@ -42,7 +43,6 @@ passport.use(
             callbackURL: 'http://localhost:4000/sessions/github',
         },
         async (req, accessToken, refreshToken, profile, done) => {
-
             const { name, email } = profile._json
             try {
                 const userDB = await userModel.findOne({ email })
@@ -55,7 +55,12 @@ passport.use(
                     apellido: name.split(' ')[1] || '',
                     email,
                     password: '',
+                    id_cart: ''
                 }
+                //Genero carrito
+                const cart = await cartModel.create({ product: [] })
+                //id_cart del usuario es igual al id del carrito que se crea
+                user.id_cart = cart._id
                 const newUserDB = await userModel.create(user)
                 done(null, newUserDB)
             } catch (error) {
