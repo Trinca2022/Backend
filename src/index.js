@@ -4,7 +4,7 @@ import express from 'express'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import multer from 'multer'
-import bcrypt from 'bcrypt'
+//import bcrypt from 'bcrypt'
 import passport from 'passport'
 import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
@@ -14,22 +14,23 @@ import './passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
-import { ProductManager } from './productManager.js'
-import { ChatManager } from './chatManager.js'
+import { ProductManager } from './persistencia/productManager.js'
+import { ChatManager } from './persistencia/chatManager.js'
 //Config mongoose
-import mongoose from 'mongoose'
-import { userModel } from './models/Users.js'
-import { productModel } from './models/Products.js'
-import { cartModel } from './models/Cart.js'
-import { messageModel } from './models/Messages.js'
-import { CartManager } from './cartManager.js'
-import { sessionModel } from './models/Sessions.js'
+//import mongoose from 'mongoose'
+import './config/dbConfig.js'
+//import { userModel } from './models/Users.js'
+import { productModel } from './persistencia/models/Products.js'
+//import { cartModel } from './models/Cart.js'
+//import { messageModel } from './models/Messages.js'
+import { CartManager } from './persistencia/cartManager.js'
+import { sessionModel } from './persistencia/models/Sessions.js'
 
 
-//Conexión con mongoose
+/*//Conexión con mongoose --> pasado a config/dbConfig.js
 mongoose.connect(process.env.URL_MONGODB_ATLAS)
     .then(() => console.log("DB is connected"))
-    .catch((error) => console.log("Errror en MongoDB Atlas :", error))
+    .catch((error) => console.log("Errror en MongoDB Atlas :", error))*/
 
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
@@ -119,21 +120,18 @@ io.on('connection', async (socket) => {
 
     })
 })
-//Bcrypt para Hashear Password
+
+/*//Bcrypt para Hashear Password --> pasado a utils/bcrypt.js
 export const hashData = async (data) => {
     return bcrypt.hash(data, 10)
 }
-
 export const compareData = async (data, hashData) => {
     return bcrypt.compare(data, hashData)
-}
+}*/
 
 //Implemento Passport
 app.use(passport.initialize());
 app.use(passport.session())
-
-
-
 
 //Configuro rutas
 app.use('/product', productRouter)

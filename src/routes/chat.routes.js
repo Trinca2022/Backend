@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ChatManager } from "../chatManager.js";
+import { ChatManager } from "../persistencia/chatManager.js";
 
 const chatManager = new ChatManager()
 

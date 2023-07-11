@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CartManager } from "../cartManager.js";
+import { CartManager } from "../persistencia/cartManager.js";
 
 const cartManager = new CartManager()
 

@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { userModel } from "../models/Users.js";
-import { hashData, compareData } from "../index.js";
+import { userModel } from "../persistencia/models/Users.js";
+import { hashData, compareData } from "../utils/bcrypt.js";
 import passport from "passport";
-import { cartModel } from "../models/Cart.js";
+import { cartModel } from "../persistencia/models/Cart.js";
 
 const router = Router()
 
