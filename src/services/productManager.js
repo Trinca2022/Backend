@@ -1,4 +1,4 @@
-import { productModel } from './models/Products.js'
+import { productModel } from '../persistencia/models/Products.js'
 
 //Genero una clase ProductManager
 export class ProductManager {

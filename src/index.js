@@ -14,8 +14,8 @@ import './passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
-import { ProductManager } from './persistencia/productManager.js'
-import { ChatManager } from './persistencia/chatManager.js'
+import { ProductManager } from './services/productManager.js'
+import { ChatManager } from './services/chatManager.js'
 //Config mongoose
 //import mongoose from 'mongoose'
 import './config/dbConfig.js'
@@ -23,7 +23,7 @@ import './config/dbConfig.js'
 import { productModel } from './persistencia/models/Products.js'
 //import { cartModel } from './models/Cart.js'
 //import { messageModel } from './models/Messages.js'
-import { CartManager } from './persistencia/cartManager.js'
+import { CartManager } from './services/cartManager.js'
 import { sessionModel } from './persistencia/models/Sessions.js'
 
 
@@ -89,9 +89,12 @@ io.on('connection', async (socket) => {
     const products = await productModel.find()
     const chats = await chatManager.getMessages()
     //Leo info del usuario logueado desde la colección sessions de mongodb
-    const userData = await sessionModel.find()
+    /*const userData = await sessionModel.find()
     const data = JSON.parse(userData[0].session)
-    const userDatos = data.user
+    const userDatos = data.user*/
+    const latestSession = await sessionModel.findOne().sort({ _id: -1 }).exec();
+    const data = JSON.parse(latestSession.session);
+    const userDatos = data.user;
 
     //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)

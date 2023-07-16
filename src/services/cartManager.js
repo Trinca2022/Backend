@@ -1,4 +1,4 @@
-import { cartModel } from './models/Cart.js'
+import { cartModel } from '../persistencia/models/Cart.js'
 
 export class CartManager {
     constructor(path) {

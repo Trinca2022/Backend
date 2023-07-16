@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ProductManager } from "../persistencia/productManager.js";
+import { ProductManager } from "../services/productManager.js";
 import { productModel } from "../persistencia/models/Products.js";
 
 const productManager = new ProductManager()

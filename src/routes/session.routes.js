@@ -1,18 +1,18 @@
+import passport from "passport";
 import { Router } from "express";
 import { userModel } from "../persistencia/models/Users.js";
 import { hashData, compareData } from "../utils/bcrypt.js";
-import passport from "passport";
 import { cartModel } from "../persistencia/models/Cart.js";
+import { errorloginHandler, loginGithubHandler, loginHandler, loginPassportHandler, logoutHandler } from "../controllers/session.controller.js";
 
 const router = Router()
 
-//Vista de registro de usuarios
+//Vista de registro de usuarios --> PASAR A USER ROUTES/CONTROLLER
 router.get('/register', (req, res) => {
     res.render('sessions/register')
 })
 
-
-//Genero nuevo usuario en mongodb
+//Genero nuevo usuario en mongodb  --> PASAR A USER ROUTES/CONTROLLER
 router.post('/register', async (req, res) => {
     const { email, password } = req.body
     const user = await userModel.findOne({ email })
@@ -28,14 +28,30 @@ router.post('/register', async (req, res) => {
 })
 
 //Vista de login
-router.get('/login', (req, res) => {
-    res.render('sessions/login')
-})
+router.get('/login', loginHandler)
 
 //Vista de errorLogin
-router.get('/errorLogin', (req, res) => {
-    res.render('sessions/errorLogin')
-})
+router.get('/errorLogin', errorloginHandler)
+
+//Login con Passport
+router.post('/login', passport.authenticate('login', {
+    failureRedirect: 'errorLogin',
+}), loginPassportHandler)
+
+//Registro con github
+router.get(
+    //Uso la estrategia githubRegister para la autenticación a través de Github
+    '/githubRegister',
+    //El acceso que se permite es al email de Github
+    passport.authenticate('githubRegister', { scope: ['user:email'] })
+)
+//Si la autenticación falla, redirecciono a login
+router.get('/github', passport.authenticate('githubRegister', { failureRedirect: '/sessions/login' }), loginGithubHandler);
+
+//Método para destruir la sesión
+router.get('/logout', logoutHandler)
+
+
 
 /*//Login sin Passport
 //Genero acceso a la vista productos
@@ -76,52 +92,5 @@ router.post('/login', async (req, res) => {
     }
 })
 */
-
-//Login con Passport
-router.post('/login', passport.authenticate('login', {
-    failureRedirect: 'errorLogin',
-}), async (req, res) => {
-    const { email } = req.body
-    //Guardo en user el resultado de la búsqueda en mongodb
-    const user = await userModel.findOne({ email }).lean().exec()
-    //Sesión de user
-    req.session.user = user
-    res.redirect('/product/realtimeproducts')
-}
-
-
-)
-
-//Método para destruir la sesión
-router.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) res.status(500).render('errors/base', {
-            error: err
-        })
-        else res.redirect('/sessions/login')
-    })
-})
-
-//Registro con github
-router.get(
-    '/githubRegister',
-    passport.authenticate('githubRegister', { scope: ['user:email'] })
-)
-router.get('/github', passport.authenticate('githubRegister', { failureRedirect: '/sessions/login' }), async (req, res) => {
-    try {
-
-        const { email } = req.user;
-        // Busco en MongoDB
-        const user = await userModel.findOne({ email }).lean().exec();
-        // Sesión de usuario
-        req.session.user = user;
-        res.redirect('/product/realtimeproducts');
-    } catch (error) {
-        console.error('Error al buscar en la base de datos:', error);
-        res.redirect('/sessions/login');
-    }
-});
-
-
 
 export default router

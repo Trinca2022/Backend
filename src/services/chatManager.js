@@ -1,4 +1,4 @@
-import { messageModel } from './models/Messages.js'
+import { messageModel } from '../persistencia/models/Messages.js'
 
 //Genero una clase ChatManager con la ruta
 export class ChatManager {
