@@ -1,8 +1,5 @@
 import { Router } from "express";
-import { ProductManager } from "../services/productManager.js";
-import { productModel } from "../persistencia/models/Products.js";
-
-const productManager = new ProductManager()
+import { addProductHandler, deleteProductHandler, getProductByIdHandler, productsFilterHandler, productsViewHandler, updateProductHandler } from "../controllers/product.controller.js";
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
@@ -13,95 +10,21 @@ const auth = (req, res, next) => {
 }
 
 //Consulta de productos con filtros
-productRouter.get("/", auth, async (req, res, next) => {
-    try {
-        let { limit, page, status, sort } = req.query
-        let hasPrevPage = true
-        let hasNextPage = true
-
-        limit = limit ?? 10
-        page = page ?? 1
-        status = status ?? true
-        sort = sort ?? 0
-
-        const products = await productModel.paginate({ status: status }, { limit: limit, page: page, sort: { price: sort } })
-
-
-        if (page <= 1)
-            hasPrevPage = false
-        if (page >= 3)
-            hasNextPage = false
-
-
-        const response = {
-            status: "success",
-            docs: products,
-            totalPages: 3,
-            page: page,
-            prevPage: Number(page) - 1,
-            nextPage: Number(page) + 1,
-            hasPrevPage: hasPrevPage,
-            hasNextPage: hasNextPage
-        }
-
-        res.send(response)
-        // res.send(JSON.stringify(products))
-
-    }
-    catch (error) {
-        next(error)
-    }
-})
+productRouter.get("/", auth, productsFilterHandler)
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproducts", auth, async (req, res, next) => {
-    try {
-        const products = await productModel.find()
-        //Envío array al cliente para renderizar
-        res.render('realtimeproducts', { products: products, layout: 'mainrealtime' })
-    }
-    catch (error) {
-        next(error)
-    }
-})
+productRouter.get("/realtimeproducts", auth, productsViewHandler)
 
 //Consulta de productos por id
-productRouter.get("/:id", async (req, res) => {
-    const product = await productManager.getProductById(req.params.id)
-    res.render('product', {
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        code: product.code,
-        stock: product.stock
-
-    })
-})
+productRouter.get("/:id", getProductByIdHandler)
 
 //Agrego productos con método POST
-productRouter.post("/", async (req, res) => {
-    const { title, description, price, thumbnail, code, stock, status } = req.body
-    const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status })
-    res.send(prodNew)
-})
+productRouter.post("/", addProductHandler)
 
 //Actualizo producto según ID con método PUT
-productRouter.put("/:id", async (req, res) => {
-    const id = req.params.id
-    const { title, description, price, thumbnail, code, stock, status } = req.body
-
-    const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
-
-    res.send(mensaje)
-})
+productRouter.put("/:id", updateProductHandler)
 
 //Elimino producto según ID con método DELETE
-productRouter.delete("/:id", async (req, res) => {
-    const id = req.params.id
-    const mensaje = await productManager.deleteProduct(id)
-    res.send(mensaje)
-})
-
-
+productRouter.delete("/:id", deleteProductHandler)
 
 export default productRouter

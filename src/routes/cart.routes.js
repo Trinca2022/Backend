@@ -1,72 +1,27 @@
 import { Router } from "express";
-import { CartManager } from "../services/cartManager.js";
-
-const cartManager = new CartManager()
+import { addProductInCartHandler, createCartHandler, deleteProductInCartHandler, deleteProductsInCartHandler, getCartByIdHandler, updateCartHandler, updateProductInCartHandler } from "../controllers/cart.controller.js";
 
 const cartRouter = Router()
 
 //Creo carrito mediante método POST
-cartRouter.post("/", async (req, res) => {
-    const products = req.body
-    await cartManager.createCarrito(products)
-    res.send("Carrito creado")
-})
-
+cartRouter.post("/", createCartHandler)
 
 //Consulta de carrito
-cartRouter.get("/:id", async (req, res, next) => {
-    try {
-        const cart = await cartManager.getCartById(req.params.id)
-        res.send(cart)
-    }
-    catch (error) {
-        next(error)
-    }
-})
+cartRouter.get("/:id", getCartByIdHandler)
 
 //Agrego producto al carrito
-cartRouter.post("/:id/product/:id_prod", async (req, res) => {
-    const id = req.params.id;
-    const id_prod = req.params.id_prod;
-    const message = await cartManager.addProductCart(id, id_prod)
-    res.send(message)
-})
-
+cartRouter.post("/:id/product/:id_prod", addProductInCartHandler)
 
 //Elimino producto según ID_PROD con método DELETE
-cartRouter.delete("/:id/product/:id_prod", async (req, res) => {
-    const id = req.params.id;
-    const id_prod = req.params.id_prod;
-    const message = await cartManager.deleteProductCart(id, id_prod)
-    res.send(message)
-})
-
+cartRouter.delete("/:id/product/:id_prod", deleteProductInCartHandler)
 
 //Actualizo cantidad producto según ID_PROD con método PUT
-cartRouter.put("/:id/product/:id_prod", async (req, res) => {
-    const quant = req.body
-    const id = req.params.id;
-    const id_prod = req.params.id_prod;
-    const message = await cartManager.putProductCart(id, id_prod, quant)
-    res.send(message)
-})
+cartRouter.put("/:id/product/:id_prod", updateProductInCartHandler)
 
-//Elimino todos los productos del carrito según su ID con método DELETE
-cartRouter.delete("/:id", async (req, res) => {
-    const id = req.params.id;
-    const message = await cartManager.deleteProductsCart(id)
-    res.send(message)
-})
+//Elimino TODOS los productos del carrito según su ID con método DELETE
+cartRouter.delete("/:id", deleteProductsInCartHandler)
 
 //Actualizo carrito entero con método PUT
-cartRouter.put("/:id", async (req, res) => {
-    const newProducts = req.body
-    const id = req.params.id;
-    const message = await cartManager.putCart(id, newProducts)
-    res.send(message)
-})
-
-
-
+cartRouter.put("/:id", updateCartHandler)
 
 export default cartRouter

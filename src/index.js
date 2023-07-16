@@ -4,12 +4,12 @@ import express from 'express'
 import session from 'express-session'
 import MongoStore from 'connect-mongo'
 import multer from 'multer'
-//import bcrypt from 'bcrypt'
 import passport from 'passport'
 import productRouter from './routes/product.routes.js'
 import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
 import sessionRouter from './routes/session.routes.js'
+import userRouter from './routes/user.routes.js'
 import './passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
@@ -17,12 +17,8 @@ import { Server } from 'socket.io'
 import { ProductManager } from './services/productManager.js'
 import { ChatManager } from './services/chatManager.js'
 //Config mongoose
-//import mongoose from 'mongoose'
 import './config/dbConfig.js'
-//import { userModel } from './models/Users.js'
 import { productModel } from './persistencia/models/Products.js'
-//import { cartModel } from './models/Cart.js'
-//import { messageModel } from './models/Messages.js'
 import { CartManager } from './services/cartManager.js'
 import { sessionModel } from './persistencia/models/Sessions.js'
 
@@ -39,7 +35,7 @@ const cartManager = new CartManager()
 //Creo y guardo productos/mensajes/carrito en mongodb
 await productManager.createProducts()
 await chatManager.createChats()
-await cartManager.createCarrito()
+await cartManager.createCart()
 
 //Configuro express
 const app = express()
@@ -89,12 +85,10 @@ io.on('connection', async (socket) => {
     const products = await productModel.find()
     const chats = await chatManager.getMessages()
     //Leo info del usuario logueado desde la colección sessions de mongodb
-    /*const userData = await sessionModel.find()
-    const data = JSON.parse(userData[0].session)
-    const userDatos = data.user*/
-    const latestSession = await sessionModel.findOne().sort({ _id: -1 }).exec();
+    const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
     const data = JSON.parse(latestSession.session);
     const userDatos = data.user;
+
 
     //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)
@@ -143,6 +137,7 @@ app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
 app.use('/sessions', sessionRouter)
+app.use('/register', userRouter)
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })

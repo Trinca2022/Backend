@@ -5,7 +5,7 @@ export class CartManager {
         this.path = path
     }
 
-    async createCarrito() {
+    async createCart() {
         try {
             const carts = await cartModel.find()
             if (carts.length === 0) {
@@ -30,7 +30,7 @@ export class CartManager {
         }
     }
 
-    async addProductCart(id, id_prod) {
+    async addProductInCart(id, id_prod) {
         const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
         const product = cart.products.find(product => product.id_prod.toString() === id_prod)
@@ -50,7 +50,7 @@ export class CartManager {
     }
 
     //Método deleteProduct en Cart --> elimina producto con un ID existente
-    async deleteProductCart(id, id_prod) {
+    async deleteProductInCart(id, id_prod) {
         const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
         const product = cart.products.find(product => product.id_prod.toString() === id_prod)
@@ -69,7 +69,7 @@ export class CartManager {
         }
     }
     //Método putProductCart de Product en Cart --> modifica la cantidad del producto con ID Existente en el Cart
-    async putProductCart(id, id_prod, quant) {
+    async updateProductInCart(id, id_prod, quant) {
         const cart = await cartModel.findById(id)
         const newQuantity = quant.quantity
         if (!cart) { return "Carrito inexistente" }
@@ -92,7 +92,7 @@ export class CartManager {
     }
 
     //Método deleteProducts en Cart --> vacía carrito
-    async deleteProductsCart(id) {
+    async deleteProductsInCart(id) {
         const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
         await cartModel.updateOne({ "_id": id }, {
@@ -101,7 +101,7 @@ export class CartManager {
     }
 
     //Método putCart--> actualiza cart según body
-    async putCart(id, newProducts) {
+    async updateCart(id, newProducts) {
         const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
         //Me fijo si existe el producto en el carrito
