@@ -21,6 +21,7 @@ import './config/dbConfig.js'
 import { productModel } from './persistencia/models/Products.js'
 import { CartManager } from './services/cartManager.js'
 import { sessionModel } from './persistencia/models/Sessions.js'
+import ticketRouter from './routes/ticket.routes.js'
 
 
 /*//Conexión con mongoose --> pasado a config/dbConfig.js
@@ -114,8 +115,13 @@ io.on('connection', async (socket) => {
         await chatManager.addChat(chat)
         const chats = await chatManager.getMessages()
         io.emit("allChats", chats)
-
     })
+    /*socket.on("deletedProduct", async (prod) => {
+        const { id } = prod
+        await productManager.deleteProduct(id)
+        const products = await productModel.find()
+        io.emit("allProducts", products)
+    })*/
 })
 
 /*//Bcrypt para Hashear Password --> pasado a utils/bcrypt.js
@@ -138,6 +144,7 @@ app.use('/product', express.static(__dirname + '/public'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
 app.use('/sessions', sessionRouter)
 app.use('/register', userRouter)
+app.use('/ticket', ticketRouter)
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
@@ -148,4 +155,3 @@ app.get('/', async (req, res) => {
     const products = await productModel.find()
     res.render('sessions/login')
 })
-

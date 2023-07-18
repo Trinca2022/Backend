@@ -61,3 +61,10 @@ export const updateCartHandler =
         const message = await cartManager.putCart(id, newProducts)
         res.send(message)
     }
+
+/*//Creo orden
+export const createOrderHandler = async (req, res) => {
+    const id_cart = req.params.id_cart;
+    await cartManager.createCart(products)
+    res.send("Carrito creado")
+}*/

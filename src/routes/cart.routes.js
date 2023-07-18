@@ -24,4 +24,6 @@ cartRouter.delete("/:id", deleteProductsInCartHandler)
 //Actualizo carrito entero con método PUT
 cartRouter.put("/:id", updateCartHandler)
 
+//cartRouter.post("/:id/purchase", createOrderHandler)
+
 export default cartRouter

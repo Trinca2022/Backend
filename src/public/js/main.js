@@ -4,6 +4,7 @@ const socket = io()
 const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
 const userName = document.getElementById("userName")
+const eliminarProducto = document.getElementById("eliminarProducto")
 
 //Cuando se escucha el evento envío información de los prods al servidor
 productForm.addEventListener('submit', (e) => {
@@ -23,6 +24,17 @@ productForm.addEventListener('submit', (e) => {
 
 })
 
+/*//Cuando se escucha el evento envío información del prod a eliminar al servidor
+eliminarProducto.addEventListener('submit', (e) => {
+    e.preventDefault()
+    //Transformo un objeto HTML a un objeto Iterator
+    const prodsIterator = new FormData(e.target)
+    //Transformo de un objeto Iterator a un objeto Simple
+    const prod = Object.fromEntries(prodsIterator)
+    socket.emit("deletedProduct", prod)
+})*/
+
+
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
     productList.innerHTML = ""
@@ -36,6 +48,7 @@ socket.on("allProducts", products => {
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
+            <button id="eliminarProducto">Eliminar producto</button>
         </div>
         </div>`})
 
