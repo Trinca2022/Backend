@@ -1,4 +1,5 @@
 import { productModel } from '../persistencia/models/Products.js'
+import { productMongo } from '../persistencia/DAOs/productMongo.js'
 
 //Genero una clase ProductManager
 export class ProductManager {
@@ -37,7 +38,7 @@ export class ProductManager {
     //Método addProduct --> con mongoose
     async addProduct(product, code) {
         try {
-            const prods = await productModel.find()
+            const prods = await productMongo.findAll()
             //Validación de campo faltante
             if ((product.title && product.description && product.price && product.code && product.stock && product.status) === undefined)
                 console.log("Error: falta campo")
@@ -48,7 +49,7 @@ export class ProductManager {
             else {
                 prods.push(product)
             }
-            await productModel.create(prods)
+            await productMongo.createOne(prods)
             return "Producto creado"
         }
         catch (error) {
@@ -58,7 +59,7 @@ export class ProductManager {
 
     //Método getProductById --> busca un producto por su ID mongodb
     async getProductById(id) {
-        const productFound = await productModel.findById(id)
+        const productFound = await productMongo.findOneById(id)
         if (productFound) {
             return productFound
         }
