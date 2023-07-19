@@ -106,7 +106,8 @@ io.on('connection', async (socket) => {
         //Ejecuto el método addProduct de productManager y agrega el producto a los productos
         //Cargo prods en mongoose
         await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true })
-        const products = await productModel.find()
+        //const products = await productModel.find()
+        const products = await productMongo.findAll()
         io.emit("allProducts", products)
     })
     //Recibo los campos cargados en form y los guardo en chats
@@ -133,13 +134,13 @@ io.on('connection', async (socket) => {
 
     })
 
-    //ACTUALIZO PRODUCTO!!!!!!!
+    /*//ACTUALIZO PRODUCTO!!!!!!!
     socket.on("updatedProduct", async (prod) => {
-        const { _id } = prod
-        await productMongo.deleteOne(_id)
-        const products = await productMongo.findAll()
+        const { _id, title, description, price, thumbnail, code, stock } = prod
+        await productMongo.updateOne(_id, { title, description, price, thumbnail, code, stock, status: true })
+        const products = await productModel.find()
         io.emit("allProducts", products)
-    })
+    })*/
 
     //AGREGAR PRODUCTO AL CARRTIO!!!!!!!!!
     socket.on("newProdInCart", async (prod) => {

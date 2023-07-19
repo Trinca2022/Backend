@@ -97,6 +97,8 @@ export const updateProductHandler = async (req, res) => {
 //Manejo función que elimina un producto y exporto a la ruta
 export const deleteProductHandler = async (req, res) => {
     const id = req.params.id
+
+    //const { id } = req.body
     const mensaje = await productManager.deleteProduct(id)
     res.send(mensaje)
 }

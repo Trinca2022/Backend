@@ -53,14 +53,23 @@ socket.on("allProducts", products => {
             socket.emit("deletedProduct", prod)
         })
 
-        //Cuando se escucha el evento envío información del prod a eliminar al servidor
+        /*//Cuando se escucha el evento envío información del prod a actualizar al servidor
         const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
         actualizarProducto.addEventListener('click', (e) => {
-
             e.preventDefault()
-            console.log("hola")
-            socket.emit("updatedProduct", prod)
-        })
+            //Transformo un objeto HTML a un objeto Iterator
+            const prodsIterator = new FormData(e.target)
+            //Transformo de un objeto Iterator a un objeto Simple
+            const prod = Object.fromEntries(prodsIterator)
+            socket.emit("updatedProduct", {
+                title: prod.title,
+                description: prod.description,
+                price: prod.price,
+                thumbnail: prod.thumbnail,
+                code: prod.code,
+                stock: prod.stock
+            })
+        })*/
 
     })
 })
