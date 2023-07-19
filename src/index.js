@@ -22,6 +22,7 @@ import { productModel } from './persistencia/models/Products.js'
 import { CartManager } from './services/cartManager.js'
 import { sessionModel } from './persistencia/models/Sessions.js'
 import ticketRouter from './routes/ticket.routes.js'
+import { productMongo } from './persistencia/DAOs/productMongo.js'
 
 
 /*//Conexión con mongoose --> pasado a config/dbConfig.js
@@ -94,6 +95,7 @@ io.on('connection', async (socket) => {
     //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)
     socket.emit("allChats", chats)
+    socket.emit("adminName", userDatos)
     socket.emit("userName", userDatos)
 
     //Recibo los campos cargados en form y los guardo en array products
@@ -116,21 +118,39 @@ io.on('connection', async (socket) => {
         const chats = await chatManager.getMessages()
         io.emit("allChats", chats)
     })
-    /*socket.on("deletedProduct", async (prod) => {
-        const { id } = prod
-        await productManager.deleteProduct(id)
-        const products = await productModel.find()
-        io.emit("allProducts", products)
-    })*/
-})
 
-/*//Bcrypt para Hashear Password --> pasado a utils/bcrypt.js
-export const hashData = async (data) => {
-    return bcrypt.hash(data, 10)
-}
-export const compareData = async (data, hashData) => {
-    return bcrypt.compare(data, hashData)
-}*/
+    //Elimino un producto
+    socket.on("deletedProduct", async (prod) => {
+        const { _id } = prod
+        await productMongo.deleteOne(_id)
+        console.log("HOLA id", _id)
+        //console.log("HOLA SERGUNDO ID", id.toString())
+        //const products = await productMongo.findOneById(_id)
+        const products = await productMongo.findAll()
+        //console.log("HOLA PROD", products)
+        const filteredProducts = products.filter((product) => product._id.toString() !== _id);
+        io.emit("allProducts", filteredProducts)
+
+    })
+
+    //ACTUALIZO PRODUCTO!!!!!!!
+    socket.on("updatedProduct", async (prod) => {
+        const { _id } = prod
+        await productMongo.deleteOne(_id)
+        const products = await productMongo.findAll()
+        io.emit("allProducts", products)
+    })
+
+    //AGREGAR PRODUCTO AL CARRTIO!!!!!!!!!
+    socket.on("newProdInCart", async (prod) => {
+        console.log("HOLA")
+        /*const { _id } = prod
+        await cartManager.addProductInCart({ _id })
+        const productsInCart = await cartManager.getCartById()
+        io.emit("allProducts", products)*/
+    })
+
+})
 
 //Implemento Passport
 app.use(passport.initialize());
@@ -141,6 +161,7 @@ app.use('/product', productRouter)
 app.use('/cart', cartRouter)
 app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
+app.use('/product', express.static(__dirname + '/public/user'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
 app.use('/sessions', sessionRouter)
 app.use('/register', userRouter)

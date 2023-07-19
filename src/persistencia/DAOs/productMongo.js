@@ -29,7 +29,7 @@ class ProductMongo {
     }
     async deleteOne(id) {
         try {
-            const response = await productModel.deleteOne({ _id: id })
+            const response = await productModel.deleteOne(id)//({ _id: id })
             return response
         } catch (error) {
             return error
@@ -38,7 +38,7 @@ class ProductMongo {
 
     async updateOne(id, obj) {
         try {
-            const response = await productModel.updateOne({ _id: id }, obj)
+            const response = await productModel.updateOne(id, obj)
             return response
         } catch (error) {
             return error

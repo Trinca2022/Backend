@@ -17,7 +17,9 @@ export const loginPassportHandler = async (req, res) => {
     const user = await userModel.findOne({ email }).lean().exec()
     //Si se encuentra el usuario, se guarda en la sesión actual del usuario
     req.session.user = user
-    res.redirect('/product/realtimeproducts')
+    const { rol } = req.session.user
+    if (rol === "Administrador") { res.redirect('/product/realtimeproductsAdmin') }
+    if (rol === "Usuario") { res.redirect('/product/realtimeproductsUser') }
 }
 
 //Manejo del login con Github que exporto a la ruta
@@ -29,7 +31,9 @@ export const loginGithubHandler = async (req, res) => {
         const user = await userModel.findOne({ email }).lean().exec();//lean:obtener obj plano y no un doc de mongoose completo/exec:ejecuta consulta
         //Si se encuentra el usuario, se guarda en la sesión actual del usuario
         req.session.user = user;
-        res.redirect('/product/realtimeproducts');
+        const { rol } = req.session.user
+        if (rol === "Administrador") { res.redirect('/product/realtimeproductsAdmin') }
+        if (rol === "Usuario") { res.redirect('/product/realtimeproductsUser') }
     } catch (error) {
         console.error('Error al buscar en la base de datos:', error);
         res.redirect('/sessions/login');

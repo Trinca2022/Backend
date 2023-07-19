@@ -69,9 +69,9 @@ export class ProductManager {
 
     //Método updateProduct --> actualiza campo de un producto con un ID existente
     async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {
-        const productFound = await productModel.findById(id)
+        const productFound = await productMongo.findOneById(id)
         if (productFound) {
-            await productModel.updateOne({ "_id": id }, {
+            await productMongo.updateOne({ "_id": id }, {
                 $set: {
                     "title": title,
                     "description": description,
@@ -83,7 +83,7 @@ export class ProductManager {
                 }
             })
 
-            await productModel.create()
+            await productMongo.createOne()
             return (`El producto cuyo id es ${productFound.id} se ha actualizado`)
         }
         else
@@ -94,9 +94,9 @@ export class ProductManager {
 
     //Método deleteProduct --> elimina producto con un ID existente
     async deleteProduct(id) {
-        const productFound = await productModel.findById(id)
+        const productFound = await productMongo.findOneById(id)
         if (productFound) {
-            await productModel.deleteOne({ "_id": id })
+            await productMongo.deleteOne({ "_id": id })
             return (`El producto cuyo id es ${productFound.id} se ha eliminado`)
         }
         else {

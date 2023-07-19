@@ -42,11 +42,24 @@ export const productsFilterHandler = async (req, res, next) => {
 
 //Manejo de la vista de productos que exporto a la ruta
 //Envío el array de productos inicial al cliente a través de socket
-export const productsViewHandler = async (req, res, next) => {
+export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
         const products = await productModel.find()
         //Envío array al cliente para renderizar
-        res.render('realtimeproducts', { products: products, layout: 'mainrealtime' })
+        res.render('realtimeproductsAdmin', { products: products, layout: 'mainrealtime' })
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
+//Manejo de la vista de productos que exporto a la ruta
+//Envío el array de productos inicial al cliente a través de socket
+export const productsViewHandlerUser = async (req, res, next) => {
+    try {
+        const products = await productModel.find()
+        //Envío array al cliente para renderizar
+        res.render('realtimeproductsUser', { products: products, layout: 'mainrealtime' })
     }
     catch (error) {
         next(error)

@@ -1,19 +1,35 @@
 import { Router } from "express";
-import { addProductHandler, deleteProductHandler, getProductByIdHandler, productsFilterHandler, productsViewHandler, updateProductHandler } from "../controllers/product.controller.js";
+import { addProductHandler, deleteProductHandler, getProductByIdHandler, productsFilterHandler, productsViewHandlerAdmin, productsViewHandlerUser, updateProductHandler } from "../controllers/product.controller.js";
 
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
 //Autenticación para poder acceder a la vista de productos
-const auth = (req, res, next) => {
-    if (req.session.user) return next()
-    return res.send("Error de autenticación")
+const authAdmin = (req, res, next) => {
+    if (!req.session.user)
+        return res.send("Error de autenticación")
+    const { rol } = req.session.user
+    if (rol === "Administrador") return next()
+}
+
+//Autenticación para poder acceder a la vista de productos
+const authUser = (req, res, next) => {
+    if (!req.session.user)
+        return res.send("Error de autenticación")
+    const { rol } = req.session.user
+    if (rol === "Usuario") return next()
 }
 
 //Consulta de productos con filtros
-productRouter.get("/", auth, productsFilterHandler)
+productRouter.get("/", authAdmin, productsFilterHandler)
+
+//Consulta de productos con filtros
+productRouter.get("/", authUser, productsFilterHandler)
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproducts", auth, productsViewHandler)
+productRouter.get("/realtimeproductsAdmin", authAdmin, productsViewHandlerAdmin)
+
+//Envío el array de productos inicial al cliente a través de socket
+productRouter.get("/realtimeproductsUser", authUser, productsViewHandlerUser)
 
 //Consulta de productos por id
 productRouter.get("/:id", getProductByIdHandler)
