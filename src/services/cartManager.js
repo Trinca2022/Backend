@@ -1,5 +1,8 @@
 import { cartModel } from '../persistencia/models/Cart.js'
 
+
+//ACÁ CREAR UNA FUNCIÓN QUE ME SUME EL MONTO TOTAL DEL CARRITO
+
 export class CartManager {
     constructor(path) {
         this.path = path
