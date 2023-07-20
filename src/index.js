@@ -23,6 +23,7 @@ import { CartManager } from './services/cartManager.js'
 import { sessionModel } from './persistencia/models/Sessions.js'
 import ticketRouter from './routes/ticket.routes.js'
 import { productMongo } from './persistencia/DAOs/productMongo.js'
+import { userModel } from './persistencia/models/Users.js'
 
 
 /*//Conexión con mongoose --> pasado a config/dbConfig.js
@@ -97,6 +98,7 @@ io.on('connection', async (socket) => {
     socket.emit("allChats", chats)
     socket.emit("adminName", userDatos)
     socket.emit("userName", userDatos)
+    socket.emit("idCart", userDatos)
 
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {
@@ -134,7 +136,7 @@ io.on('connection', async (socket) => {
 
     })
 
-    /*//ACTUALIZO PRODUCTO!!!!!!!
+    /*//ACTUALIZO PRODUCTO
     socket.on("updatedProduct", async (prod) => {
         const { _id, title, description, price, thumbnail, code, stock } = prod
         await productMongo.updateOne(_id, { title, description, price, thumbnail, code, stock, status: true })
@@ -142,13 +144,14 @@ io.on('connection', async (socket) => {
         io.emit("allProducts", products)
     })*/
 
-    //AGREGAR PRODUCTO AL CARRTIO!!!!!!!!!
-    socket.on("newProdInCart", async (prod) => {
-        console.log("HOLA")
-        /*const { _id } = prod
-        await cartManager.addProductInCart({ _id })
-        const productsInCart = await cartManager.getCartById()
-        io.emit("allProducts", products)*/
+    //AGREGAR PRODUCTO AL CARRITO
+    socket.on("addProduct", async (prod) => {
+        const { _id } = prod
+        const id = userDatos.id_cart
+        await cartManager.addProductInCart(id, { _id })
+        io.emit("prodInCart", _id)
+        //const productsInCart = await cartManager.getCartById(_id)
+        //io.emit("allProducts", productsInCart)
     })
 
 })
@@ -160,6 +163,7 @@ app.use(passport.session())
 //Configuro rutas
 app.use('/product', productRouter)
 app.use('/cart', cartRouter)
+app.use('/cart', express.static(__dirname + '/public/cart'))
 app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
 app.use('/product', express.static(__dirname + '/public/user'))

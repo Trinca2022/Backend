@@ -3,6 +3,7 @@ const socket = io()
 //Obtengo elementos del DOM por el ID
 const chatForm = document.getElementById("chatForm")
 const chatList = document.getElementById("chatList")
+const userName = document.getElementById("userName")
 
 
 //Cuando se escucha el evento envío información de los mensajes al servidor
@@ -32,4 +33,13 @@ socket.on("allChats", chats => {
         <hr>
         </div>`
     })
-}) 
+})
+
+//Recibo el nombre y el rol del usuario logueado y los renderizo
+//Usuario de mongo
+socket.on("userName", userDatos => {
+    userName.innerHTML = `
+        <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} al Chat de Café Don Julio</h1>
+        <hr>
+        `;
+});

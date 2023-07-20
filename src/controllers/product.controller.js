@@ -59,7 +59,7 @@ export const productsViewHandlerUser = async (req, res, next) => {
     try {
         const products = await productModel.find()
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsUser', { products: products, layout: 'mainrealtime' })
+        res.render('realtimeproductsUser', { products: products, layout: 'mainrealtimeUser' })
     }
     catch (error) {
         next(error)

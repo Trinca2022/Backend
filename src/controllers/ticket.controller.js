@@ -5,8 +5,8 @@ const ticketManager = new TicketManager()
 
 //Creo ticket mediante método POST
 export const createTicketHandler = async (req, res) => {
-    // const id_cart = req.params.id_cart;
-    const cart = req.body
-    await ticketManager.createTicket(cart)
-    res.send("Ticket creado")
+    const { code, purchase_datetime, amount, purchaser } = req.body
+    //await ticketManager.createTicket()
+    const ticket = await ticketManager.createTicket({ code, purchase_datetime, amount, purchaser })
+    res.send(ticket)
 }

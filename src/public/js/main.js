@@ -25,8 +25,10 @@ productForm.addEventListener('submit', (e) => {
 
 })
 
-
-
+//Función del Administrador para eliminar un producto
+const eliminarProducto = (productId) => {
+    socket.emit("deletedProduct", { _id: productId })
+}
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
     productList.innerHTML = ""
@@ -40,46 +42,39 @@ socket.on("allProducts", products => {
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
-            <button id="eliminarProducto-${prod._id}">Eliminar producto</button>
-           <button id=" actualizarProducto-${prod._id}">Actualizar producto</button>
+            <button onClick="eliminarProducto('${prod._id}')">Eliminar producto</button>
             </div>
             </div>`
 
-        //Cuando se escucha el evento envío información del prod a eliminar al servidor
-        const eliminarProducto = document.getElementById(`eliminarProducto-${prod._id}`)
-        eliminarProducto.addEventListener('click', (e) => {
-            e.preventDefault()
-            console.log("hola")
-            socket.emit("deletedProduct", prod)
-        })
-
-        /*//Cuando se escucha el evento envío información del prod a actualizar al servidor
-        const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
-        actualizarProducto.addEventListener('click', (e) => {
-            e.preventDefault()
-            //Transformo un objeto HTML a un objeto Iterator
-            const prodsIterator = new FormData(e.target)
-            //Transformo de un objeto Iterator a un objeto Simple
-            const prod = Object.fromEntries(prodsIterator)
-            socket.emit("updatedProduct", {
-                title: prod.title,
-                description: prod.description,
-                price: prod.price,
-                thumbnail: prod.thumbnail,
-                code: prod.code,
-                stock: prod.stock
-            })
-        })*/
-
     })
 })
+
+/*//Cuando se escucha el evento envío información del prod a actualizar al servidor
+const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
+actualizarProducto.addEventListener('click', (e) => {
+    e.preventDefault()
+    //Transformo un objeto HTML a un objeto Iterator
+    const prodsIterator = new FormData(e.target)
+    //Transformo de un objeto Iterator a un objeto Simple
+    const prod = Object.fromEntries(prodsIterator)
+    socket.emit("updatedProduct", {
+        title: prod.title,
+        description: prod.description,
+        price: prod.price,
+        thumbnail: prod.thumbnail,
+        code: prod.code,
+        stock: prod.stock
+    })
+})*/
+
+
 
 
 //Recibo el nombre y el rol del usuario logueado y los renderizo
 //Usuario de mongo
 socket.on("adminName", userDatos => {
     adminName.innerHTML = `
-        <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
+    <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
         <hr>
         `;
 });

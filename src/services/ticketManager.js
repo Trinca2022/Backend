@@ -7,14 +7,18 @@ export class TicketManager {
     }
 
     //Mét create ticket
-    async createTicket() {
+    async createTicket({ code, purchase_datetime, amount, purchaser }) {
         try {
-            const tickets = await ticketModel.find()
-            if (tickets.length === 0) {
-                await ticketModel.create([])
-                return "Carrito creado"
-            }
-            else return
+
+            await ticketModel.create({
+                "code": code,
+                "purchase_datetime": purchase_datetime,
+                "amount": amount,
+                "purchaser": purchaser
+            })
+            return "Ticket creado"
+
+
         }
         catch (error) {
             console.log(error)

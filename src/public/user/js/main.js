@@ -1,8 +1,15 @@
 const socket = io()
 
+//MAIN DE LA VISTA DE PRODUCTOS PARA EL USUARIO
+
 const userName = document.getElementById("userName")
 const productList = document.getElementById("productList")
 
+//USUARIO AGREGA PROD AL CARRITO
+
+const addProdInCart = (productId) => {
+    socket.emit("addProduct", { _id: productId })
+}
 
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
@@ -17,31 +24,22 @@ socket.on("allProducts", products => {
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
-            <button id="addProdInCart-${prod._id}">Agregar al carrito</button>
+            <button onClick="addProdInCart('${prod._id}')">Comprar producto</button>
             </div>
             </div>`
-
-        //Cuando se escucha el evento envío información del prod a agregar al servidor
-        const eliminarProducto = document.getElementById(`addProdInCart-${prod._id}`)
-        eliminarProducto.addEventListener('click', (e) => {
-
-            e.preventDefault()
-            console.log("hola")
-            socket.emit("newProdInCart", prod)
-
-        })
-
     }
     )
 
 })
 
-
 //Recibo el nombre y el rol del usuario logueado y los renderizo
 //Usuario de mongo
 socket.on("userName", userDatos => {
     userName.innerHTML = `
-        <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
-        <hr>
-        `;
+                <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
+                <hr>
+                `;
 });
+
+
+
