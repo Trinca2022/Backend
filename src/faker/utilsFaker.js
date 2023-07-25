@@ -9,7 +9,6 @@ export const generateProductFaker = async () => {
             price: fakerES.commerce.price(),
             thumbnail: fakerES.image.urlPicsumPhotos(),
             stock: 15,
-            //id: fakerES.database.mongodbObjectId(),
             status: true
         })
         return productsFakerCreated

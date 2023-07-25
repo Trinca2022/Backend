@@ -45,6 +45,16 @@ class ProductMongo {
         }
     }
 
+    async findByIds(ids) {
+        try {
+            const response = await productModel.find({ "_id": { $in: ids } })
+            return response
+        }
+        catch (error) {
+            return error
+        }
+    }
+
 }
 
 

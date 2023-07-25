@@ -15,7 +15,7 @@ export const getCartByIdHandler = async (req, res, next) => {
     try {
         const cart = await cartManager.getCartById(req.params.id)
         //res.send(cart)
-        res.render('realtimecart', { cart: cart, layout: 'mainrealtimeCart' })
+        res.render('realtimecart', { cart: JSON.stringify(cart), layout: 'mainrealtimeCart' })
 
     }
     catch (error) {

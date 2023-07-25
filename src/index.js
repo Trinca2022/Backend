@@ -99,7 +99,15 @@ io.on('connection', async (socket) => {
     socket.emit("allChats", chats)
     socket.emit("adminName", userDatos)
     socket.emit("userName", userDatos)
-    socket.emit("idCart", userDatos)
+    //socket.emit("idCart", userDatos)
+
+    socket.on("getCart", async (args, callback) => {
+        const cart = await cartManager.getCartById(userDatos.id_cart)
+        const idProdsinCart = cart.products.map(prod => prod.id_prod)
+        const prodsInCart = await productMongo.findByIds(idProdsinCart)
+        callback({ cart, prodsInCart })
+        console.log(cart, prodsInCart)
+    })
 
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {
