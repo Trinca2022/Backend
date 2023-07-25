@@ -40,7 +40,7 @@ export class ProductManager {
         try {
             const prods = await productMongo.findAll()
             //Validación de campo faltante
-            if ((product.title && product.description && product.price && product.code && product.stock && product.status) === undefined)
+            if ((!product.title || !product.description || !product.price || !product.code || !product.stock || !product.status))
                 console.log("Error: falta campo")
             //Validación de code repetido
             else if (prods.find(product => product.code === code))

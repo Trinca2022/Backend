@@ -24,6 +24,7 @@ import { sessionModel } from './persistencia/models/Sessions.js'
 import ticketRouter from './routes/ticket.routes.js'
 import { productMongo } from './persistencia/DAOs/productMongo.js'
 import { userModel } from './persistencia/models/Users.js'
+import getProductFaker from './faker/routes.productFaker.js'
 
 
 /*//Conexión con mongoose --> pasado a config/dbConfig.js
@@ -171,6 +172,8 @@ app.use('/chat', express.static(__dirname + '/public/chat'))
 app.use('/sessions', sessionRouter)
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
+//RUTA DE FAKER
+app.use('/mockingproducts', getProductFaker)
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
