@@ -22,21 +22,29 @@ export const userErrorHandler = async (req, res) => {
 }*/
 
 //Manejo del registro de usuario que exporto a la ruta
-export const registerHandler = async (req, res) => {
-    const { nombre, apellido, email, edad, password } = req.body;
-    if ((!nombre || !apellido || !email || !edad)) {
-        createError({
-            name: "Error de creación de usuario",
-            cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
-            message: "Error al tratar de crear un nuevo usuario",
-            code: errorTypes.INVALID_TYPES_ERROR
-        })
+export const registerHandler = async (req, res, next) => {
+    try {
+        const { nombre, apellido, email, edad, password } = req.body;
+        if ((!nombre || !apellido || !email || !edad)) {
+            createError({
+                name: "Error de creación de usuario",
+                cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
+                message: "Error al tratar de crear un nuevo usuario",
+                code: errorTypes.INVALID_TYPES_ERROR
+            })
+        }
+        const hashPassword = await hashData(password)
+        const cart = await cartModel.create({ product: [] })
+        const cartUser = cart._id
+        await ticketModel.create()
+        await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
+        res.redirect('/sessions/login')
     }
-    const hashPassword = await hashData(password)
-    const cart = await cartModel.create({ product: [] })
-    const cartUser = cart._id
-    await ticketModel.create()
-    await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
-    res.redirect('/sessions/login')
+    catch (error) {
+        next(error)
+    }
+
+
+
 }
 

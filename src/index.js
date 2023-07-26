@@ -183,6 +183,7 @@ app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
+
 //ERRORES
 app.use(errorHandler)
 app.post('/upload', upload.single('product'), (req, res) => {
