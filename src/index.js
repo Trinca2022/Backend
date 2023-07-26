@@ -25,6 +25,7 @@ import ticketRouter from './routes/ticket.routes.js'
 import { productMongo } from './persistencia/DAOs/productMongo.js'
 import { userModel } from './persistencia/models/Users.js'
 import getProductFaker from './faker/routes.productFaker.js'
+import errorHandler from './middlewares/errors/indexError.js'
 
 
 /*//Conexión con mongoose --> pasado a config/dbConfig.js
@@ -182,6 +183,8 @@ app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
+//ERRORES
+app.use(errorHandler)
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
