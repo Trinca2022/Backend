@@ -9,7 +9,4 @@ userRouter.get('/register', registerViewHandler)
 //Genero nuevo usuario en mongodb
 userRouter.post('/register', registerHandler)
 
-/*//Manejo de error customizado
-userRouter.get('/register', userErrorHandler)*/
-
 export default userRouter

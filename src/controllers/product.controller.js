@@ -1,10 +1,13 @@
 import { productModel } from "../persistencia/models/Products.js";
 import { ProductManager } from "../services/productManager.js";
+import createError from "../services/errors/customError.js";
+import errorTypes from "../services/errors/errorTypes.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const productManager = new ProductManager()
 
-//Manejo de la consulta con filtros que exporto a la ruta--> PARA MI ESTO DEBERÍA IR EN EL MANAGER
+//Manejo de la consulta con filtros que exporto a la ruta
 export const productsFilterHandler = async (req, res, next) => {
     try {
         let { limit, page, status, sort } = req.query
@@ -80,10 +83,24 @@ export const getProductByIdHandler = async (req, res) => {
 }
 
 //Manejo función que agrega producto y exporto a la ruta
-export const addProductHandler = async (req, res) => {
-    const { title, description, price, thumbnail, code, stock, status } = req.body
-    const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status })
-    res.send(prodNew)
+export const addProductHandler = async (req, res, next) => {
+    try {
+        const { title, description, price, thumbnail, code, stock, status } = req.body
+        if ((!title || !description || !price || !code || !stock)) {
+            createError({
+                name: "Error de creación de producto",
+                cause: generateProductErrorInfo({ title, description, price, code, stock }),
+                message: "Error al tratar de crear un nuevo producto",
+                code: errorTypes.INVALID_TYPES_ERROR
+            })
+        }
+        const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status })
+        res.send(prodNew)
+    }
+    catch (error) {
+        next(error)
+
+    }
 }
 
 //Manejo función que actualiza un producto y exporto a la ruta

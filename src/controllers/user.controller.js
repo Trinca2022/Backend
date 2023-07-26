@@ -14,13 +14,6 @@ export const registerViewHandler = (req, res) => {
     res.render('register/register')
 }
 
-//OTRA MANERA DE MANEJAR LA VISTA CUANDO NO HAY ERROR??????????????????
-/*const users = [];
-//Manejo del error de usuario
-export const userErrorHandler = async (req, res) => {
-    res.send({ status: "success", payload: users })
-}*/
-
 //Manejo del registro de usuario que exporto a la ruta
 export const registerHandler = async (req, res, next) => {
     try {
@@ -43,8 +36,5 @@ export const registerHandler = async (req, res, next) => {
     catch (error) {
         next(error)
     }
-
-
-
 }
 
