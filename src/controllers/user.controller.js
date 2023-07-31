@@ -14,7 +14,7 @@ export const registerViewHandler = (req, res) => {
     res.render('register/register')
 }
 
-//Manejo del registro de usuario que exporto a la ruta
+//Manejo del registro de usuario que exporto a la ruta -- > AGREGAR THROW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 export const registerHandler = async (req, res, next) => {
     try {
         const { nombre, apellido, email, edad, password } = req.body;
