@@ -1,9 +1,9 @@
 import passport from "passport";
-import { userModel } from './persistencia/models/Users.js'
+import { userModel } from '../persistencia/models/Users.js'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as GithubStrategy } from 'passport-github2'
-import { compareData } from './utils/bcrypt.js'
-import { cartModel } from "./persistencia/models/Cart.js";
+import { compareData } from './bcrypt.js'
+import { cartModel } from "../persistencia/models/Cart.js";
 
 
 

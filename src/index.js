@@ -1,5 +1,6 @@
 //HOLA QUE TAL
-import 'dotenv/config.js'
+//import 'dotenv/config.js'
+import config from './config.js'
 import * as path from 'path'
 import express from 'express'
 import session from 'express-session'
@@ -11,7 +12,7 @@ import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
 import sessionRouter from './routes/session.routes.js'
 import userRouter from './routes/user.routes.js'
-import './passportStrategies.js'
+import './utils/passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
@@ -27,12 +28,8 @@ import { productMongo } from './persistencia/DAOs/productMongo.js'
 import { userModel } from './persistencia/models/Users.js'
 import getProductFaker from './faker/routes.productFaker.js'
 import errorHandler from './middlewares/errors/indexError.js'
-
-
-/*//Conexión con mongoose --> pasado a config/dbConfig.js
-mongoose.connect(process.env.URL_MONGODB_ATLAS)
-    .then(() => console.log("DB is connected"))
-    .catch((error) => console.log("Errror en MongoDB Atlas :", error))*/
+import { addLogger } from './utils/logger.js'
+import loggerRouter from './routes/logger.routes.js'
 
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
@@ -55,9 +52,13 @@ const storage = multer.diskStorage({
 })
 
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
-const server = app.listen(process.env.PORT, () => {
-    console.log("Server on port", process.env.PORT)
+const server = app.listen(config.PORT, () => {
+    console.log(`Escuchando al puerto ${config.PORT}`)
 })
+
+/*const server = app.listen(process.env.PORT, () => {
+    console.log("Server on port", process.env.PORT)
+})*/
 
 //Configuro handlebars
 app.engine('handlebars', engine())//Para trabajar con handlebars
@@ -69,17 +70,22 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 const upload = (multer({ storage: storage }))
 
+//Configuro logger
+app.use(addLogger)
+
 //Server de socket.io
 const io = new Server(server)
 
 //Configuro Sessions
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: process.env.URL_MONGODB_ATLAS,
+        //mongoUrl: process.env.URL_MONGODB_ATLAS,
+        mongoUrl: config.URL_MONGODB_ATLAS,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         // ttl: 210
     }),
-    secret: process.env.SESSION_SECRET,
+    //secret: process.env.SESSION_SECRET,
+    secret: config.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
 }))
@@ -187,6 +193,9 @@ app.use('/mockingproducts', getProductFaker)
 
 //ERRORES
 app.use(errorHandler)
+app.use('/loggerTest', loggerRouter)
+
+//IMG
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 })
