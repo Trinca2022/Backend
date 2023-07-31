@@ -22,6 +22,7 @@ const levelOptions = {
 export const logger = winston.createLogger({
     levels: levelOptions.levels,
     transports: [
+        //Para entorno DEV
         new winston.transports.Console({
             level: "debug",
             format: winston.format.combine(
@@ -29,6 +30,7 @@ export const logger = winston.createLogger({
                 winston.format.simple()
             )
         }),
+        //Para entorno PROD
         new winston.transports.File({
             filename: "./errors.log", level: "info",
             format: winston.format.simple()

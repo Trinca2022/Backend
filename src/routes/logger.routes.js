@@ -1,12 +1,12 @@
 import { Router } from "express";
+import { logger } from "../utils/logger.js";
 
 const loggerRouter = Router()
 
 //PETICIÓN PARA ENTORNO DE PROD DESDE EL NIVEL DE INFO
 loggerRouter.get('/', (req, res) => {
     //Peticion con info
-    req.logger.http("INFO")
-
+    logger.info("INFO")
     res.send({ message: "Logger para entorno producción" })
 })
 

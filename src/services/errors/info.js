@@ -1,11 +1,12 @@
 export const generateUserErrorInfo = (user) => {
     return `Una o más propiedades están incompletas. Lista de propiedades requeridas:
-    * nombre : debe ser string, recibido ${user.nombre}
-    * apellido : debe ser string, recibido ${user.apellido}
-    * email : debe ser string, recibido ${user.email}
-    * edad : debe ser number, recibido ${user.edad}
+    * nombre : debe ser string, recibido: "${user.nombre}"
+    * apellido : debe ser string, recibido: "${user.apellido}"
+    * email : debe ser string, recibido: "${user.email}"
+    * edad : debe ser number, recibido: "${user.edad}"
     `
 }
+
 
 export const generateProductErrorInfo = (prod) => {
     return `Una o más propiedades están incompletas. Lista de propiedades requeridas:
