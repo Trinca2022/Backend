@@ -19,7 +19,7 @@ export const registerHandler = async (req, res, next) => {
     try {
         const { nombre, apellido, email, edad, password } = req.body;
         if ((!nombre || !apellido || !email || !edad)) {
-            createError({
+            throw createError({
                 name: "Error de creación de usuario",
                 cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
                 message: "Error al tratar de crear un nuevo usuario",
