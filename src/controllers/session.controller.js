@@ -35,7 +35,9 @@ export const loginGithubHandler = async (req, res) => {
         if (rol === "Administrador") { res.redirect('/product/realtimeproductsAdmin') }
         if (rol === "Usuario") { res.redirect('/product/realtimeproductsUser') }
     } catch (error) {
-        console.error('Error al buscar en la base de datos:', error);
+
+        logger.warning(error.message, "Error al buscar en la base de datos")
+        //console.error('Error al buscar en la base de datos:', error);
         res.redirect('/sessions/login');
     }
 }

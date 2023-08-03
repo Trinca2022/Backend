@@ -1,4 +1,5 @@
 import { cartModel } from '../persistencia/models/Cart.js'
+import { logger } from "../utils/logger.js";
 
 
 //ACÁ CREAR UNA FUNCIÓN QUE ME SUME EL MONTO TOTAL DEL CARRITO
@@ -18,7 +19,7 @@ export class CartManager {
             else return
         }
         catch (error) {
-            console.log(error)
+            logger.fatal(error.message, "Error al crear carrito")
         }
     }
 

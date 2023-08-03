@@ -185,7 +185,9 @@ app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
 app.use('/product', express.static(__dirname + '/public/user'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
+
 app.use('/sessions', sessionRouter)
+
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
 //RUTA DE FAKER
@@ -204,5 +206,6 @@ app.post('/upload', upload.single('product'), (req, res) => {
 //Uso HBS para mostrar en home el login
 app.get('/', async (req, res) => {
     const products = await productModel.find()
-    res.render('sessions/login')
+    res.render('sessions/login',
+        { style: 'styles.css' })
 })

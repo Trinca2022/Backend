@@ -6,14 +6,14 @@ const getProductFaker = Router()
 getProductFaker.get('/', async (req, res) => {
     try {
         const productsFaker = []
-        console.log("HOLASA", productsFaker)
+        console.log(productsFaker)
 
         for (let i = 0; i < 100; i++) {
             const prod = await generateProductFaker()
             productsFaker.push(prod)
 
         }
-        console.log("HOLAA que tal tu como estas, dime si eres feliz", productsFaker)
+
 
         res.json({ status: 'success', payload: productsFaker })
     }

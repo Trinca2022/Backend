@@ -47,7 +47,7 @@ mostrarProds.addEventListener('click', () => {
 
         })
     })
-    console.log("holaaaa front")
+    console.log("Prueba front")
 })
 
 /*socket.on("connect", () => {

@@ -6,6 +6,8 @@ import errorTypes from "../services/errors/errorTypes.js";
 import { UserManager } from "../services/userManager.js";
 import { hashData } from "../utils/bcrypt.js";
 import { generateUserErrorInfo } from "../services/errors/info.js";
+import { generateUserEmailErrorInfo } from "../services/errors/info.js";
+import { logger } from "../utils/logger.js";
 
 const userManager = new UserManager()
 
@@ -17,6 +19,7 @@ export const registerViewHandler = (req, res) => {
 //Manejo del registro de usuario que exporto a la ruta
 export const registerHandler = async (req, res, next) => {
     try {
+        const users = await userModel.find()
         const { nombre, apellido, email, edad, password } = req.body;
         if ((!nombre || !apellido || !email || !edad)) {
             throw createError({
@@ -24,6 +27,14 @@ export const registerHandler = async (req, res, next) => {
                 cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
                 message: "Error al tratar de crear un nuevo usuario",
                 code: errorTypes.INVALID_TYPES_ERROR
+            })
+        }
+        if (users.find(user => user.email === email)) {
+            throw createError({
+                name: "Error de creación de usuario",
+                cause: generateUserEmailErrorInfo({ email }),
+                message: "Usuario ya existe. Elegir otro email",
+                code: errorTypes.DATABASE_ERROR
             })
         }
         const hashPassword = await hashData(password)
@@ -35,6 +46,7 @@ export const registerHandler = async (req, res, next) => {
     }
     catch (error) {
         next(error)
+        logger.error(error.message, "FALTA CAMPO")
     }
 }
 

@@ -7,6 +7,12 @@ export const generateUserErrorInfo = (user) => {
     `
 }
 
+export const generateUserEmailErrorInfo = (user) => {
+    return `Email repetido:
+      * "${user.email}" ya existe
+      `
+}
+
 
 export const generateProductErrorInfo = (prod) => {
     return `Una o más propiedades están incompletas. Lista de propiedades requeridas:

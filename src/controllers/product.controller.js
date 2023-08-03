@@ -4,6 +4,7 @@ import createError from "../services/errors/customError.js";
 import errorTypes from "../services/errors/errorTypes.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 
+
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const productManager = new ProductManager()
 
