@@ -23,7 +23,7 @@ export const logger = winston.createLogger({
     levels: levelOptions.levels,
     transports: [
         new winston.transports.Console({
-            level: "debug",
+            level: "warning",
             format: winston.format.combine(
                 winston.format.colorize({ colors: levelOptions.color }),
                 winston.format.simple()
