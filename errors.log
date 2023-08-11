@@ -6,3 +6,14 @@ error: Error al tratar de crear un nuevo usuario
 error: Error al tratar de crear un nuevo usuario
 error: Usuario ya existe
 error: Error al tratar de crear un nuevo usuario
+error: Error al tratar de crear un nuevo usuario
+error: No recipients defined
+error: email is not defined
+error: email is not defined
+error: No recipients defined
+error: No recipients defined
+error: No recipients defined
+error: No recipients defined
+error: No recipients defined
+error: Cannot access 'user' before initialization
+error: Mail inexistente

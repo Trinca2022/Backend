@@ -5,8 +5,7 @@ import createError from "../services/errors/customError.js";
 import errorTypes from "../services/errors/errorTypes.js";
 import { UserManager } from "../services/userManager.js";
 import { hashData } from "../utils/bcrypt.js";
-import { generateUserErrorInfo } from "../services/errors/info.js";
-import { generateUserEmailErrorInfo } from "../services/errors/info.js";
+import { generateUserErrorInfo, generateUserEmailErrorInfo, generateUserPassErrorInfo } from "../services/errors/info.js";
 import { logger } from "../utils/logger.js";
 import { transporter } from "../utils/nodemailer.js";
 
@@ -16,6 +15,44 @@ const userManager = new UserManager()
 export const registerViewHandler = (req, res) => {
     res.render('register/register')
 }
+
+//Manejo de la vista de registro para restablecer contraseña que exporto a la ruta
+export const registerViewPasswordRecoveryHandler = (req, res) => {
+    res.render('register/passwordRecovery')
+}
+
+//Mailer para enviar a recuperar contresña
+export const registerPasswordRecoveryHandler = async (req, res, next) => {
+    try {
+        const users = await userModel.find()
+        const { email } = req.body;
+        const emailUser = users.find(user => user.email === email)
+        if (!emailUser) {
+            throw createError(
+                {
+                    name: "Error de recuperación de contraseña",
+                    cause: generateUserPassErrorInfo({ email }),
+                    message: "Mail inexistente",
+                    code: errorTypes.INVALID_TYPES_ERROR
+                })
+
+
+        }
+        await transporter.sendMail({
+            to: email,
+            subject: 'Restablecer contraseña',
+            text: 'LINK'
+        })
+        res.redirect('/sessions/login')
+    }
+
+
+    catch (error) {
+        next(error)
+        logger.error(error.message)
+    }
+}
+
 
 //Manejo del registro de usuario que exporto a la ruta
 export const registerHandler = async (req, res, next) => {
