@@ -17,3 +17,5 @@ error: No recipients defined
 error: No recipients defined
 error: Cannot access 'user' before initialization
 error: Mail inexistente
+error: Cannot read properties of undefined (reading 'id')
+error: emailUser is not defined

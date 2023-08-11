@@ -29,6 +29,15 @@ export class UserManager {
             logger.warning(error.message, "Usuario ya existe")
         }
     }
+
+    async getUserById(id) {
+        const userFound = await userModel.findById(id)
+        if (userFound) {
+            return ("Usuario encontrado:", userFound)
+        }
+        else return "Usuario no encontrado"
+    }
+
 }
 
 

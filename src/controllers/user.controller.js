@@ -16,9 +16,19 @@ export const registerViewHandler = (req, res) => {
     res.render('register/register')
 }
 
-//Manejo de la vista de registro para restablecer contraseña que exporto a la ruta
+//Manejo de la vista de registro para mandar mail y restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryHandler = (req, res) => {
     res.render('register/passwordRecovery')
+}
+
+//Manejo de la vista de registro para restablecer contraseña que exporto a la ruta
+export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
+    const user = await userManager.getUserById(req.params.id)
+    console.log("userrrrrr", user)
+    const userID = user._id.toString()
+    console.log("userriddd", userID)
+    res.render(`register/passwordRecoveryPass`)
+    //res.render(`register/passwordRecovery/:id`)
 }
 
 //Mailer para enviar a recuperar contresña
@@ -26,8 +36,10 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
     try {
         const users = await userModel.find()
         const { email } = req.body;
-        const emailUser = users.find(user => user.email === email)
-        if (!emailUser) {
+        const user = users.find(user => user.email === email)
+        const userID = user._id.toString()
+        console.log("USER EMAIL", userID)
+        if (!user) {
             throw createError(
                 {
                     name: "Error de recuperación de contraseña",
@@ -41,7 +53,7 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         await transporter.sendMail({
             to: email,
             subject: 'Restablecer contraseña',
-            text: 'LINK'
+            text: `LINK: http://localhost:4000/register/passwordRecovery/${userID}`
         })
         res.redirect('/sessions/login')
     }
@@ -52,6 +64,9 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         logger.error(error.message)
     }
 }
+
+
+
 
 
 //Manejo del registro de usuario que exporto a la ruta
