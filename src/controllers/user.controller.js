@@ -8,6 +8,7 @@ import { hashData } from "../utils/bcrypt.js";
 import { generateUserErrorInfo } from "../services/errors/info.js";
 import { generateUserEmailErrorInfo } from "../services/errors/info.js";
 import { logger } from "../utils/logger.js";
+import { transporter } from "../utils/nodemailer.js";
 
 const userManager = new UserManager()
 
@@ -41,8 +42,14 @@ export const registerHandler = async (req, res, next) => {
         const cart = await cartModel.create({ product: [] })
         const cartUser = cart._id
         await ticketModel.create()
+        await transporter.sendMail({
+            to: email,
+            subject: 'BIENVENIDO A CAFÉ DON JULIO',
+            text: '¡Muchas gracias!'
+        })
         await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
         res.redirect('/sessions/login')
+
     }
     catch (error) {
         next(error)
