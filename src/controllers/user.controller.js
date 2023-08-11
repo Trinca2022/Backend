@@ -24,7 +24,7 @@ export const registerHandler = async (req, res, next) => {
         const { nombre, apellido, email, edad, password } = req.body;
         if ((!nombre || !apellido || !email || !edad)) {
             throw createError({
-                name: "Error de creación de usuario",
+                name: "Error de creación de usuario: completar todos los campos solicitados",
                 cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
                 message: "Error al tratar de crear un nuevo usuario",
                 code: errorTypes.INVALID_TYPES_ERROR
@@ -32,10 +32,10 @@ export const registerHandler = async (req, res, next) => {
         }
         if (users.find(user => user.email === email)) {
             throw createError({
-                name: "Error de creación de usuario",
+                name: "Error de creación de usuario: elegir otro email",
                 cause: generateUserEmailErrorInfo({ email }),
-                message: "Usuario ya existe. Elegir otro email",
-                code: errorTypes.DATABASE_ERROR
+                message: "Usuario ya existe",
+                code: errorTypes.INVALID_TYPES_ERROR
             })
         }
         const hashPassword = await hashData(password)
@@ -53,7 +53,7 @@ export const registerHandler = async (req, res, next) => {
     }
     catch (error) {
         next(error)
-        logger.error(error.message, "FALTA CAMPO")
+        logger.error(error.message)
     }
 }
 
