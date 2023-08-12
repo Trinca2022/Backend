@@ -38,29 +38,39 @@ export class UserManager {
         else return "Usuario no encontrado"
     }
 
-    //Método updateUser --> actualiza campo de un producto con un ID existente --> REPETIR TODO Y SOLO ACTUALIZAR PASS
-    async updateUser(id, { nombre, apellido, email, edad, rol, password, id_cart }) {
-        const userFound = await userModel.findById(id)
-        if (userFound) {
-            await userModel.updateOne({ "_id": id }, {
+    //Método updateUser 
+    async updateUser(id, { nombre,
+        apellido,
+        edad,
+        rol,
+        password,
+        id_cart }) {
+        try {
+            const updatedUser = await userModel.findOneAndUpdate(
+                { "_id": id }, {
                 $set: {
                     "nombre": nombre,
                     "apellido": apellido,
-                    "email": email,
+
                     "edad": edad,
                     "rol": rol,
                     "password": password,
                     "id_cart": id_cart
                 }
-            })
-            //await userModel.create()
-            return (`La contraseña del usuario cuyo id es ${userFound.id} se ha actualizado`)
+            },
+                { new: true } // Devuelve el documento actualizado
+            );
+
+            if (updatedUser) {
+                return `El usuario con ID ${updatedUser._id} se ha actualizado correctamente.`;
+            } else {
+                return 'Usuario no encontrado.';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return 'Ha ocurrido un error al actualizar el usuario.';
         }
-        else
-            return 'Not found'
     }
-
-
 }
 
 

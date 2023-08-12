@@ -110,57 +110,27 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
 export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
     try {
         const users = await userModel.find()
-        const { email } = req.body;
-        let { password } = req.body
+        const { email, password } = req.body;
         const user = users.find(user => user.email === email)
         const userID = user._id.toString()
-        console.log("userID:", userID)
+        const userIDCart = user.id_cart.toString()
+        const { nombre, apellido, edad, rol } = user;
         const isOldPassword = await compareData(password, user.password)
-        console.log('ISOLD??', isOldPassword)
-        //res.render(`register/passwordRecoveryPass`)
-
-        if (!isOldPassword) {
-            await userManager.updateUser({ "_id": userID }, {
-                $set: {
-                    "nombre": user.nombre,
-                    "apellido": user.apellido,
-                    "email": user.email,
-                    "edad": user.edad,
-                    "rol": user.rol,
-                    "password": password,
-                    "id_cart": user.id_cart
-                }
-            })
-
-            return console.log("PRUEBA IS OLD PASS")
-
+        if (isOldPassword) {
+            console.log("ERROR!! PASS COINCIDE")
+            res.send("Elegir otra contraseña")
         }
         else {
-            res.status(401).render('errors/base', {
-                error: 'Se debe generar una contraseña distinta de la anterior'
-            })
-
-
+            const hashPassword = await hashData(password)
+            await userManager.updateUser(userID, {
+                nombre, apellido, edad, rol, password: hashPassword, userIDCart
+            });
+            res.send("Contraseña restablecida")
         }
-        const hashPassword = await hashData(password)
-            /*const cart = await cartModel.create({ product: [] })
-            const cartUser = cart._id
-            await ticketModel.create()
-            await transporter.sendMail({
-                to: email,
-                subject: 'BIENVENIDO A CAFÉ DON JULIO',
-                text: '¡Muchas gracias!'
-            })*/
-
-            / await userManager.createUser({ nombre, apellido, email, edad, rol, password: hashPassword, id_cart })
-
-        //res.redirect('/sessions/login')*/
-        res.render(`register/passwordRecoveryPass`)
     }
     catch (error) {
         next(error)
-        console.log(error)
-        //logger.error(error.message)
+        logger.error(error.message)
     }
 }
 
