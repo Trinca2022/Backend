@@ -38,6 +38,27 @@ export class UserManager {
         else return "Usuario no encontrado"
     }
 
+    //Método updateUser --> actualiza campo de un producto con un ID existente --> REPETIR TODO Y SOLO ACTUALIZAR PASS
+    async updateUser(id, password) {
+        const userFound = await userModel.findById(id)
+        if (userFound) {
+            await userModel.updateOne(id, obj),
+            //await productMongo.updateOne({ "_id": id }, 
+            {
+                $set: {
+                    "password": password,
+
+                }
+            }
+
+            await userModel.create()
+            return (`La contraseña del usuario cuyo id es ${userFound.id} se ha actualizado`)
+        }
+        else
+            return 'Not found'
+    }
+
+
 }
 
 

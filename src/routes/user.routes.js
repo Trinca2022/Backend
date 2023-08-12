@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerHandler, registerPasswordRecoveryHandler, registerViewHandler, registerViewPasswordRecoveryHandler, registerViewPasswordRecoveryIDHandler } from "../controllers/user.controller.js";
+import { registerHandler, registerPasswordRecoveryHandler, registerPasswordRecoveryNEWHandler, registerViewHandler, registerViewPasswordRecoveryHandler, registerViewPasswordRecoveryIDHandler } from "../controllers/user.controller.js";
 
 const userRouter = Router()
 
@@ -17,5 +17,8 @@ userRouter.post('/register', registerHandler)
 
 //Genero envío de recovery mailer
 userRouter.post('/passwordRecovery', registerPasswordRecoveryHandler)
+
+//Genero nueva pass
+userRouter.post('/passwordRecovery', registerPasswordRecoveryNEWHandler)
 
 export default userRouter

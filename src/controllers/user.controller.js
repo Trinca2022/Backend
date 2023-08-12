@@ -23,50 +23,12 @@ export const registerViewPasswordRecoveryHandler = (req, res) => {
 
 //Manejo de la vista de registro para restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
-    const user = await userManager.getUserById(req.params.id)
+    /*const user = await userManager.getUserById(req.params.id)
     console.log("userrrrrr", user)
     const userID = user._id.toString()
-    console.log("userriddd", userID)
+    console.log("userriddd", userID)*/
     res.render(`register/passwordRecoveryPass`)
-    //res.render(`register/passwordRecovery/:id`)
 }
-
-//Mailer para enviar a recuperar contresña
-export const registerPasswordRecoveryHandler = async (req, res, next) => {
-    try {
-        const users = await userModel.find()
-        const { email } = req.body;
-        const user = users.find(user => user.email === email)
-        const userID = user._id.toString()
-        console.log("USER EMAIL", userID)
-        if (!user) {
-            throw createError(
-                {
-                    name: "Error de recuperación de contraseña",
-                    cause: generateUserPassErrorInfo({ email }),
-                    message: "Mail inexistente",
-                    code: errorTypes.INVALID_TYPES_ERROR
-                })
-
-
-        }
-        await transporter.sendMail({
-            to: email,
-            subject: 'Restablecer contraseña',
-            text: `LINK: http://localhost:4000/register/passwordRecovery/${userID}`
-        })
-        res.redirect('/sessions/login')
-    }
-
-
-    catch (error) {
-        next(error)
-        logger.error(error.message)
-    }
-}
-
-
-
 
 
 //Manejo del registro de usuario que exporto a la ruta
@@ -108,4 +70,74 @@ export const registerHandler = async (req, res, next) => {
         logger.error(error.message)
     }
 }
+
+
+//Mailer para enviar a recuperar contresña
+export const registerPasswordRecoveryHandler = async (req, res, next) => {
+    try {
+        const users = await userModel.find()
+        const { email } = req.body;
+        const user = users.find(user => user.email === email)
+        const userID = user._id.toString()
+        console.log("USER EMAIL", userID)
+        if (!user) {
+            throw createError(
+                {
+                    name: "Error de recuperación de contraseña",
+                    cause: generateUserPassErrorInfo({ email }),
+                    message: "Mail inexistente",
+                    code: errorTypes.INVALID_TYPES_ERROR
+                })
+        }
+        await transporter.sendMail({
+            to: email,
+            subject: 'Restablecer contraseña',
+            text: `LINK: http://localhost:4000/register/passwordRecovery/${userID}`
+        })
+        res.redirect('/sessions/login')
+    }
+    catch (error) {
+        next(error)
+        logger.error(error.message)
+    }
+}
+
+//Manejo de generación de nueva pass que mando a la ruta --> VER USER MANAGER QUE FALTA TERMINAR
+export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
+    try {
+        //const users = await userModel.find()
+        const user = await userModel.findOne({ email }).lean().exec()
+        const { password } = req.body;
+        //const user = users.find(user => user.password === password)
+        //const userID = user._id.toString()
+        //Comparo contraseña
+        const isOldPassword = await compareData(password, user.password)
+        if (isOldPassword) {
+            return res.status(401).render('errors/base', {
+                error: 'Se debe generar una contraseña distinta de la anterior'
+            })
+        }
+        else { }
+        const hashPassword = await hashData(password)
+        const cart = await cartModel.create({ product: [] })
+        const cartUser = cart._id
+        await ticketModel.create()
+        await transporter.sendMail({
+            to: email,
+            subject: 'BIENVENIDO A CAFÉ DON JULIO',
+            text: '¡Muchas gracias!'
+        })
+        await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
+        res.redirect('/sessions/login')
+
+    }
+    catch (error) {
+        next(error)
+        logger.error(error.message)
+    }
+}
+
+
+
+
 
