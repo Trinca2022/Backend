@@ -21,3 +21,28 @@ error: Cannot read properties of undefined (reading 'id')
 error: emailUser is not defined
 error: Error
 fatal: Fatal
+error: Error
+fatal: Fatal
+error: email is not defined
+error: email is not defined
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: Cast to ObjectId failed for value ":id" (type string) at path "_id" for model "users"
+error: compareData is not defined
+error: Missing credentials for "PLAIN"
+error: Cannot read properties of undefined (reading '_id')
+error: Cannot read properties of undefined (reading '_id')
+error: Cannot read properties of undefined (reading '_id')
+error: Assignment to constant variable.
+error: Assignment to constant variable.
+error: Assignment to constant variable.

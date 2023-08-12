@@ -8,20 +8,21 @@ import { hashData } from "../utils/bcrypt.js";
 import { generateUserErrorInfo, generateUserEmailErrorInfo, generateUserPassErrorInfo } from "../services/errors/info.js";
 import { logger } from "../utils/logger.js";
 import { transporter } from "../utils/nodemailer.js";
+import { compareData } from "../utils/bcrypt.js";
 
 const userManager = new UserManager()
 
-//Manejo de la vista de registro que exporto a la ruta
+//Manejo de la VISTA de registro que exporto a la ruta
 export const registerViewHandler = (req, res) => {
     res.render('register/register')
 }
 
-//Manejo de la vista de registro para mandar mail y restablecer contraseña que exporto a la ruta
+//Manejo de la VISTA de registro para MANDAR MAIL y restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryHandler = (req, res) => {
     res.render('register/passwordRecovery')
 }
 
-//Manejo de la vista de registro para restablecer contraseña que exporto a la ruta
+//Manejo de la VISTA de registro para restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
     /*const user = await userManager.getUserById(req.params.id)
     console.log("userrrrrr", user)
@@ -79,7 +80,7 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         const { email } = req.body;
         const user = users.find(user => user.email === email)
         const userID = user._id.toString()
-        console.log("USER EMAIL", userID)
+
         if (!user) {
             throw createError(
                 {
@@ -102,38 +103,64 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
     }
 }
 
-//Manejo de generación de nueva pass que mando a la ruta --> VER USER MANAGER QUE FALTA TERMINAR
+
+
+
+//Manejo de generación de nueva pass que mando a la ruta
 export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
     try {
-        //const users = await userModel.find()
-        const user = await userModel.findOne({ email }).lean().exec()
-        const { password } = req.body;
-        //const user = users.find(user => user.password === password)
-        //const userID = user._id.toString()
-        //Comparo contraseña
+        const users = await userModel.find()
+        const { email } = req.body;
+        let { password } = req.body
+        const user = users.find(user => user.email === email)
+        const userID = user._id.toString()
+        console.log("userID:", userID)
         const isOldPassword = await compareData(password, user.password)
-        if (isOldPassword) {
-            return res.status(401).render('errors/base', {
+        console.log('ISOLD??', isOldPassword)
+        //res.render(`register/passwordRecoveryPass`)
+
+        if (!isOldPassword) {
+            await userManager.updateUser({ "_id": userID }, {
+                $set: {
+                    "nombre": user.nombre,
+                    "apellido": user.apellido,
+                    "email": user.email,
+                    "edad": user.edad,
+                    "rol": user.rol,
+                    "password": password,
+                    "id_cart": user.id_cart
+                }
+            })
+
+            return console.log("PRUEBA IS OLD PASS")
+
+        }
+        else {
+            res.status(401).render('errors/base', {
                 error: 'Se debe generar una contraseña distinta de la anterior'
             })
-        }
-        else { }
-        const hashPassword = await hashData(password)
-        const cart = await cartModel.create({ product: [] })
-        const cartUser = cart._id
-        await ticketModel.create()
-        await transporter.sendMail({
-            to: email,
-            subject: 'BIENVENIDO A CAFÉ DON JULIO',
-            text: '¡Muchas gracias!'
-        })
-        await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
-        res.redirect('/sessions/login')
 
+
+        }
+        const hashPassword = await hashData(password)
+            /*const cart = await cartModel.create({ product: [] })
+            const cartUser = cart._id
+            await ticketModel.create()
+            await transporter.sendMail({
+                to: email,
+                subject: 'BIENVENIDO A CAFÉ DON JULIO',
+                text: '¡Muchas gracias!'
+            })*/
+
+            / await userManager.createUser({ nombre, apellido, email, edad, rol, password: hashPassword, id_cart })
+
+        //res.redirect('/sessions/login')*/
+        res.render(`register/passwordRecoveryPass`)
     }
     catch (error) {
         next(error)
-        logger.error(error.message)
+        console.log(error)
+        //logger.error(error.message)
     }
 }
 

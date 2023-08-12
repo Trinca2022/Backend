@@ -39,19 +39,21 @@ export class UserManager {
     }
 
     //Método updateUser --> actualiza campo de un producto con un ID existente --> REPETIR TODO Y SOLO ACTUALIZAR PASS
-    async updateUser(id, password) {
+    async updateUser(id, { nombre, apellido, email, edad, rol, password, id_cart }) {
         const userFound = await userModel.findById(id)
         if (userFound) {
-            await userModel.updateOne(id, obj),
-            //await productMongo.updateOne({ "_id": id }, 
-            {
+            await userModel.updateOne({ "_id": id }, {
                 $set: {
+                    "nombre": nombre,
+                    "apellido": apellido,
+                    "email": email,
+                    "edad": edad,
+                    "rol": rol,
                     "password": password,
-
+                    "id_cart": id_cart
                 }
-            }
-
-            await userModel.create()
+            })
+            //await userModel.create()
             return (`La contraseña del usuario cuyo id es ${userFound.id} se ha actualizado`)
         }
         else

@@ -51,6 +51,9 @@ const storage = multer.diskStorage({
     }
 })
 
+import bodyParser from 'body-parser';
+app.use(bodyParser.json());
+
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
 const server = app.listen(config.PORT, () => {
     console.log(`Escuchando al puerto ${config.PORT}`)
