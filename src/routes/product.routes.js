@@ -8,8 +8,16 @@ const authAdmin = (req, res, next) => {
     if (!req.session.user)
         return res.send("Error de autenticación")
     const { rol } = req.session.user
-    if (rol === "Administrador") return next()
+    if (rol === "Administrador" || "Premium") return next()
 }
+
+/*//Autenticación para poder acceder a la vista de productos
+const authPrem = (req, res, next) => {
+    if (!req.session.user)
+        return res.send("Error de autenticación")
+    const { rol } = req.session.user
+    if (rol === "Premium") return next()
+}*/
 
 //Autenticación para poder acceder a la vista de productos
 const authUser = (req, res, next) => {

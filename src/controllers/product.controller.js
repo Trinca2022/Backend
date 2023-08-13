@@ -3,6 +3,7 @@ import { ProductManager } from "../services/productManager.js";
 import createError from "../services/errors/customError.js";
 import errorTypes from "../services/errors/errorTypes.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
+import { sessionModel } from "../persistencia/models/Sessions.js";
 
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
@@ -95,7 +96,13 @@ export const addProductHandler = async (req, res, next) => {
                 code: errorTypes.INVALID_TYPES_ERROR
             })
         }
-        const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status })
+        //Busco en la sesión actual el email para agregarlo
+        const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+        const data = JSON.parse(latestSession.session);
+        const userDatos = data.user;
+        const userEmail = userDatos.email;
+        console.log("userEmail", userEmail)
+        const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, owner: userEmail })
         res.send(prodNew)
     }
     catch (error) {

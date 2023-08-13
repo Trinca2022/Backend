@@ -26,6 +26,11 @@ const productSchema = new Schema({
     status: {
         type: Boolean,
         default: true
+    },
+    owner: {
+        type: String,
+        default: "Administrador",
+        ref: "users"
     }
 
 

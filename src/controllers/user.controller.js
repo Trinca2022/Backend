@@ -24,10 +24,6 @@ export const registerViewPasswordRecoveryHandler = (req, res) => {
 
 //Manejo de la VISTA de registro para restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
-    /*const user = await userManager.getUserById(req.params.id)
-    console.log("userrrrrr", user)
-    const userID = user._id.toString()
-    console.log("userriddd", userID)*/
     res.render(`register/passwordRecoveryPass`)
 }
 
@@ -57,11 +53,11 @@ export const registerHandler = async (req, res, next) => {
         const cart = await cartModel.create({ product: [] })
         const cartUser = cart._id
         await ticketModel.create()
-        await transporter.sendMail({
+        /*await transporter.sendMail({
             to: email,
             subject: 'BIENVENIDO A CAFÉ DON JULIO',
             text: '¡Muchas gracias!'
-        })
+        })*/
         await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
         res.redirect('/sessions/login')
 

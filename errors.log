@@ -46,3 +46,5 @@ error: Cannot read properties of undefined (reading '_id')
 error: Assignment to constant variable.
 error: Assignment to constant variable.
 error: Assignment to constant variable.
+error: Missing credentials for "PLAIN"
+error: Missing credentials for "PLAIN"

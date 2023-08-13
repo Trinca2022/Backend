@@ -19,6 +19,7 @@ export const loginPassportHandler = async (req, res) => {
     req.session.user = user
     const { rol } = req.session.user
     if (rol === "Administrador") { res.redirect('/product/realtimeproductsAdmin') }
+    if (rol === "Premium") { res.redirect('/product/realtimeproductsAdmin') }
     if (rol === "Usuario") { res.redirect('/product/realtimeproductsUser') }
 }
 
@@ -33,6 +34,7 @@ export const loginGithubHandler = async (req, res) => {
         req.session.user = user;
         const { rol } = req.session.user
         if (rol === "Administrador") { res.redirect('/product/realtimeproductsAdmin') }
+        if (rol === "Premium") { res.redirect('/product/realtimeproductsAdmin') }
         if (rol === "Usuario") { res.redirect('/product/realtimeproductsUser') }
     } catch (error) {
 

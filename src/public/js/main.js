@@ -38,11 +38,12 @@ socket.on("allProducts", products => {
         <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}"
         class="card-img-top" alt="...">
         <div class="card-body">
-        <p class="card-text">Código: ${prod.code}.<br>
+        <p class="card-text">Propietario/a: ${prod.owner}.<br>Código: ${prod.code}.<br>
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
             <button onClick="eliminarProducto('${prod._id}')">Eliminar producto</button>
+            <button onClick="addProdInCart('${prod._id}')">Comprar producto</button>
             </div>
             </div>`
 
