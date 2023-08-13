@@ -36,9 +36,9 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         //Genero un token unico para el enlace
         const token = crypto.randomBytes(20).toString('hex')
         //Almaceno la hora de expiracion
-        const expirationTime = Date.now() + 10 * 60 * 1000;
+        const expirationTime = Date.now() + 1 * 60 * 1000;
         // Construyo el enlace
-        const enlace = ` http://localhost:4000/register/passwordRecovery/${token}`;
+        const enlace = ` http://localhost:4000/register/passwordRecovery/validation?token=${token}`;
         // Almaceno el enlace y su tiempo de expiración
         links[token] = expirationTime;
         if (!user) {
@@ -67,13 +67,23 @@ export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
 
 
     const { token } = req.query
+
     // Verificar si el enlace ha expirado
-    if (links[token] && Date.now() < parseInt(links[token])) {
+    if (links[token] && (Date.now() < links[token])) {
         // Realizar la acción correspondiente al enlace válido
 
         res.render(`register/passwordRecoveryPass`);
     } else {
-        res.status(400).send('Enlace inválido o expirado.');
+
+        const alertScript = `
+        <script>
+            alert('Ha expirado el tiempo para restablecer la contraseña, solicitar nuevamente');
+            window.location.href = '/sessions/login'; // Redireccionar a donde desees
+        </script>
+    `;
+
+        res.send(alertScript);
+        //res.render('register/passwordRecovery');
     }
 
 
@@ -105,11 +115,7 @@ export const registerHandler = async (req, res, next) => {
         const cart = await cartModel.create({ product: [] })
         const cartUser = cart._id
         await ticketModel.create()
-        /*await transporter.sendMail({
-            to: email,
-            subject: 'BIENVENIDO A CAFÉ DON JULIO',
-            text: '¡Muchas gracias!'
-        })*/
+
         await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
         res.redirect('/sessions/login')
 
