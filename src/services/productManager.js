@@ -97,7 +97,6 @@ export class ProductManager {
         const productFound = await productMongo.findOneById(id)
         if (productFound) {
             await productMongo.deleteOne({ "_id": id })
-            //await productMongo.deleteOne(id)
             return (`El producto cuyo id es ${productFound.id} se ha eliminado`)
         }
         else {

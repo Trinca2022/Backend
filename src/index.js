@@ -59,9 +59,7 @@ const server = app.listen(config.PORT, () => {
     console.log(`Escuchando al puerto ${config.PORT}`)
 })
 
-/*const server = app.listen(process.env.PORT, () => {
-    console.log("Server on port", process.env.PORT)
-})*/
+
 
 //Configuro handlebars
 app.engine('handlebars', engine())//Para trabajar con handlebars
@@ -82,12 +80,10 @@ const io = new Server(server)
 //Configuro Sessions
 app.use(session({
     store: MongoStore.create({
-        //mongoUrl: process.env.URL_MONGODB_ATLAS,
         mongoUrl: config.URL_MONGODB_ATLAS,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         // ttl: 210
     }),
-    //secret: process.env.SESSION_SECRET,
     secret: config.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
@@ -153,16 +149,28 @@ io.on('connection', async (socket) => {
 
     //Elimino un producto
     socket.on("deletedProduct", async (prod) => {
-        const { _id } = prod
-        await productMongo.deleteOne(_id)
-        console.log("ID PROD A ELIMINAR", _id)
-        //console.log("HOLA SERGUNDO ID", id.toString())
-        //const products = await productMongo.findOneById(_id)
-        const products = await productMongo.findAll()
-        //console.log("HOLA PROD", products)
-        const filteredProducts = products.filter((product) => product._id.toString() !== _id);
-        io.emit("allProducts", filteredProducts)
-
+        const { _id } = prod//esto solo _id
+        //Busco el rol del usuario actual
+        const userRol = userDatos.rol;
+        //Busco el email del owner en la info del producto
+        const product = await productManager.getProductById(_id)
+        const prodOwnerEmail = product.owner
+        //Busco el rol del usuario que creó el producto
+        const users = await userModel.find()
+        const prodOwner = users.find(user => user.email === prodOwnerEmail)
+        const prodOwnerRol = prodOwner.rol
+        //Si el rol de la sesión coincide con la del owner: borro prod
+        //Si la sesión es de Admin: borro prod
+        if (userRol === prodOwnerRol || userRol === "Administrador") {
+            await productManager.deleteProduct(_id)
+            console.log("ID PROD A ELIMINAR", _id)
+            const products = await productMongo.findAll()
+            const filteredProducts = products.filter((product) => product._id.toString() !== _id);
+            io.emit("allProducts", filteredProducts)
+        }
+        else {
+            socket.emit("productNotDeleted", "No tienes permisos para eliminar este producto.");
+        }
     })
 
     /*//ACTUALIZO PRODUCTO

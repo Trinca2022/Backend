@@ -4,6 +4,7 @@ import createError from "../services/errors/customError.js";
 import errorTypes from "../services/errors/errorTypes.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 import { sessionModel } from "../persistencia/models/Sessions.js";
+import { userModel } from "../persistencia/models/Users.js";
 
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
@@ -101,7 +102,6 @@ export const addProductHandler = async (req, res, next) => {
         const data = JSON.parse(latestSession.session);
         const userDatos = data.user;
         const userEmail = userDatos.email;
-        console.log("userEmail", userEmail)
         const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, owner: userEmail })
         res.send(prodNew)
     }
@@ -113,17 +113,54 @@ export const addProductHandler = async (req, res, next) => {
 
 //Manejo función que actualiza un producto y exporto a la ruta
 export const updateProductHandler = async (req, res) => {
-    const id = req.params.id
-    const { title, description, price, thumbnail, code, stock, status } = req.body
-    const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
-    res.send(mensaje)
+    try {
+        const id = req.params.id
+        const { title, description, price, thumbnail, code, stock, status } = req.body
+        const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
+        res.send(mensaje)
+    }
+    catch (error) {
+        next(error)
+
+    }
 }
 
 //Manejo función que elimina un producto y exporto a la ruta
 export const deleteProductHandler = async (req, res) => {
-    const id = req.params.id
+    try {
+        const id = req.params.id
+        //Busco el rol del usuario actual
+        const data = JSON.parse(latestSession.session);
+        const userDatos = data.user;
+        const userRol = userDatos.rol;
+        //Busco el email del owner en la info del producto
+        const product = await productManager.getProductById(_id)
+        const prodOwnerEmail = product.owner
+        //Busco el rol del usuario que creó el producto
+        const users = await userModel.find()
+        const prodOwner = users.find(user => user.email === prodOwnerEmail)
+        const prodOwnerRol = prodOwner.rol
+        //Si el rol de la sesión coincide con la del owner: borro prod
+        //Si la sesión es de Admin: borro prod
+        if (userRol === prodOwnerRol || userRol === "Administrador") {
+            const mensaje = await productManager.deleteProduct(id)
+            res.send(mensaje)
+        }
+        else {
 
-    //const { id } = req.body
-    const mensaje = await productManager.deleteProduct(id)
-    res.send(mensaje)
+            const alertScript = `
+            <script>
+                alert('Sin permiso para eliminar este producto');
+                window.location.href = '/realtimeproductsAdmin';
+            </script>
+        `;
+
+            res.send(alertScript);
+
+        }
+
+    }
+    catch (error) {
+        next(error)
+    }
 }

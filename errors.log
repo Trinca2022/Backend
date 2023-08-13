@@ -51,3 +51,14 @@ error: Missing credentials for "PLAIN"
 error: crypto is not defined
 error: Missing credentials for "PLAIN"
 fatal: Operation `carts.find()` buffering timed out after 10000ms
+error: Error al tratar de crear un nuevo usuario
+error: Error al tratar de crear un nuevo usuario
+error: Error al tratar de crear un nuevo usuario
+error: Error al tratar de crear un nuevo usuario
+error: Error al tratar de crear un nuevo usuario
+error: Error al tratar de crear un nuevo usuario
+error: Usuario ya existe
+error: Usuario ya existe
+error: Usuario ya existe
+error: Usuario ya existe
+error: Error al tratar de crear un nuevo usuario

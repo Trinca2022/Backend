@@ -64,29 +64,20 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
 }
 //Manejo de la VISTA de registro para restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
-
-
     const { token } = req.query
-
     // Verificar si el enlace ha expirado
     if (links[token] && (Date.now() < links[token])) {
         // Realizar la acción correspondiente al enlace válido
-
         res.render(`register/passwordRecoveryPass`);
     } else {
-
         const alertScript = `
         <script>
             alert('Ha expirado el tiempo para restablecer la contraseña, solicitar nuevamente');
-            window.location.href = '/sessions/login'; // Redireccionar a donde desees
+            window.location.href = '/sessions/login';
         </script>
     `;
-
         res.send(alertScript);
-        //res.render('register/passwordRecovery');
     }
-
-
 }
 
 
@@ -96,12 +87,14 @@ export const registerHandler = async (req, res, next) => {
         const users = await userModel.find()
         const { nombre, apellido, email, edad, password } = req.body;
         if ((!nombre || !apellido || !email || !edad)) {
-            throw createError({
-                name: "Error de creación de usuario: completar todos los campos solicitados",
-                cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
-                message: "Error al tratar de crear un nuevo usuario",
-                code: errorTypes.INVALID_TYPES_ERROR
-            })
+            {
+                throw createError({
+                    name: "Error de creación de usuario: completar todos los campos solicitados",
+                    cause: generateUserErrorInfo({ nombre, apellido, email, edad }),
+                    message: "Error al tratar de crear un nuevo usuario",
+                    code: errorTypes.INVALID_TYPES_ERROR
+                })
+            }
         }
         if (users.find(user => user.email === email)) {
             throw createError({
@@ -115,9 +108,15 @@ export const registerHandler = async (req, res, next) => {
         const cart = await cartModel.create({ product: [] })
         const cartUser = cart._id
         await ticketModel.create()
-
         await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
-        res.redirect('/sessions/login')
+        const alertScript = `
+        <script>
+            alert('Usuario creado!');
+            window.location.href = '/sessions/login';
+        </script>
+    `;
+        res.send(alertScript);
+
 
     }
     catch (error) {
@@ -170,10 +169,12 @@ export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
         const userIDCart = user.id_cart.toString()
         const { nombre, apellido, edad, rol } = user;
         const isOldPassword = await compareData(password, user.password)
+        //Si la pass coincide, no permite avanzar
         if (isOldPassword) {
             console.log("ERROR!! PASS COINCIDE")
             res.send("Elegir otra contraseña")
         }
+        //Si la pass no es igual a la anterior, la actualiza
         else {
             const hashPassword = await hashData(password)
             await userManager.updateUser(userID, {

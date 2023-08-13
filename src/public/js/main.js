@@ -80,6 +80,11 @@ socket.on("adminName", userDatos => {
         `;
 });
 
+//Emito error de eliminación
+socket.on("productNotDeleted", (message) => {
+    alert(message);
+});
+
 
 
 
