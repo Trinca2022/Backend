@@ -48,3 +48,5 @@ error: Assignment to constant variable.
 error: Assignment to constant variable.
 error: Missing credentials for "PLAIN"
 error: Missing credentials for "PLAIN"
+error: crypto is not defined
+error: Missing credentials for "PLAIN"

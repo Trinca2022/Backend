@@ -9,6 +9,8 @@ import { generateUserErrorInfo, generateUserEmailErrorInfo, generateUserPassErro
 import { logger } from "../utils/logger.js";
 import { transporter } from "../utils/nodemailer.js";
 import { compareData } from "../utils/bcrypt.js";
+import crypto from 'crypto'
+
 
 const userManager = new UserManager()
 
@@ -21,10 +23,60 @@ export const registerViewHandler = (req, res) => {
 export const registerViewPasswordRecoveryHandler = (req, res) => {
     res.render('register/passwordRecovery')
 }
+//Genero y almaceno enlaces con su tiempo de ejecucion
+const links = {}
+//Mailer para enviar a recuperar contresña
+export const registerPasswordRecoveryHandler = async (req, res, next) => {
+    try {
+        const users = await userModel.find()
+        const { email } = req.body;
+        const user = users.find(user => user.email === email)
+        const userID = user._id.toString()
 
+        //Genero un token unico para el enlace
+        const token = crypto.randomBytes(20).toString('hex')
+        //Almaceno la hora de expiracion
+        const expirationTime = Date.now() + 10 * 60 * 1000;
+        // Construyo el enlace
+        const enlace = ` http://localhost:4000/register/passwordRecovery/${token}`;
+        // Almaceno el enlace y su tiempo de expiración
+        links[token] = expirationTime;
+        if (!user) {
+            throw createError(
+                {
+                    name: "Error de recuperación de contraseña",
+                    cause: generateUserPassErrorInfo({ email }),
+                    message: "Mail inexistente",
+                    code: errorTypes.INVALID_TYPES_ERROR
+                })
+        }
+        await transporter.sendMail({
+            to: email,
+            subject: 'Restablecer contraseña',
+            text: `LINK: ${enlace}`
+        })
+        res.redirect('/sessions/login')
+    }
+    catch (error) {
+        next(error)
+        logger.error(error.message)
+    }
+}
 //Manejo de la VISTA de registro para restablecer contraseña que exporto a la ruta
 export const registerViewPasswordRecoveryIDHandler = async (req, res) => {
-    res.render(`register/passwordRecoveryPass`)
+
+
+    const { token } = req.query
+    // Verificar si el enlace ha expirado
+    if (links[token] && Date.now() < parseInt(links[token])) {
+        // Realizar la acción correspondiente al enlace válido
+
+        res.render(`register/passwordRecoveryPass`);
+    } else {
+        res.status(400).send('Enlace inválido o expirado.');
+    }
+
+
 }
 
 
@@ -69,6 +121,7 @@ export const registerHandler = async (req, res, next) => {
 }
 
 
+/*
 //Mailer para enviar a recuperar contresña
 export const registerPasswordRecoveryHandler = async (req, res, next) => {
     try {
@@ -98,8 +151,7 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         logger.error(error.message)
     }
 }
-
-
+*/
 
 
 //Manejo de generación de nueva pass que mando a la ruta
