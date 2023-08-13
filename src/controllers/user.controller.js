@@ -17,7 +17,7 @@ export const registerViewHandler = (req, res) => {
     res.render('register/register')
 }
 
-//Manejo de la VISTA de registro para MANDAR MAIL y restablecer contraseña que exporto a la ruta
+//Manejo de la VISTA de registro para MANDAR MAIL y restablecer contraseña que exporto a la ruta.
 export const registerViewPasswordRecoveryHandler = (req, res) => {
     res.render('register/passwordRecovery')
 }
