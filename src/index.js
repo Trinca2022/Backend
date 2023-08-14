@@ -149,19 +149,19 @@ io.on('connection', async (socket) => {
 
     //Elimino un producto
     socket.on("deletedProduct", async (prod) => {
-        const { _id } = prod//esto solo _id
+        const { _id } = prod
         //Busco el rol del usuario actual
-        const userRol = userDatos.rol;
+        const userSessionRol = userDatos.rol;
         //Busco el email del owner en la info del producto
         const product = await productManager.getProductById(_id)
-        const prodOwnerEmail = product.owner
+        const prodOwnerEmailOrAdmin = product.owner
         //Busco el rol del usuario que creó el producto
         const users = await userModel.find()
-        const prodOwner = users.find(user => user.email === prodOwnerEmail)
+        const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
         const prodOwnerRol = prodOwner.rol
         //Si el rol de la sesión coincide con la del owner: borro prod
         //Si la sesión es de Admin: borro prod
-        if (userRol === prodOwnerRol || userRol === "Administrador") {
+        if (userSessionRol === prodOwnerRol || userSessionRol === "Administrador") {
             await productManager.deleteProduct(_id)
             console.log("ID PROD A ELIMINAR", _id)
             const products = await productMongo.findAll()
@@ -185,10 +185,24 @@ io.on('connection', async (socket) => {
     socket.on("addProduct", async (prod) => {
         const { _id } = prod
         const id = userDatos.id_cart
-        await cartManager.addProductInCart(id, { _id })
-        io.emit("prodInCart", _id)
-        //const productsInCart = await cartManager.getCartById(_id)
-        //io.emit("allProducts", productsInCart)
+        //Busco el rol del usuario actual
+        const userSessionRol = userDatos.rol;
+        //Busco el email del owner en la info del producto
+        const product = await productManager.getProductById(_id)
+        const prodOwnerEmailOrAdmin = product.owner
+        //Busco el rol del usuario que creó el producto
+        const users = await userModel.find()
+        const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
+        const prodOwnerRol = prodOwner.rol
+        //Si el rol de la sesión es distinto al owner del prod: se puede comprar
+        if (userSessionRol !== prodOwnerRol) {
+            await cartManager.addProductInCart(id, { _id })
+            io.emit("prodInCart", _id)
+        }
+        else {
+            socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
+        }
+
     })
 
 })

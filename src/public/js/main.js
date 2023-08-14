@@ -1,10 +1,15 @@
 const socket = io()
 
+//MAIN DE LA VISTA DE PRODUCTOS PARA ADMIN/PREMIUM
+
 //Obtengo elementos del DOM por el ID
 const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
 const adminName = document.getElementById("adminName")
 
+const addProdInCart = (productId) => {
+    socket.emit("addProduct", { _id: productId })
+}
 
 
 //Cuando se escucha el evento envío información de los prods al servidor
@@ -82,6 +87,11 @@ socket.on("adminName", userDatos => {
 
 //Emito error de eliminación
 socket.on("productNotDeleted", (message) => {
+    alert(message);
+});
+
+//Emito error de eliminación
+socket.on("productNotBuyed", (message) => {
     alert(message);
 });
 
