@@ -51,14 +51,15 @@ const storage = multer.diskStorage({
     }
 })
 
+import bodyParser from 'body-parser';
+app.use(bodyParser.json());
+
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
 const server = app.listen(config.PORT, () => {
     console.log(`Escuchando al puerto ${config.PORT}`)
 })
 
-/*const server = app.listen(process.env.PORT, () => {
-    console.log("Server on port", process.env.PORT)
-})*/
+
 
 //Configuro handlebars
 app.engine('handlebars', engine())//Para trabajar con handlebars
@@ -79,12 +80,10 @@ const io = new Server(server)
 //Configuro Sessions
 app.use(session({
     store: MongoStore.create({
-        //mongoUrl: process.env.URL_MONGODB_ATLAS,
         mongoUrl: config.URL_MONGODB_ATLAS,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
         // ttl: 210
     }),
-    //secret: process.env.SESSION_SECRET,
     secret: config.SESSION_SECRET,
     resave: true,
     saveUninitialized: true
@@ -107,15 +106,24 @@ io.on('connection', async (socket) => {
     socket.emit("allChats", chats)
     socket.emit("adminName", userDatos)
     socket.emit("userName", userDatos)
-    //socket.emit("idCart", userDatos)
+    socket.emit("idCart", userDatos)
 
-    socket.on("getCart", async (args, callback) => {
+    /*socket.on("getCart", async (args, callback) => {
+            const cart = await cartManager.getCartById(userDatos.id_cart)
+            const idProdsinCart = cart.products.map(prod => prod.id_prod)
+            const prodsInCart = await productMongo.findByIds(idProdsinCart)
+            callback({ cart, prodsInCart })
+            console.log(cart, prodsInCart)
+        })*/
+
+
+    /*socket.on("getCart", async (args, callback) => {
         const cart = await cartManager.getCartById(userDatos.id_cart)
         const idProdsinCart = cart.products.map(prod => prod.id_prod)
         const prodsInCart = await productMongo.findByIds(idProdsinCart)
         callback({ cart, prodsInCart })
         console.log(cart, prodsInCart)
-    })
+    })*/
 
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod) => {
@@ -124,7 +132,7 @@ io.on('connection', async (socket) => {
         const { title, description, price, thumbnail, code, stock } = prod
         //Ejecuto el método addProduct de productManager y agrega el producto a los productos
         //Cargo prods en mongoose
-        await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true })
+        await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true, owner: userDatos.email })
         //const products = await productModel.find()
         const products = await productMongo.findAll()
         io.emit("allProducts", products)
@@ -142,15 +150,27 @@ io.on('connection', async (socket) => {
     //Elimino un producto
     socket.on("deletedProduct", async (prod) => {
         const { _id } = prod
-        await productMongo.deleteOne(_id)
-        console.log("HOLA id", _id)
-        //console.log("HOLA SERGUNDO ID", id.toString())
-        //const products = await productMongo.findOneById(_id)
-        const products = await productMongo.findAll()
-        //console.log("HOLA PROD", products)
-        const filteredProducts = products.filter((product) => product._id.toString() !== _id);
-        io.emit("allProducts", filteredProducts)
-
+        //Busco el rol del usuario actual
+        const userSessionRol = userDatos.rol;
+        //Busco el email del owner en la info del producto
+        const product = await productManager.getProductById(_id)
+        const prodOwnerEmailOrAdmin = product.owner
+        //Busco el rol del usuario que creó el producto
+        const users = await userModel.find()
+        const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
+        const prodOwnerRol = prodOwner.rol
+        //Si el rol de la sesión coincide con la del owner: borro prod
+        //Si la sesión es de Admin: borro prod
+        if (userSessionRol === prodOwnerRol || userSessionRol === "Administrador") {
+            await productManager.deleteProduct(_id)
+            console.log("ID PROD A ELIMINAR", _id)
+            const products = await productMongo.findAll()
+            const filteredProducts = products.filter((product) => product._id.toString() !== _id);
+            io.emit("allProducts", filteredProducts)
+        }
+        else {
+            socket.emit("productNotDeleted", "No tienes permisos para eliminar este producto.");
+        }
     })
 
     /*//ACTUALIZO PRODUCTO
@@ -165,10 +185,24 @@ io.on('connection', async (socket) => {
     socket.on("addProduct", async (prod) => {
         const { _id } = prod
         const id = userDatos.id_cart
-        await cartManager.addProductInCart(id, { _id })
-        io.emit("prodInCart", _id)
-        //const productsInCart = await cartManager.getCartById(_id)
-        //io.emit("allProducts", productsInCart)
+        //Busco el rol del usuario actual
+        const userSessionRol = userDatos.rol;
+        //Busco el email del owner en la info del producto
+        const product = await productManager.getProductById(_id)
+        const prodOwnerEmailOrAdmin = product.owner
+        //Busco el rol del usuario que creó el producto
+        const users = await userModel.find()
+        const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
+        const prodOwnerRol = prodOwner.rol
+        //Si el rol de la sesión es distinto al owner del prod: se puede comprar
+        if (userSessionRol !== prodOwnerRol) {
+            await cartManager.addProductInCart(id, { _id })
+            io.emit("prodInCart", _id)
+        }
+        else {
+            socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
+        }
+
     })
 
 })

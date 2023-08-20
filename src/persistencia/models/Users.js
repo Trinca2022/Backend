@@ -14,6 +14,7 @@ const userSchema = new Schema({ //Defino las propiedades de mi modelo user
     },
     rol: {
         type: String,
+        enum: ["Administrador", "Usuario", "Premium"],
         default: "Usuario"
     },
     password: String,

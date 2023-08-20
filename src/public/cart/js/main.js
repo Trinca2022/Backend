@@ -16,6 +16,13 @@ socket.on("userName", userDatos => {
         `;
 });
 
+socket.on("idCart", userDatos => {
+    idCart.innerHTML = `
+                <h1>ID del carrito: ${userDatos.id_cart}</h1>
+                <hr>
+                `;
+});
+
 /*socket.on("cartInfo", ({ cart, prodsInCart }) => {
     idCart.innerHTML = `
                 <h1>ID del carrito: ${cart._id}</h1>

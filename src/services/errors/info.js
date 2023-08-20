@@ -13,6 +13,12 @@ export const generateUserEmailErrorInfo = (user) => {
       `
 }
 
+export const generateUserPassErrorInfo = (user) => {
+    return `Email inexistente:
+      * "${user.email}" no existe
+      `
+}
+
 
 export const generateProductErrorInfo = (prod) => {
     return `Una o más propiedades están incompletas. Lista de propiedades requeridas:

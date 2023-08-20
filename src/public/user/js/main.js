@@ -1,6 +1,6 @@
 const socket = io()
 
-//MAIN DE LA VISTA DE PRODUCTOS PARA EL USUARIO
+//MAIN DE LA VISTA DE PRODUCTOS PARA USUARIO
 
 const userName = document.getElementById("userName")
 const productList = document.getElementById("productList")

@@ -1,10 +1,15 @@
 const socket = io()
 
+//MAIN DE LA VISTA DE PRODUCTOS PARA ADMIN/PREMIUM
+
 //Obtengo elementos del DOM por el ID
 const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
 const adminName = document.getElementById("adminName")
 
+const addProdInCart = (productId) => {
+    socket.emit("addProduct", { _id: productId })
+}
 
 
 //Cuando se escucha el evento envío información de los prods al servidor
@@ -38,11 +43,12 @@ socket.on("allProducts", products => {
         <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}"
         class="card-img-top" alt="...">
         <div class="card-body">
-        <p class="card-text">Código: ${prod.code}.<br>
+        <p class="card-text">Propietario/a: ${prod.owner}.<br>Código: ${prod.code}.<br>
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
             <button onClick="eliminarProducto('${prod._id}')">Eliminar producto</button>
+            <button onClick="addProdInCart('${prod._id}')">Comprar producto</button>
             </div>
             </div>`
 
@@ -77,6 +83,16 @@ socket.on("adminName", userDatos => {
     <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
         <hr>
         `;
+});
+
+//Emito error de eliminación
+socket.on("productNotDeleted", (message) => {
+    alert(message);
+});
+
+//Emito error de eliminación
+socket.on("productNotBuyed", (message) => {
+    alert(message);
 });
 
 

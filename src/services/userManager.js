@@ -29,6 +29,48 @@ export class UserManager {
             logger.warning(error.message, "Usuario ya existe")
         }
     }
+
+    async getUserById(id) {
+        const userFound = await userModel.findById(id)
+        if (userFound) {
+            return ("Usuario encontrado:", userFound)
+        }
+        else return "Usuario no encontrado"
+    }
+
+    //Método updateUser 
+    async updateUser(id, { nombre,
+        apellido,
+        edad,
+        rol,
+        password,
+        id_cart }) {
+        try {
+            const updatedUser = await userModel.findOneAndUpdate(
+                { "_id": id }, {
+                $set: {
+                    "nombre": nombre,
+                    "apellido": apellido,
+
+                    "edad": edad,
+                    "rol": rol,
+                    "password": password,
+                    "id_cart": id_cart
+                }
+            },
+                { new: true } // Devuelve el documento actualizado
+            );
+
+            if (updatedUser) {
+                return `El usuario con ID ${updatedUser._id} se ha actualizado correctamente.`;
+            } else {
+                return 'Usuario no encontrado.';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return 'Ha ocurrido un error al actualizar el usuario.';
+        }
+    }
 }
 
 

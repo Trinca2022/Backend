@@ -4,12 +4,13 @@ import { addProductHandler, deleteProductHandler, getProductByIdHandler, product
 const productRouter = Router() //Guardo todas las rutas en productRouter
 
 //Autenticación para poder acceder a la vista de productos
-const authAdmin = (req, res, next) => {
+const authAdminOrPrem = (req, res, next) => {
     if (!req.session.user)
         return res.send("Error de autenticación")
     const { rol } = req.session.user
-    if (rol === "Administrador") return next()
+    if (rol === "Administrador" || "Premium") return next()
 }
+
 
 //Autenticación para poder acceder a la vista de productos
 const authUser = (req, res, next) => {
@@ -20,13 +21,13 @@ const authUser = (req, res, next) => {
 }
 
 //Consulta de productos con filtros
-productRouter.get("/", authAdmin, productsFilterHandler)
+productRouter.get("/", authAdminOrPrem, productsFilterHandler)
 
 //Consulta de productos con filtros
 productRouter.get("/", authUser, productsFilterHandler)
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproductsAdmin", authAdmin, productsViewHandlerAdmin)
+productRouter.get("/realtimeproductsAdmin", authAdminOrPrem, productsViewHandlerAdmin)
 
 //Envío el array de productos inicial al cliente a través de socket
 productRouter.get("/realtimeproductsUser", authUser, productsViewHandlerUser)
