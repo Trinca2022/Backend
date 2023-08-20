@@ -1,4 +1,15 @@
 paths:
+  /product:
+    get:
+      tags:
+        - Products
+      summary: Gets All Products from the DB
+      responses:
+        "200":
+          description: Products fetched successfully from the DB
+        "500":
+          description: Internal Server Error
+
   /product/realtimeproductsUser:
     get:
       tags:
@@ -8,4 +19,15 @@ paths:
         "200":
           description: Success
         "500":
-      description: Cannot GET products
+          description: Cannot GET products
+
+  /product/realtimeproductsAdmin:
+    get:
+      tags:
+        - Products
+      summary: Gets view of admin or premium product options
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Cannot GET products
