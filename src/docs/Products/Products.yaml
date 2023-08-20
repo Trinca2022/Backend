@@ -1,0 +1,11 @@
+paths:
+  /product/realtimeproductsUser:
+    get:
+      tags:
+        - Products
+      summary: Gets view of user product options
+      responses:
+        "200":
+          description: Success
+        "500":
+      description: Cannot GET products

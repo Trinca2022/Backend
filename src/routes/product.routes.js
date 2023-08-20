@@ -20,10 +20,10 @@ const authUser = (req, res, next) => {
     if (rol === "Usuario") return next()
 }
 
-//Consulta de productos con filtros
+//Consulta de productos con filtros para ADMIN o PREMIUM
 productRouter.get("/", authAdminOrPrem, productsFilterHandler)
 
-//Consulta de productos con filtros
+//Consulta de productos con filtros para USER
 productRouter.get("/", authUser, productsFilterHandler)
 
 //Envío el array de productos inicial al cliente a través de socket

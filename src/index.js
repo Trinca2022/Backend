@@ -1,5 +1,3 @@
-//HOLA QUE TAL
-//import 'dotenv/config.js'
 import config from './config.js'
 import * as path from 'path'
 import express from 'express'
@@ -18,8 +16,7 @@ import { engine } from 'express-handlebars'
 import { Server } from 'socket.io'
 import { ProductManager } from './services/productManager.js'
 import { ChatManager } from './services/chatManager.js'
-//Config mongoose
-import './config/dbConfig.js'
+import './config/dbConfig.js'//Config mongoose
 import { productModel } from './persistencia/models/Products.js'
 import { CartManager } from './services/cartManager.js'
 import { sessionModel } from './persistencia/models/Sessions.js'
@@ -30,6 +27,8 @@ import getProductFaker from './faker/routes.productFaker.js'
 import errorHandler from './middlewares/errors/indexError.js'
 import { addLogger } from './utils/logger.js'
 import loggerRouter from './routes/logger.routes.js'
+import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
+import swaggerUiExpress from 'swagger-ui-express'
 
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
@@ -51,14 +50,36 @@ const storage = multer.diskStorage({
     }
 })
 
-import bodyParser from 'body-parser';
-app.use(bodyParser.json());
+/*import bodyParser from 'body-parser';
+app.use(bodyParser.json());*/
 
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
 const server = app.listen(config.PORT, () => {
     console.log(`Escuchando al puerto ${config.PORT}`)
 })
 
+//Configuración de swagger para documentar la API
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: "Documentación de las APIs",
+            description: "Información de productos y carritos",
+            version: '1.0.0',
+            /*contact:{
+                name:"Andrea Lopez",
+                url: "https://www.linkedin.com/in/adelid-andrea-l%C3%B3pez-411868105/"
+            }*/
+        }
+    },
+    apis: [`${process.cwd()}/src/docs/**/*.yaml`],
+    //apis: [`./docs/**/*.yaml`]
+    //apis: [`./docs/Users/Users.yaml`]
+    //apis: [`./docs/Users/Users.yaml`]
+    //apis: [(__dirname, './docs/Users/Users.yaml')]
+}
+
+const spec = swaggerJSDoc(swaggerOptions)
 
 
 //Configuro handlebars
@@ -88,6 +109,9 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }))
+
+//Config swagger
+app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(spec))
 
 //Conecto con cliente
 io.on('connection', async (socket) => {
