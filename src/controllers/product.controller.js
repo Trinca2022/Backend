@@ -112,7 +112,7 @@ export const addProductHandler = async (req, res, next) => {
 }
 
 //Manejo función que actualiza un producto y exporto a la ruta
-export const updateProductHandler = async (req, res) => {
+export const updateProductHandler = async (req, res, next) => {
     try {
         const id = req.params.id
         const { title, description, price, thumbnail, code, stock, status } = req.body
@@ -126,40 +126,43 @@ export const updateProductHandler = async (req, res) => {
 }
 
 //Manejo función que elimina un producto y exporto a la ruta
-export const deleteProductHandler = async (req, res) => {
+export const deleteProductHandler = async (req, res, next) => {
     try {
         const id = req.params.id
-        //Busco el rol del usuario actual
-        const data = JSON.parse(latestSession.session);
-        const userDatos = data.user;
-        const userRol = userDatos.rol;
-        //Busco el email del owner en la info del producto
-        const product = await productManager.getProductById(_id)
-        const prodOwnerEmail = product.owner
-        //Busco el rol del usuario que creó el producto
-        const users = await userModel.find()
-        const prodOwner = users.find(user => user.email === prodOwnerEmail)
-        const prodOwnerRol = prodOwner.rol
-        //Si el rol de la sesión coincide con la del owner: borro prod
-        //Si la sesión es de Admin: borro prod
-        if (userRol === prodOwnerRol || userRol === "Administrador") {
-            const mensaje = await productManager.deleteProduct(id)
-            res.send(mensaje)
-        }
-        else {
+        const mensaje = await productManager.deleteProduct(id)
+        res.send(mensaje)
+    }
+    /*//Busco el rol del usuario actual
+    const data = JSON.parse(latestSession.session);
+    const userDatos = data.user;
+    const userRol = userDatos.rol;
+    //Busco el email del owner en la info del producto
+    const product = await productManager.getProductById(_id)
+    const prodOwnerEmail = product.owner
+    //Busco el rol del usuario que creó el producto
+    const users = await userModel.find()
+    const prodOwner = users.find(user => user.email === prodOwnerEmail)
+    const prodOwnerRol = prodOwner.rol
+    //Si el rol de la sesión coincide con la del owner: borro prod
+    //Si la sesión es de Admin: borro prod
+    if (userRol === prodOwnerRol || userRol === "Administrador") {
+        const mensaje = await productManager.deleteProduct(id)
+        res.send(mensaje)
+    }
+    else {
 
-            const alertScript = `
-            <script>
-                alert('Sin permiso para eliminar este producto');
-                window.location.href = '/realtimeproductsAdmin';
-            </script>
-        `;
+        const alertScript = `
+        <script>
+            alert('Sin permiso para eliminar este producto');
+            window.location.href = '/realtimeproductsAdmin';
+        </script>
+    `;
 
-            res.send(alertScript);
-
-        }
+        res.send(alertScript);
 
     }
+
+}*/
     catch (error) {
         next(error)
     }
