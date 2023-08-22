@@ -61,7 +61,7 @@ paths:
     get:
       tags:
         - Products
-      summary: Gets a single product by their id
+      summary: Gets a single product by its id
       parameters:
         - name: productId
           in: path
@@ -113,7 +113,7 @@ paths:
     delete:
       tags:
         - Products
-      summary: Deletes a single product by their id
+      summary: Deletes a single product by its id
       parameters:
         - name: productId
           in: path
