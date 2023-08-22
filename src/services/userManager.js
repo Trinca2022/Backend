@@ -30,6 +30,15 @@ export class UserManager {
         }
     }
 
+    async findAllUsers() {
+        try {
+            const response = await userModel.find()
+            return response
+        } catch (error) {
+            return error
+        }
+    }
+
     async getUserById(id) {
         const userFound = await userModel.findById(id)
         if (userFound) {

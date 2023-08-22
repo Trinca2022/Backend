@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { registerHandler, registerPasswordRecoveryHandler, registerPasswordRecoveryNEWHandler, registerViewHandler, registerViewPasswordRecoveryHandler, registerViewPasswordRecoveryIDHandler } from "../controllers/user.controller.js";
-import { UserManager } from "../services/userManager.js";
 
 const userRouter = Router()
 
@@ -22,10 +21,7 @@ userRouter.get('/passwordRecovery/:id', registerViewPasswordRecoveryIDHandler)
 userRouter.post('/passwordRecovery', registerPasswordRecoveryHandler)
 
 //Genero nueva pass--> ACTUALIZO USUARIO
-userRouter.post('/passwordRecovery/:id',
-
-    registerPasswordRecoveryNEWHandler,
-)
+userRouter.post('/passwordRecovery/:id', registerPasswordRecoveryNEWHandler)
 
 /*
 userRouter.post('/passwordRecovery/:id', async (req, res, next) => {

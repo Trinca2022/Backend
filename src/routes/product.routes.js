@@ -21,10 +21,7 @@ const authUser = (req, res, next) => {
 }
 
 //Consulta de productos con filtros
-productRouter.get("/", authAdminOrPrem, productsFilterHandler)
-
-//Consulta de productos con filtros
-productRouter.get("/", authUser, productsFilterHandler)
+productRouter.get("/", productsFilterHandler)
 
 //Envío el array de productos inicial al cliente a través de socket
 productRouter.get("/realtimeproductsAdmin", authAdminOrPrem, productsViewHandlerAdmin)

@@ -1,0 +1,259 @@
+paths:
+  /cart:
+    post:
+    tags:
+      - Carts
+    summary: Creates a new Cart to DB
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#components/requestBodies/CreateCartPayload"
+    responses:
+      "200":
+        description: Cart created successfully
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/NewCartResponse"
+      "400":
+        description: Wrong params
+      "500":
+        description: Internal Server Error
+
+  /cart/{cartId}:
+    get:
+      tags:
+        - Carts
+      summary: Gets a single Cart by its id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart id to fetch
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Cart from DB with the given cartId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "404":
+          description: Cart with given cartId Not Found
+        "500":
+          description: Internal server error
+    put:
+      tags:
+        - Carts
+      summary: Updates a single Cart for a given cartId
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart id to fetch
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/UpdateCartPayload"
+      responses:
+        "200":
+          description: Updated Cart with a given cartId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Invalid body format.
+        "404":
+          description: User with given cartId Not Found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Carts
+      summary: Delete all products in Cart by its id
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart id to fetch
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Deleted all products in Cart from DB with the given cartId
+        "404":
+          description: Cart with given cartId Not Found
+        "500":
+          description: Internal server error
+
+  cart/{cartId}/product/{productId}:
+    post:
+      tags:
+        - Carts
+      summary: Add product in Cart in the DB
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart id
+          schema:
+            $type: string
+        - name: productId
+          in: path
+          required: true
+          description: Product id
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Product in cart fetched successfully from the DB
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Invalid body format.
+        "404":
+          description: User or Pet Not found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Carts
+      summary: Delete product in Cart in the DB
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart id
+          schema:
+            $type: string
+        - name: productId
+          in: path
+          required: true
+          description: Product id
+          schema:
+            $type: string
+      responses:
+        "200":
+          description: Deleted product in Cart from DB with the given cartId and   prodId
+        "404":
+          description: Cart with given cartId Not Found
+        "500":
+          description: Internal server error
+    put:
+      tags:
+        - Carts
+      summary: Delete product in Cart in the DB
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: Cart id
+          schema:
+            $type: string
+        - name: productId
+          in: path
+          required: true
+          description: Product id
+          schema:
+            $type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#components/requestBodies/UpdateCartPayload"
+      responses:
+        "200":
+          description: Updated Product in Cart with a given cartId and prodId
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/CartResponse"
+        "400":
+          description: Invalid body format.
+        "404":
+          description: User with given cartId Not Found
+        "500":
+          description: Internal Server Error
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: Autogenerated MongoDB ID
+        id_prod:
+          type: ObjectId
+          description: Product Id in cart
+        quantity:
+          type: number
+          description: Quantity of products in cart
+      example:
+        _id: ObjectId(64e404e103f5de1179b1374a)
+        id_prod: ObjectId(64b828915ae2b63b11f48605)
+        quantity: 1
+
+    CartResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Carts response status
+        payload:
+          $ref: "#components/schemas/Cart"
+
+    NewCartResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Carts response status
+        payload:
+          type: ObjectId
+          description: Created Cart ObjectId
+        example:
+          status: success
+          payload: ObjectId(64e404e103f5de1179b1374a)
+
+  requestBodies:
+    UpdateCartPayload:
+      type: object
+      properties:
+        id_prod:
+          type: ObjectId
+          description: Product Id in cart
+        quantity:
+          type: number
+          description: Quantity of products in cart
+      example:
+        _id: ObjectId(64e404e103f5de1179b1374a)
+        id_prod: ObjectId(64b828915ae2b63b11f48605)
+        quantity: 1
+
+requestBodies:
+  CreateCartPayload:
+    type: object
+    properties:
+      id_prod:
+        type: ObjectId
+        description: Product Id in cart
+      quantity:
+        type: number
+        description: Quantity of products in cart
+    example:
+      id_prod: ObjectId(64b828915ae2b63b11f48605)
+      quantity: 1
