@@ -1,22 +1,22 @@
 paths:
   /cart:
     post:
-    tags:
-      - Carts
-    summary: Creates a new Cart to DB
-    requestBody:
-      required: true
-      content:
+      tags:
+        - Carts
+      summary: Creates a new Cart to DB
+      requestBody:
+        required: true
+        content:
         application/json:
           schema:
             $ref: "#components/requestBodies/CreateCartPayload"
-    responses:
-      "200":
-        description: Cart created successfully
-        content:
-          application/json:
-            schema:
-              $ref: "#components/schemas/NewCartResponse"
+      responses:
+        "200":
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/NewCartResponse"
       "400":
         description: Wrong params
       "500":

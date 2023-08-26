@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import program from './utils/commander.js'
+import program from '../utils/commander.js'
 
 dotenv.config({
     path: program.opts().mode === 'production' ? '.env.production' : '.env'
