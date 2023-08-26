@@ -7,6 +7,12 @@ const userName = document.getElementById("userName")
 const idCart = document.getElementById("idCart")
 const mostrarProds = document.getElementById("mostrarProds")
 
+//Envío evento al back para manejarlo
+const goToProds = () => {
+    socket.emit("goToProds")
+}
+
+
 //Recibo el nombre y el rol del usuario logueado y los renderizo
 //Usuario de mongo
 socket.on("userName", userDatos => {
@@ -56,6 +62,19 @@ mostrarProds.addEventListener('click', () => {
     })
     console.log("Prueba front")
 })
+
+//Redirecciono a productos de usuario
+socket.on("redirectToUserProds", (path) => {
+    window.location.href = path;
+});
+
+//Redirecciono a productos de premium
+socket.on("redirectToPremiumProds", (path) => {
+    window.location.href = path;
+});
+
+
+
 
 /*socket.on("connect", () => {
     socket.emit("getCart", undefined, ({ cart, prodsInCart }) => {

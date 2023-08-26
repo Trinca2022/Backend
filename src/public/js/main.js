@@ -7,8 +7,14 @@ const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
 const adminName = document.getElementById("adminName")
 
+//Envío evento al back para manejarlo
 const addProdInCart = (productId) => {
     socket.emit("addProduct", { _id: productId })
+}
+
+//Envío evento al back para manejarlo
+const goToCart = () => {
+    socket.emit("goToCart")
 }
 
 
@@ -85,14 +91,24 @@ socket.on("adminName", userDatos => {
         `;
 });
 
-//Emito error de eliminación
+//Emito en el front error de eliminación
 socket.on("productNotDeleted", (message) => {
     alert(message);
 });
 
-//Emito error de eliminación
+//Emito en el front error de eliminación
 socket.on("productNotBuyed", (message) => {
     alert(message);
+});
+
+//Emito en el front alert de error de permiso
+socket.on("notGoToCart", (message) => {
+    alert(message);
+});
+
+//Redirecciono a carrito si es Premium
+socket.on("redirectToCart", (path) => {
+    window.location.href = path;
 });
 
 

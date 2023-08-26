@@ -143,6 +143,8 @@ io.on('connection', async (socket) => {
             console.log(cart, prodsInCart)
         })*/
 
+
+
         //Recibo los campos cargados en form y los guardo en array products
         socket.on("newProduct", async (prod) => {
             console.log(prod)
@@ -163,6 +165,30 @@ io.on('connection', async (socket) => {
             await chatManager.addChat(chat)
             const chats = await chatManager.getMessages()
             io.emit("allChats", chats)
+        })
+
+        //Ir al carrito según rol
+        socket.on("goToCart", async () => {
+            //Busco el rol del usuario actual
+            const userSessionRol = userDatos.rol;
+            if (userSessionRol === "Administrador") {
+                socket.emit("notGoToCart", "No tienes permisos para acceder a esta ruta");
+            }
+            if (userSessionRol === "Premium") {
+                socket.emit("redirectToCart", "/cart/realtimecart");
+            }
+        })
+
+        //Ir desde el carrito a productos según el rol
+        socket.on("goToProds", async () => {
+            //Busco el rol del usuario actual
+            const userSessionRol = userDatos.rol;
+            if (userSessionRol === "Usuario") {
+                socket.emit("redirectToUserProds", "/product/realtimeproductsUser");
+            }
+            if (userSessionRol === "Premium") {
+                socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+            }
         })
 
         //Elimino un producto
