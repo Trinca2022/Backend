@@ -99,9 +99,12 @@ export class CartManager {
     async deleteProductsInCart(id) {
         const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
-        await cartModel.updateOne({ "_id": id }, {
-            $set: { "cart": {} }
-        })
+        else {
+            await cartModel.updateOne({ "_id": id }, {
+                $set: { "cart": {} }
+            })
+            return (`Carrito vaciado`)
+        }
     }
 
     //Método putCart--> actualiza cart según body

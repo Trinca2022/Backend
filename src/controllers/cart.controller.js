@@ -60,7 +60,7 @@ export const updateCartHandler =
     async (req, res) => {
         const newProducts = req.body
         const id = req.params.id;
-        const message = await cartManager.putCart(id, newProducts)
+        const message = await cartManager.updateCart(id, newProducts)
         res.send(message)
     }
 
