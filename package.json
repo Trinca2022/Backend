@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "prod": "node src/index.js -m production"
+    "prod": "node src/index.js -m production",
+    "test": "mocha test/unitario/cartsChai.test.js"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +36,9 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.1.0",
+    "supertest": "^6.3.3"
   }
 }

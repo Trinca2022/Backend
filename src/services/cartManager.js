@@ -23,6 +23,17 @@ export class CartManager {
         }
     }
 
+    //Crea carrito sin restricciones y sin necesidad de usuario
+    async createOneCart() {
+        try {
+            const newCart = await cartModel.create({})
+            return newCart
+        }
+        catch (error) {
+            logger.fatal(error.message, "Error al crear carrito")
+        }
+    }
+
     async getCartById(id) {
         const cartFound = await cartModel.findById(id).populate("products.id_prod")
         //const cartFoundJSON = JSON.stringify(cartFound)
@@ -31,6 +42,26 @@ export class CartManager {
         }
         else {
             return "Carrito no encontrado"
+        }
+    }
+
+    //sin populate
+    async findOneById(id) {
+        try {
+            const response = await cartModel.findById(id)
+            return response
+        } catch (error) {
+            return error
+        }
+    }
+
+
+    async findAll() {
+        try {
+            const response = await cartModel.find()
+            return response
+        } catch (error) {
+            return error
         }
     }
 

@@ -29,14 +29,16 @@ import { addLogger } from './utils/logger.js'
 import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
+
+//Utilizo los manager
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
 const cartManager = new CartManager()
 
-//Creo y guardo productos/mensajes/carrito en mongodb
+//Creo y guardo productos/mensajes en mongodb
 await productManager.createProducts()
 await chatManager.createChats()
-await cartManager.createCart()
+//await cartManager.createCart()
 
 //Configuro express
 const app = express()
@@ -61,16 +63,11 @@ const swaggerOptions = {
         info: {
             title: "Documentación de las APIs",
             description: "Información de productos y carritos",
-            version: '1.0.0',
-            /*contact:{
-                name:"Andrea Lopez",
-                url: "https://www.linkedin.com/in/adelid-andrea-l%C3%B3pez-411868105/"
-            }*/
+            version: '1.0.0'
         }
     },
     apis: [`${process.cwd()}/src/docs/**/*.yaml`],
 }
-
 const spec = swaggerJSDoc(swaggerOptions)
 
 

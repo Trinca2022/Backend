@@ -27,6 +27,16 @@ class ProductMongo {
             return error
         }
     }
+
+    async findOneBy(params) {
+        try {
+            const response = await productModel.findOne(params)
+            return response
+        } catch (error) {
+            return error
+        }
+    }
+
     async deleteOne(id) {
         try {
             const response = await productModel.deleteOne({ "_id": id })
@@ -39,6 +49,16 @@ class ProductMongo {
     async updateOne(id, obj) {
         try {
             const response = await productModel.updateOne(id, obj)
+            return response
+        } catch (error) {
+            return error
+        }
+    }
+
+    //Encontrando según id y actualizando
+    async updateOneById(id, obj) {
+        try {
+            const response = await productModel.findByIdAndUpdate(id, { $set: obj })
             return response
         } catch (error) {
             return error

@@ -66,6 +66,15 @@ export class ProductManager {
         else return "Producto no encontrado"
     }
 
+    /*//Método getProductBy --> busca un producto por alguna prop en mongodb
+    async getProductBy(params) {
+        const productFound = await productMongo.findOne(params)
+        if (productFound) {
+            return productFound
+        }
+        else return "Producto no encontrado"
+    }*/
+
 
     //Método updateProduct --> actualiza campo de un producto con un ID existente
     async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {
