@@ -3,7 +3,7 @@ paths:
     get:
       tags:
         - Products
-      summary: Gets All Products from the DB
+      summary: Get All Products from the DB
       responses:
         "200":
           description: Products fetched successfully from the DB
@@ -39,7 +39,7 @@ paths:
     get:
       tags:
         - Products
-      summary: Gets view of user product options
+      summary: Get view of user product options
       responses:
         "200":
           description: Success
@@ -50,7 +50,7 @@ paths:
     get:
       tags:
         - Products
-      summary: Gets view of admin or premium product options
+      summary: Get view of admin or premium product options
       responses:
         "200":
           description: Success
@@ -61,7 +61,7 @@ paths:
     get:
       tags:
         - Products
-      summary: Gets a single product by its id
+      summary: Get a single product by its id
       parameters:
         - name: productId
           in: path
@@ -83,7 +83,7 @@ paths:
     put:
       tags:
         - Products
-      summary: Updates a single product for a given productId
+      summary: Update a single product for a given productId
       parameters:
         - name: productId
           in: path
@@ -113,7 +113,7 @@ paths:
     delete:
       tags:
         - Products
-      summary: Deletes a single product by its id
+      summary: Delete a single product by its id
       parameters:
         - name: productId
           in: path

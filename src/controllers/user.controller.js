@@ -108,14 +108,18 @@ export const registerHandler = async (req, res, next) => {
         const cart = await cartModel.create({ product: [] })
         const cartUser = cart._id
         await ticketModel.create()
-        await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
-        const alertScript = `
-        <script>
-            alert('Usuario creado!');
-            window.location.href = '/sessions/login';
-        </script>
-    `;
-        res.send(alertScript);
+        let result = await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
+        console.log(result)
+        /* const alertScript = `
+         <script>
+             alert('Usuario creado!');
+             window.location.href = '/sessions/login';
+         </script>
+     `;
+         res.send(alertScript);*/
+        res.send({ status: "success", payload: result[0] });
+
+
 
 
     }

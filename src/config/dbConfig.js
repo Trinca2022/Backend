@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import config from '../config.js'
+import config from './config.js'
 
 //Conexión con mongoose
 //mongoose.connect(process.env.URL_MONGODB_ATLAS)

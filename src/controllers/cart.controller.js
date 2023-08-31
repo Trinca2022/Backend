@@ -3,11 +3,18 @@ import { CartManager } from "../services/cartManager.js";
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const cartManager = new CartManager()
 
-//Creo carrito mediante método POST
+/*//Creo carrito mediante método POST
 export const createCartHandler = async (req, res) => {
     const products = req.body
     await cartManager.createCart(products)
     res.send("Carrito creado")
+}*/
+
+//Creo carrito mediante método POST
+export const createCartHandler = async (req, res) => {
+    const products = req.body
+    let result = await cartManager.createOneCart(products)
+    res.send({ status: "success", payload: result });
 }
 
 //Consulta de carrito
@@ -60,7 +67,7 @@ export const updateCartHandler =
     async (req, res) => {
         const newProducts = req.body
         const id = req.params.id;
-        const message = await cartManager.putCart(id, newProducts)
+        const message = await cartManager.updateCart(id, newProducts)
         res.send(message)
     }
 

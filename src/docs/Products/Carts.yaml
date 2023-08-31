@@ -1,32 +1,9 @@
 paths:
-  /cart:
-    post:
-    tags:
-      - Carts
-    summary: Creates a new Cart to DB
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#components/requestBodies/CreateCartPayload"
-    responses:
-      "200":
-        description: Cart created successfully
-        content:
-          application/json:
-            schema:
-              $ref: "#components/schemas/NewCartResponse"
-      "400":
-        description: Wrong params
-      "500":
-        description: Internal Server Error
-
   /cart/{cartId}:
     get:
       tags:
         - Carts
-      summary: Gets a single Cart by its id
+      summary: Get a single Cart by its id
       parameters:
         - name: cartId
           in: path
@@ -45,36 +22,7 @@ paths:
           description: Cart with given cartId Not Found
         "500":
           description: Internal server error
-    put:
-      tags:
-        - Carts
-      summary: Updates a single Cart for a given cartId
-      parameters:
-        - name: cartId
-          in: path
-          required: true
-          description: Cart id to fetch
-          schema:
-            $type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#components/requestBodies/UpdateCartPayload"
-      responses:
-        "200":
-          description: Updated Cart with a given cartId
-          content:
-            application/json:
-              schema:
-                $ref: "#components/schemas/CartResponse"
-        "400":
-          description: Invalid body format.
-        "404":
-          description: User with given cartId Not Found
-        "500":
-          description: Internal Server Error
+
     delete:
       tags:
         - Carts
@@ -94,7 +42,7 @@ paths:
         "500":
           description: Internal server error
 
-  cart/{cartId}/product/{productId}:
+  /cart/{cartId}/product/{productId}:
     post:
       tags:
         - Carts
@@ -152,7 +100,7 @@ paths:
     put:
       tags:
         - Carts
-      summary: Delete product in Cart in the DB
+      summary: Update product in Cart in the DB
       parameters:
         - name: cartId
           in: path

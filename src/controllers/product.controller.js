@@ -5,6 +5,7 @@ import errorTypes from "../services/errors/errorTypes.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 import { sessionModel } from "../persistencia/models/Sessions.js";
 import { userModel } from "../persistencia/models/Users.js";
+import { productMongo } from "../persistencia/DAOs/productMongo.js";
 
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
@@ -39,7 +40,7 @@ export const productsFilterHandler = async (req, res, next) => {
             hasPrevPage: hasPrevPage,
             hasNextPage: hasNextPage
         }
-        res.send(response)
+        res.send(response);
     }
     catch (error) {
         next(error)
@@ -75,15 +76,45 @@ export const productsViewHandlerUser = async (req, res, next) => {
 //Manejo búsqueda por ID que exporto a la ruta
 export const getProductByIdHandler = async (req, res) => {
     const product = await productManager.getProductById(req.params.id)
-    res.render('product', {
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        code: product.code,
-        stock: product.stock
-
-    })
+    console.log(product)
+    res.send({ status: "success", payload: product });
+    /* res.render('product', {
+         title: product.title,
+         description: product.description,
+         price: product.price,
+         code: product.code,
+         stock: product.stock
+ 
+     })*/
 }
+
+//Manejo búsqueda por ID que exporto a la ruta
+export const getProductsHandler = async (req, res) => {
+    const products = await productManager.getProducts()
+    //const products = await productModel.find()
+    //const prod = JSON.stringify(products)
+    //res.render('products', { products })
+    res.send({ status: "success", payload: products });
+}
+
+
+
+
+
+
+/*export const getProductsHandler = async (req, res) => {
+    try {
+        const product = await productModel.find(); 
+        // Obtener una lista de productos
+        //console.log(product)
+        res.render('products', { product }
+       )
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al obtener los productos');
+    }
+};*/
+
 
 //Manejo función que agrega producto y exporto a la ruta
 export const addProductHandler = async (req, res, next) => {
@@ -104,6 +135,7 @@ export const addProductHandler = async (req, res, next) => {
         const userEmail = userDatos.email;
         const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, owner: userEmail })
         res.send(prodNew)
+        //res.send({ status: "success", payload: prodNew });
     }
     catch (error) {
         next(error)
