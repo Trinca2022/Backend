@@ -49,8 +49,8 @@ export class ProductManager {
             else {
                 prods.push(product)
             }
-            await productMongo.createOne(prods)
-            return "Producto creado"
+            const prodNew = await productMongo.createOne(prods)
+            return prodNew
         }
         catch (error) {
             console.log(error)
@@ -66,15 +66,14 @@ export class ProductManager {
         else return "Producto no encontrado"
     }
 
-    /*//Método getProductBy --> busca un producto por alguna prop en mongodb
-    async getProductBy(params) {
-        const productFound = await productMongo.findOne(params)
-        if (productFound) {
-            return productFound
+    //Método getProductById --> busca un producto por su ID mongodb
+    async getProducts() {
+        const productsFound = await productMongo.findAll()
+        if (productsFound) {
+            return productsFound
         }
         else return "Producto no encontrado"
-    }*/
-
+    }
 
     //Método updateProduct --> actualiza campo de un producto con un ID existente
     async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {

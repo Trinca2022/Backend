@@ -1,13 +1,13 @@
 import { productModel } from "../../src/persistencia/models/Products.js";
 import { productMongo } from "../../src/persistencia/DAOs/productMongo.js";
 import mongoose from "mongoose";
-import config from "../../src/config/config.js";
+import 'dotenv/config.js'
 
 
 import chai from "chai";
 const expect = chai.expect;
 
-mongoose.connect(config.URL_MONGODB_ATLAS)
+mongoose.connect(process.env.URL_MONGODB_ATLAS_TEST)
 
 
 describe("Pruebas de productos con chai", async function () {

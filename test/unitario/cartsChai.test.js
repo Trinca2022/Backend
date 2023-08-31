@@ -1,13 +1,13 @@
 import { cartModel } from "../../src/persistencia/models/Cart.js";
 import { CartManager } from "../../src/services/cartManager.js";
 import mongoose from "mongoose";
-import config from "../../src/config/config.js";
+import 'dotenv/config.js'
 
 
 import chai from "chai";
 const expect = chai.expect;
 
-mongoose.connect(config.URL_MONGODB_ATLAS)
+mongoose.connect(process.env.URL_MONGODB_ATLAS_TEST)
 
 
 describe("Pruebas de carritos con chai", async function () {

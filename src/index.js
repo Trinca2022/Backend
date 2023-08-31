@@ -76,6 +76,7 @@ app.engine('handlebars', engine())//Para trabajar con handlebars
 app.set('view engine', 'handlebars')//Vistas de handlebars
 app.set('views', path.resolve(__dirname, './views'))//Ubicación de las vistas
 
+
 //Configuro middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -92,7 +93,7 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: config.URL_MONGODB_ATLAS,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-        ttl: 20
+        ttl: 1000
     }),
     secret: config.SESSION_SECRET,
     resave: true,
@@ -261,6 +262,7 @@ app.use(passport.session())
 
 //Configuro rutas
 app.use('/product', productRouter)
+app.use('/products', productRouter)
 app.use('/cart', cartRouter)
 app.use('/cart', express.static(__dirname + '/public/cart'))
 app.use('/chat', chatRouter)

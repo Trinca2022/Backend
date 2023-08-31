@@ -22,8 +22,8 @@ export class UserManager {
             else {
                 users.push(user)
             }
-            await userModel.create(users)
-            return "Usuario creado"
+            const newUser = await userModel.create(users)
+            return newUser
         }
         catch (error) {
             logger.warning(error.message, "Usuario ya existe")
