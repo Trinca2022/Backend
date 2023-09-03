@@ -29,6 +29,7 @@ import { addLogger } from './utils/logger.js'
 import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
+import { getCartByIdHandler } from './controllers/cart.controller.js'
 
 //Utilizo los manager
 const productManager = new ProductManager()
@@ -107,15 +108,15 @@ app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(spec))
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
     //Leo los productos/mensajes de mongodb
-    const products = await productModel.find()
+    //const products = await productModel.find()
+    const products = await productManager.getProducts()
     const chats = await chatManager.getMessages()
+
     //Leo info del usuario logueado desde la colección sessions de mongodb
     const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
     if (latestSession) {
         const data = JSON.parse(latestSession.session);
         const userDatos = data.user;
-
-
 
         //Emito el array con todos los productos/mensajes/sesiones
         socket.emit("allProducts", products)
@@ -124,22 +125,8 @@ io.on('connection', async (socket) => {
         socket.emit("userName", userDatos)
         socket.emit("idCart", userDatos)
 
-        /*socket.on("getCart", async (args, callback) => {
-                const cart = await cartManager.getCartById(userDatos.id_cart)
-                const idProdsinCart = cart.products.map(prod => prod.id_prod)
-                const prodsInCart = await productMongo.findByIds(idProdsinCart)
-                callback({ cart, prodsInCart })
-                console.log(cart, prodsInCart)
-            })*/
 
 
-        /*socket.on("getCart", async (args, callback) => {
-            const cart = await cartManager.getCartById(userDatos.id_cart)
-            const idProdsinCart = cart.products.map(prod => prod.id_prod)
-            const prodsInCart = await productMongo.findByIds(idProdsinCart)
-            callback({ cart, prodsInCart })
-            console.log(cart, prodsInCart)
-        })*/
 
 
 
@@ -155,6 +142,7 @@ io.on('connection', async (socket) => {
             const products = await productMongo.findAll()
             io.emit("allProducts", products)
         })
+
         //Recibo los campos cargados en form y los guardo en chats
         socket.on("newChat", async (chat) => {
             console.log(chat)
@@ -187,6 +175,30 @@ io.on('connection', async (socket) => {
             if (userSessionRol === "Premium") {
                 socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
             }
+        })
+
+        //AGREGAR PRODUCTO AL CARRITO
+        socket.on("addProduct", async (prod) => {
+            const { _id } = prod
+            const id = userDatos.id_cart
+            //Busco el rol del usuario actual
+            const userSessionRol = userDatos.rol;
+            //Busco el email del owner en la info del producto
+            const product = await productManager.getProductById(_id)
+            const prodOwnerEmailOrAdmin = product.owner
+            //Busco el rol del usuario que creó el producto
+            const users = await userModel.find()
+            const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
+            const prodOwnerRol = prodOwner.rol
+            //Si el rol de la sesión es distinto al owner del prod: se puede comprar
+            if (userSessionRol !== prodOwnerRol) {
+                await cartManager.addProductInCart(id, { _id })
+                io.emit("prodInCart", _id)
+            }
+            else {
+                socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
+            }
+
         })
 
         //Elimino un producto
@@ -223,30 +235,27 @@ io.on('connection', async (socket) => {
             io.emit("allProducts", products)
         })*/
 
-        //AGREGAR PRODUCTO AL CARRITO
-        socket.on("addProduct", async (prod) => {
-            const { _id } = prod
-            const id = userDatos.id_cart
-            //Busco el rol del usuario actual
-            const userSessionRol = userDatos.rol;
-            //Busco el email del owner en la info del producto
-            const product = await productManager.getProductById(_id)
-            const prodOwnerEmailOrAdmin = product.owner
-            //Busco el rol del usuario que creó el producto
-            const users = await userModel.find()
-            const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
-            const prodOwnerRol = prodOwner.rol
-            //Si el rol de la sesión es distinto al owner del prod: se puede comprar
-            if (userSessionRol !== prodOwnerRol) {
-                await cartManager.addProductInCart(id, { _id })
-                io.emit("prodInCart", _id)
-            }
-            else {
-                socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
-            }
 
-        })
+        //Emito productos del carrito para renderizarlos 
+        //Busco el rol del usuario actual
+        const userSessionRol = userDatos.rol;
+        if (userSessionRol === "Usuario" || userSessionRol === "Premium") {
+            const idCart = userDatos.id_cart
+            const cart = await cartManager.findOneById(idCart)
+            const idProdsInCart = cart.products.map(prod => prod.id_prod)
+            const quantityProdsInCart = cart.products.map(prod => prod.quantity)
+            const idsExtraidos = idProdsInCart.map((idObj) => idObj.toString());
+            const prodsInCart = await productMongo.findByIds(idsExtraidos)
+            const quantityByProductId = {};
+            prodsInCart.forEach((prod, index) => {
+                quantityByProductId[prod._id] = quantityProdsInCart[index];
+            });
+            socket.emit("getProdsInCart", prodsInCart, quantityByProductId)
+        }
+        else if (userSessionRol === "Administrador") { return }
 
+
+        //ACÁ CIERRA TODO EL CÓDIGO!
     }
     else return
 })

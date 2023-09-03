@@ -40,6 +40,8 @@ productForm.addEventListener('submit', (e) => {
 const eliminarProducto = (productId) => {
     socket.emit("deletedProduct", { _id: productId })
 }
+
+
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
     productList.innerHTML = ""
