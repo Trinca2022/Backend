@@ -29,12 +29,15 @@ import { addLogger } from './utils/logger.js'
 import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
-import { getCartByIdHandler } from './controllers/cart.controller.js'
+import { UserManager } from './services/userManager.js'
+
 
 //Utilizo los manager
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
 const cartManager = new CartManager()
+const userManager = new UserManager()
+
 
 //Creo y guardo productos/mensajes en mongodb
 await productManager.createProducts()
@@ -43,14 +46,34 @@ await chatManager.createChats()
 
 //Configuro express
 const app = express()
-const storage = multer.diskStorage({
+
+//Configuro multer
+const documentsStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'src/public/img')
+        cb(null, 'src/public/archivos/documents')
     },
     filename: (req, file, cb) => {
         cb(null, `${file.originalname}`)
     }
 })
+const profilesStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'src/public/archivos/profiles')
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.originalname}`)
+    }
+})
+const productsStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'src/public/archivos/products')
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${file.originalname}`)
+    }
+})
+
+
 
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
 const server = app.listen(config.PORT, () => {
@@ -81,7 +104,9 @@ app.set('views', path.resolve(__dirname, './views'))//Ubicación de las vistas
 //Configuro middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-const upload = (multer({ storage: storage }))
+export const uploadDocuments = (multer({ storage: documentsStorage }))
+export const uploadProfilePic = (multer({ storage: profilesStorage }))
+export const uploadProductPic = (multer({ storage: productsStorage }))
 
 //Configuro logger
 app.use(addLogger)
@@ -161,6 +186,7 @@ io.on('connection', async (socket) => {
                 socket.emit("notGoToCart", "No tienes permisos para acceder a esta ruta");
             }
             if (userSessionRol === "Premium") {
+
                 socket.emit("redirectToCart", "/cart/realtimecart");
             }
         })
@@ -176,6 +202,33 @@ io.on('connection', async (socket) => {
                 socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
             }
         })
+
+        //Cambio de user a premium --> AGREGAR VERIFIC DE STATUS: TRUE
+        socket.on("goToPremium", async () => {
+            //Busco el rol del usuario actual
+            const idUser = userDatos._id
+            const updateRol = await userManager.updateUser(idUser, { rol: "Premium" })
+            console.log("NUEVO ROL", updateRol)
+            socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+
+        })
+
+        //Cambio de premium a user
+        socket.on("goToUsuario", async () => {
+            //Busco el rol del usuario actual
+            const userSessionRol = userDatos.rol;
+            if (userSessionRol === "Administrador") {
+                socket.emit("notGoToUser", "No tienes permisos para acceder a esta ruta")
+            }
+            else if (userSessionRol === "Premium" || userSessionRol === "Usuario") {
+                const idUser = userDatos._id
+                const updateRol = await userManager.updateUser(idUser, { rol: "Usuario" })
+                socket.emit("redirectToUserProds", "/product/realtimeproductsUser")
+            }
+
+        })
+
+
 
         //AGREGAR PRODUCTO AL CARRITO
         socket.on("addProduct", async (prod) => {
@@ -290,10 +343,10 @@ app.use('/mockingproducts', getProductFaker)
 app.use(errorHandler)
 app.use('/loggerTest', loggerRouter)
 
-//IMG
+/*//IMG
 app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
-})
+})*/
 
 
 //Uso HBS para mostrar en home el login

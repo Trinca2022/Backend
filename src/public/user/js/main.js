@@ -11,6 +11,12 @@ const addProdInCart = (productId) => {
     socket.emit("addProduct", { _id: productId })
 }
 
+//Envío evento al back para manejarlo
+const goToPremium = () => {
+    socket.emit("goToPremium")
+}
+
+
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
     productList.innerHTML = ""
@@ -39,6 +45,11 @@ socket.on("userName", userDatos => {
                 <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
                 <hr>
                 `;
+});
+
+//Redirecciono a productos de premium
+socket.on("redirectToPremiumProds", (path) => {
+    window.location.href = path;
 });
 
 

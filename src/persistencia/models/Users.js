@@ -21,6 +21,19 @@ const userSchema = new Schema({ //Defino las propiedades de mi modelo user
     id_cart: {
         type: Schema.Types.ObjectId,
         ref: "carts",
+    },
+    documents: {
+        type: [
+            {
+                name: String,
+                reference: String
+            }
+        ]
+    },
+    last_connection: String,
+    status: {
+        type: Boolean,
+        default: false
     }
 })
 

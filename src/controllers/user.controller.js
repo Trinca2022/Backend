@@ -10,6 +10,8 @@ import { logger } from "../utils/logger.js";
 import { transporter } from "../utils/nodemailer.js";
 import { compareData } from "../utils/bcrypt.js";
 import crypto from 'crypto'
+import { uploadDocuments, uploadProductPic, uploadProfilePic } from "../index.js";
+import multer from "multer";
 
 
 const userManager = new UserManager()
@@ -199,7 +201,64 @@ export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
     }
 }
 
+//VISTA carga de archivos
+export const uploadFileViewHandler = (req, res) => {
+    res.render('register/uploadFile')
+}
 
 
+/*Identificación, Comprobante de domicilio, Comprobante de estado de cuenta-->DOCS
+--> se guardan en la carpeta de docs pero hay un campo para cada uno
+diferentes archivos-->diferentes carpetas
+
+*/
+//Carga de archivos
+export const uploadFileHandler = async (req, res, next) => {
+    try {
+        // Utilizamos el middleware de Multer para manejar la carga de archivos de documentos
+        uploadDocuments.array('document')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                // Ocurrió otro tipo de error
+                console.error('Error desconocido:', err);
+                res.status(500).send('Ocurrió un error desconocido');
+            }
+        })
+        /*
+                // Utilizamos el middleware de Multer para manejar la carga de la foto de perfil
+                uploadProfilePic.single('document1')(req, res, function (err) {
+                    if (err instanceof multer.MulterError) {
+                        // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
+                        console.error('Error de Multer:', err.message);
+                        res.status(400).send('Error de Multer: ' + err.message);
+                    } else if (err) {
+                        // Ocurrió otro tipo de error
+                        console.error('Error desconocido:', err);
+                        res.status(500).send('Ocurrió un error desconocido');
+                    }
+                });
+        
+                // Utilizamos el middleware de Multer para manejar la carga de la foto de producto
+                uploadProductPic.single('document2')(req, res, function (err) {
+                    if (err instanceof multer.MulterError) {
+                        // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
+                        console.error('Error de Multer:', err.message);
+                        res.status(400).send('Error de Multer: ' + err.message);
+                    } else if (err) {
+                        // Ocurrió otro tipo de error
+                        console.error('Error desconocido:', err);
+                        res.status(500).send('Ocurrió un error desconocido');
+                    }
+                });
+        */
 
 
+    } catch (error) {
+        next(error)
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+}

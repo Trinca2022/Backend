@@ -53,25 +53,26 @@ export class UserManager {
         edad,
         rol,
         password,
-        id_cart }) {
+        id_cart,
+        status }) {
         try {
             const updatedUser = await userModel.findOneAndUpdate(
                 { "_id": id }, {
                 $set: {
                     "nombre": nombre,
                     "apellido": apellido,
-
                     "edad": edad,
                     "rol": rol,
                     "password": password,
-                    "id_cart": id_cart
+                    "id_cart": id_cart,
+                    "status": status
                 }
             },
                 { new: true } // Devuelve el documento actualizado
             );
 
             if (updatedUser) {
-                return `El usuario con ID ${updatedUser._id} se ha actualizado correctamente.`;
+                return `El usuario con ID ${updatedUser._id} se ha actualizado correctamente. Nuevos datos de usuario ${updatedUser}`;
             } else {
                 return 'Usuario no encontrado.';
             }
