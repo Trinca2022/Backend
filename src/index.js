@@ -73,6 +73,13 @@ const productsStorage = multer.diskStorage({
     }
 })
 
+//Configuro middleware
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+export const uploadDocuments = (multer({ storage: documentsStorage }))
+export const uploadProfilePic = (multer({ storage: profilesStorage }))
+export const uploadProductPic = (multer({ storage: productsStorage }))
+
 
 
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
@@ -101,12 +108,7 @@ app.set('view engine', 'handlebars')//Vistas de handlebars
 app.set('views', path.resolve(__dirname, './views'))//Ubicación de las vistas
 
 
-//Configuro middleware
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-export const uploadDocuments = (multer({ storage: documentsStorage }))
-export const uploadProfilePic = (multer({ storage: profilesStorage }))
-export const uploadProductPic = (multer({ storage: productsStorage }))
+
 
 //Configuro logger
 app.use(addLogger)

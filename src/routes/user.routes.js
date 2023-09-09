@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerHandler, registerPasswordRecoveryHandler, registerPasswordRecoveryNEWHandler, registerViewHandler, registerViewPasswordRecoveryHandler, registerViewPasswordRecoveryIDHandler, uploadFileHandler, uploadFileViewHandler } from "../controllers/user.controller.js";
+import { registerHandler, registerPasswordRecoveryHandler, registerPasswordRecoveryNEWHandler, registerViewHandler, registerViewPasswordRecoveryHandler, registerViewPasswordRecoveryIDHandler, uploadFileHandler, uploadFileViewHandler, uploadProductPicHandler, uploadProfilePicHandler } from "../controllers/user.controller.js";
 
 const userRouter = Router()
 
@@ -14,6 +14,12 @@ userRouter.get('/:id/documents', uploadFileViewHandler)
 
 //Ruta de carga de documentos de usuario
 userRouter.post('/:id/documents', uploadFileHandler)
+
+//Ruta de carga de documentos de usuario
+userRouter.post('/:id/profilePics', uploadProfilePicHandler)
+
+//Ruta de carga de documentos de usuario
+userRouter.post('/:id/productPics', uploadProductPicHandler)
 
 //PARA RESTABLECER CONTRSEÑA:
 

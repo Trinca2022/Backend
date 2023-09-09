@@ -221,13 +221,58 @@ export const uploadFileHandler = async (req, res, next) => {
                 // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
                 console.error('Error de Multer:', err.message);
                 res.status(400).send('Error de Multer: ' + err.message);
-            } else if (err) {
-                // Ocurrió otro tipo de error
-                console.error('Error desconocido:', err);
-                res.status(500).send('Ocurrió un error desconocido');
             }
+            else res.send("Carga exitosa de documento")
         })
-        /*
+    } catch (error) {
+        next(error)
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+}
+
+//PROBAR ESTO PERO CON LA MISMA RUTA DOCS 
+
+//Carga de archivos
+export const uploadProfilePicHandler = async (req, res, next) => {
+    try {
+        // Utilizamos el middleware de Multer para manejar la carga de archivos de documentos
+        uploadProfilePic.single('document1')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            }
+            else res.send("Carga exitosa de foto de perfil")
+        })
+    } catch (error) {
+        next(error)
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+}
+
+//Carga de archivos
+export const uploadProductPicHandler = async (req, res, next) => {
+    try {
+        // Utilizamos el middleware de Multer para manejar la carga de archivos de documentos
+        uploadProductPic.single('document2')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            }
+            else res.send("Carga exitosa de foto de producto")
+        })
+    } catch (error) {
+        next(error)
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+}
+
+
+/*
                 // Utilizamos el middleware de Multer para manejar la carga de la foto de perfil
                 uploadProfilePic.single('document1')(req, res, function (err) {
                     if (err instanceof multer.MulterError) {
@@ -255,10 +300,3 @@ export const uploadFileHandler = async (req, res, next) => {
                 });
         */
 
-
-    } catch (error) {
-        next(error)
-        console.error('Error en la carga de los archivos:', error);
-        res.status(500).send('Ocurrió un error en la carga de los archivos');
-    }
-}
