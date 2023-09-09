@@ -132,39 +132,6 @@ export const registerHandler = async (req, res, next) => {
 }
 
 
-/*
-//Mailer para enviar a recuperar contresña
-export const registerPasswordRecoveryHandler = async (req, res, next) => {
-    try {
-        const users = await userModel.find()
-        const { email } = req.body;
-        const user = users.find(user => user.email === email)
-        const userID = user._id.toString()
-
-        if (!user) {
-            throw createError(
-                {
-                    name: "Error de recuperación de contraseña",
-                    cause: generateUserPassErrorInfo({ email }),
-                    message: "Mail inexistente",
-                    code: errorTypes.INVALID_TYPES_ERROR
-                })
-        }
-        await transporter.sendMail({
-            to: email,
-            subject: 'Restablecer contraseña',
-            text: `LINK: http://localhost:4000/register/passwordRecovery/${userID}`
-        })
-        res.redirect('/sessions/login')
-    }
-    catch (error) {
-        next(error)
-        logger.error(error.message)
-    }
-}
-*/
-
-
 //Manejo de generación de nueva pass que mando a la ruta
 export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
     try {

@@ -54,7 +54,8 @@ export class UserManager {
         rol,
         password,
         id_cart,
-        status }) {
+        status,
+        last_connection }) {
         try {
             const updatedUser = await userModel.findOneAndUpdate(
                 { "_id": id }, {
@@ -65,7 +66,8 @@ export class UserManager {
                     "rol": rol,
                     "password": password,
                     "id_cart": id_cart,
-                    "status": status
+                    "status": status,
+                    "last_connection": last_connection
                 }
             },
                 { new: true } // Devuelve el documento actualizado

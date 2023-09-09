@@ -30,7 +30,10 @@ const userSchema = new Schema({ //Defino las propiedades de mi modelo user
             }
         ]
     },
-    last_connection: String,
+    last_connection: {
+        type: String,
+        default: ""
+    },
     status: {
         type: Boolean,
         default: false
