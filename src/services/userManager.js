@@ -1,9 +1,8 @@
-import { cartModel } from "../persistencia/models/Cart.js"
 import { userModel } from "../persistencia/models/Users.js"
-import { hashData } from "../utils/bcrypt.js";
 import { logger } from "../utils/logger.js";
-import createError from "../services/errors/customError.js";
-import errorTypes from "../services/errors/errorTypes.js";
+import { SessionManager } from "./sessionManager.js";
+
+const sessionManager = new SessionManager()
 
 export class UserManager {
     constructor(path) {
@@ -53,25 +52,30 @@ export class UserManager {
         edad,
         rol,
         password,
-        id_cart }) {
+        id_cart,
+        documents,
+        status,
+        last_connection }) {
         try {
             const updatedUser = await userModel.findOneAndUpdate(
                 { "_id": id }, {
                 $set: {
                     "nombre": nombre,
                     "apellido": apellido,
-
                     "edad": edad,
                     "rol": rol,
                     "password": password,
-                    "id_cart": id_cart
+                    "id_cart": id_cart,
+                    "documents": documents,
+                    "status": status,
+                    "last_connection": last_connection
                 }
             },
                 { new: true } // Devuelve el documento actualizado
             );
 
             if (updatedUser) {
-                return `El usuario con ID ${updatedUser._id} se ha actualizado correctamente.`;
+                return updatedUser;
             } else {
                 return 'Usuario no encontrado.';
             }
@@ -80,10 +84,35 @@ export class UserManager {
             return 'Ha ocurrido un error al actualizar el usuario.';
         }
     }
+
+    async userToPremium() {
+        try {
+            const _id = await sessionManager.findIdSession()
+            const userFound = await this.getUserById(_id)
+            const documents = userFound.documents
+            const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
+            const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
+            const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
+            if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
+                const statusUser = userFound.status
+                return statusUser
+                //console.log(`Faltan cargar documentos`);
+            } else {
+                const updatedUser = await this.updateUser(_id, { status: true });
+                const statusUpdatedUser = updatedUser.status
+                return statusUpdatedUser
+            }
+        }
+        catch (error) {
+            console.error('Error:', error);
+            return 'Ha ocurrido un error al actualizar el usuario.';
+
+        }
+
+    }
+
+
+
+
+
 }
-
-
-
-
-
-

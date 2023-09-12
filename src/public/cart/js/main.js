@@ -5,7 +5,8 @@ const socket = io()
 //Obtengo elementos del DOM por el ID
 const userName = document.getElementById("userName")
 const idCart = document.getElementById("idCart")
-const mostrarProds = document.getElementById("mostrarProds")
+//const mostrarProds = document.getElementById("mostrarProds")
+const showProdsInCart = document.getElementById("prodsInCart")
 
 //Envío evento al back para manejarlo
 const goToProds = () => {
@@ -29,39 +30,47 @@ socket.on("idCart", userDatos => {
                 `;
 });
 
-/*socket.on("cartInfo", ({ cart, prodsInCart }) => {
-    idCart.innerHTML = `
-                <h1>ID del carrito: ${cart._id}</h1>
-                <hr>
-                `;
+socket.on("getProdsInCart", (prodsInCart, quantityByProductId) => {
+    showProdsInCart.innerHTML = "";
+    prodsInCart.forEach((prod) => {
+        showProdsInCart.innerHTML += `
+        <div class="card" style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
+        <h3 class="card-title">${prod.title}</h3>
+        <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <p class="card-text">
+            Propietario/a: ${prod.owner}.<br>
+            Código: ${prod.code}.<br>
+            Stock: ${prod.stock}.<br>
+            Descripción: ${prod.description}.<br>
+            El precio es $${prod.price}<br>
+            Cantidad en el carrito: ${quantityByProductId[prod._id] || 0} unidades
+          </p>
+        </div>
+      </div>`;
+    });
+});
+
+
+/*
+socket.on("getProdsInCart", prodsInCart, quantityProdsInCart => {
+    showProdsInCart.innerHTML = ""
+    prodsInCart.forEach(prod => {
+        showProdsInCart.innerHTML += `<div class="card" style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
+        <h3 class="card-title">${prod.title}</h3>
+        <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}"
+        class="card-img-top" alt="...">
+        <div class="card-body">
+        <p class="card-text">Propietario/a: ${prod.owner}.<br>Código: ${prod.code}.<br>
+            Stock: ${prod.stock}.<br>
+            Descripción: ${prod.description}.<br>
+            El precio es $${prod.price} </p>
+            </div>
+            </div>`
+
+    })
 });*/
 
-mostrarProds.addEventListener('click', () => {
-    socket.emit("getCart", undefined, ({ cart, prodsInCart }) => {
-        idCart.innerHTML = `
-                <h1>ID del carrito: ${cart._id}</h1>
-                <hr>
-                `;
-        productList.innerHTML = ""
-        //PARA CADA PRODUCTO EN EL CARRITO BUSCAR LA INFO DEL PRODUCTO EN PRODS IN CART USANDO EL ID DEL PROD EN EL CARRITO
-        products.forEach(prod => {
-            productList.innerHTML += `<div class="card" style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
-                    <h3 class="card-title">${prod.title}</h3>
-                    <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}"
-                    class="card-img-top" alt="...">
-                    <div class="card-body">
-                    <p class="card-text">Código: ${prod.code}.<br>
-                        Stock: ${prod.stock}.<br>
-                        Descripción: ${prod.description}.<br>
-                        El precio es $${prod.price} </p>
-                        <button onClick="eliminarProducto('${prod._id}')">Eliminar producto</button>
-                        </div>
-                        </div>`
-
-        })
-    })
-    console.log("Prueba front")
-})
 
 //Redirecciono a productos de usuario
 socket.on("redirectToUserProds", (path) => {
@@ -72,19 +81,6 @@ socket.on("redirectToUserProds", (path) => {
 socket.on("redirectToPremiumProds", (path) => {
     window.location.href = path;
 });
-
-
-
-
-/*socket.on("connect", () => {
-    socket.emit("getCart", undefined, ({ cart, prodsInCart }) => {
-        idCart.innerHTML = `
-                <h1>ID del carrito: ${cart._id}</h1>
-                <hr>
-                `;
-    })
-    console.log("holaaaa front")
-})*/
 
 
 

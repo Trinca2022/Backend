@@ -77,44 +77,33 @@ export const productsViewHandlerUser = async (req, res, next) => {
 export const getProductByIdHandler = async (req, res) => {
     const product = await productManager.getProductById(req.params.id)
     console.log(product)
-    res.send({ status: "success", payload: product });
-    /* res.render('product', {
-         title: product.title,
-         description: product.description,
-         price: product.price,
-         code: product.code,
-         stock: product.stock
- 
-     })*/
+    //res.send({ status: "success", payload: product });
+    res.render('product', {
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        code: product.code,
+        stock: product.stock
+
+    })
 }
 
 //Manejo búsqueda por ID que exporto a la ruta
 export const getProductsHandler = async (req, res) => {
-    const products = await productManager.getProducts()
-    //const products = await productModel.find()
-    //const prod = JSON.stringify(products)
-    //res.render('products', { products })
-    res.send({ status: "success", payload: products });
-}
-
-
-
-
-
-
-/*export const getProductsHandler = async (req, res) => {
     try {
-        const product = await productModel.find(); 
-        // Obtener una lista de productos
-        //console.log(product)
-        res.render('products', { product }
-       )
-    } catch (error) {
+        //const products = await productManager.getProducts()
+        const products = await productModel.find()
+        //const prod = JSON.stringify(products)
+        res.render('products', { products })
+        //res.send(products);
+        // res.send({ status: "success", payload: products, layout: 'products' });
+    }
+    catch (error) {
         console.error(error);
         res.status(500).send('Error al obtener los productos');
     }
-};*/
 
+}
 
 //Manejo función que agrega producto y exporto a la ruta
 export const addProductHandler = async (req, res, next) => {
@@ -161,40 +150,40 @@ export const updateProductHandler = async (req, res, next) => {
 export const deleteProductHandler = async (req, res, next) => {
     try {
         const id = req.params.id
-        const mensaje = await productManager.deleteProduct(id)
-        res.send(mensaje)
-    }
-    /*//Busco el rol del usuario actual
-    const data = JSON.parse(latestSession.session);
-    const userDatos = data.user;
-    const userRol = userDatos.rol;
-    //Busco el email del owner en la info del producto
-    const product = await productManager.getProductById(_id)
-    const prodOwnerEmail = product.owner
-    //Busco el rol del usuario que creó el producto
-    const users = await userModel.find()
-    const prodOwner = users.find(user => user.email === prodOwnerEmail)
-    const prodOwnerRol = prodOwner.rol
-    //Si el rol de la sesión coincide con la del owner: borro prod
-    //Si la sesión es de Admin: borro prod
-    if (userRol === prodOwnerRol || userRol === "Administrador") {
-        const mensaje = await productManager.deleteProduct(id)
-        res.send(mensaje)
-    }
-    else {
+        //const mensaje = await productManager.deleteProduct(id)
+        // res.send(mensaje)
 
-        const alertScript = `
+        //Busco el rol del usuario actual
+        const data = JSON.parse(latestSession.session);
+        const userDatos = data.user;
+        const userRol = userDatos.rol;
+        //Busco el email del owner en la info del producto
+        const product = await productManager.getProductById(_id)
+        const prodOwnerEmail = product.owner
+        //Busco el rol del usuario que creó el producto
+        const users = await userModel.find()
+        const prodOwner = users.find(user => user.email === prodOwnerEmail)
+        const prodOwnerRol = prodOwner.rol
+        //Si el rol de la sesión coincide con la del owner: borro prod
+        //Si la sesión es de Admin: borro prod
+        if (userRol === prodOwnerRol || userRol === "Administrador") {
+            const mensaje = await productManager.deleteProduct(id)
+            res.send(mensaje)
+        }
+        else {
+
+            const alertScript = `
         <script>
             alert('Sin permiso para eliminar este producto');
             window.location.href = '/realtimeproductsAdmin';
         </script>
     `;
 
-        res.send(alertScript);
+            res.send(alertScript);
+
+        }
 
     }
-
-}*/
     catch (error) {
         next(error)
     }

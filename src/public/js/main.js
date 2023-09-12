@@ -17,6 +17,11 @@ const goToCart = () => {
     socket.emit("goToCart")
 }
 
+//Envío evento al back para manejarlo
+const goToUsuario = () => {
+    socket.emit("goToUsuario")
+}
+
 
 //Cuando se escucha el evento envío información de los prods al servidor
 productForm.addEventListener('submit', (e) => {
@@ -40,6 +45,8 @@ productForm.addEventListener('submit', (e) => {
 const eliminarProducto = (productId) => {
     socket.emit("deletedProduct", { _id: productId })
 }
+
+
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
     productList.innerHTML = ""
@@ -111,7 +118,16 @@ socket.on("redirectToCart", (path) => {
     window.location.href = path;
 });
 
+//Emito en el front alert de error de permiso
+socket.on("notGoToUser", (message) => {
+    alert(message);
+});
 
+
+//Redirecciono a productos de USER
+socket.on("redirectToUserProds", (path) => {
+    window.location.href = path;
+});
 
 
 

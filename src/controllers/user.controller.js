@@ -10,9 +10,13 @@ import { logger } from "../utils/logger.js";
 import { transporter } from "../utils/nodemailer.js";
 import { compareData } from "../utils/bcrypt.js";
 import crypto from 'crypto'
+import { uploadDocuments, uploadProductPic, uploadProfilePic } from "../index.js";
+import multer from "multer";
+import { SessionManager } from "../services/sessionManager.js";
 
 
 const userManager = new UserManager()
+const sessionManager = new SessionManager()
 
 //Manejo de la VISTA de registro que exporto a la ruta
 export const registerViewHandler = (req, res) => {
@@ -110,14 +114,14 @@ export const registerHandler = async (req, res, next) => {
         await ticketModel.create()
         let result = await userManager.createUser({ nombre, apellido, email, edad, password: hashPassword, id_cart: cartUser })
         console.log(result)
-        /* const alertScript = `
+        const alertScript = `
          <script>
              alert('Usuario creado!');
              window.location.href = '/sessions/login';
          </script>
      `;
-         res.send(alertScript);*/
-        res.send({ status: "success", payload: result[0] });
+        res.send(alertScript);
+        // res.send({ status: "success", payload: result[0] });
 
 
 
@@ -128,39 +132,6 @@ export const registerHandler = async (req, res, next) => {
         logger.error(error.message)
     }
 }
-
-
-/*
-//Mailer para enviar a recuperar contresña
-export const registerPasswordRecoveryHandler = async (req, res, next) => {
-    try {
-        const users = await userModel.find()
-        const { email } = req.body;
-        const user = users.find(user => user.email === email)
-        const userID = user._id.toString()
-
-        if (!user) {
-            throw createError(
-                {
-                    name: "Error de recuperación de contraseña",
-                    cause: generateUserPassErrorInfo({ email }),
-                    message: "Mail inexistente",
-                    code: errorTypes.INVALID_TYPES_ERROR
-                })
-        }
-        await transporter.sendMail({
-            to: email,
-            subject: 'Restablecer contraseña',
-            text: `LINK: http://localhost:4000/register/passwordRecovery/${userID}`
-        })
-        res.redirect('/sessions/login')
-    }
-    catch (error) {
-        next(error)
-        logger.error(error.message)
-    }
-}
-*/
 
 
 //Manejo de generación de nueva pass que mando a la ruta
@@ -199,7 +170,142 @@ export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
     }
 }
 
+//VISTA carga de archivos
+export const uploadFileViewHandler = (req, res) => {
+    res.render('register/uploadFile')
+}
 
 
+// Controlador de carga para Identificación
+export const uploadIdentHandler = async (req, res, next) => {
+    try {
+        // Se cargan docs con Multer
+        uploadDocuments.single('identificacion')(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(_id)
+                await userFound.documents.push({
+                    name: 'identificacion.pdf',
+                    reference: '/public/archivos/documents'
+                });
+                userManager.updateUser(_id, { documents: userFound.documents });
+                res.send("Carga exitosa de documento");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
+// Controlador de carga para Comprobante de Domicilio
+export const uploadAdressHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('domicilio')(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(_id)
+                await userFound.documents.push({
+                    name: 'domicilio.pdf',
+                    reference: '/public/archivos/documents'
+                });
+                userManager.updateUser(_id, { documents: userFound.documents });
+                res.send("Carga exitosa de documento");
 
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Comprobante de Estado de Cuenta
+export const uploadAccountHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('estadoCuenta')(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(_id)
+                await userFound.documents.push({
+                    name: 'estadoCuenta.pdf',
+                    reference: '/public/archivos/documents'
+                });
+                userManager.updateUser(_id, { documents: userFound.documents });
+                res.send("Carga exitosa de documento");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Foto de Perfil
+export const uploadProfilePicHandler = async (req, res, next) => {
+    try {
+        uploadProfilePic.single('profilePic')(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                const _id = await sessionManager.findIdSession()
+                console.log("_id", _id)
+                const userFound = await userManager.getUserById(_id)
+
+                await userFound.documents.push({
+                    name: 'profilePic.jpg',
+                    reference: '/public/archivos/profiles'
+                });
+                userManager.updateUser(_id, { documents: userFound.documents });
+                res.send("Carga exitosa de foto de perfil");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Foto de Producto
+export const uploadProductPicHandler = async (req, res, next) => {
+    try {
+        uploadProductPic.single('productPic')(req, res, async function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(_id)
+                await userFound.documents.push({
+                    name: 'productPic.jpg',
+                    reference: '/public/archivos/products'
+                });
+                userManager.updateUser(_id, { documents: userFound.documents });
+                res.send("Carga exitosa de foto de producto");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};

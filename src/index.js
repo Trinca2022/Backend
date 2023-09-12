@@ -29,11 +29,15 @@ import { addLogger } from './utils/logger.js'
 import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
+import { UserManager } from './services/userManager.js'
+
 
 //Utilizo los manager
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
 const cartManager = new CartManager()
+const userManager = new UserManager()
+
 
 //Creo y guardo productos/mensajes en mongodb
 await productManager.createProducts()
@@ -42,14 +46,50 @@ await chatManager.createChats()
 
 //Configuro express
 const app = express()
-const storage = multer.diskStorage({
+
+//Configuro multer
+const documentsStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'src/public/img')
+        cb(null, 'src/public/archivos/documents')
     },
     filename: (req, file, cb) => {
-        cb(null, `${file.originalname}`)
+        let fieldName = file.fieldname;
+        let newFileName = '';
+        if (fieldName === 'identificacion') {
+            newFileName = 'identificacion.pdf';
+        } else if (fieldName === 'domicilio') {
+            newFileName = 'domicilio.pdf';
+        } else if (fieldName === 'estadoCuenta') {
+            newFileName = 'estadoCuenta.pdf';
+        }
+        cb(null, `${newFileName}`);
+    }
+});
+const profilesStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'src/public/archivos/profiles')
+    },
+    filename: (req, file, cb) => {
+        cb(null, "profilePic.jpg")
     }
 })
+const productsStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'src/public/archivos/products')
+    },
+    filename: (req, file, cb) => {
+        cb(null, "productPic.jpg")
+    }
+})
+
+//Configuro middleware
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+export const uploadDocuments = (multer({ storage: documentsStorage }))
+export const uploadProfilePic = (multer({ storage: profilesStorage }))
+export const uploadProductPic = (multer({ storage: productsStorage }))
+
+
 
 //Configuro socket.io --> socket.io necesita saber en qué servidor está conectando
 const server = app.listen(config.PORT, () => {
@@ -77,10 +117,7 @@ app.set('view engine', 'handlebars')//Vistas de handlebars
 app.set('views', path.resolve(__dirname, './views'))//Ubicación de las vistas
 
 
-//Configuro middleware
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-const upload = (multer({ storage: storage }))
+
 
 //Configuro logger
 app.use(addLogger)
@@ -107,15 +144,15 @@ app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(spec))
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
     //Leo los productos/mensajes de mongodb
-    const products = await productModel.find()
+    //const products = await productModel.find()
+    const products = await productManager.getProducts()
     const chats = await chatManager.getMessages()
+
     //Leo info del usuario logueado desde la colección sessions de mongodb
     const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
     if (latestSession) {
         const data = JSON.parse(latestSession.session);
         const userDatos = data.user;
-
-
 
         //Emito el array con todos los productos/mensajes/sesiones
         socket.emit("allProducts", products)
@@ -123,25 +160,6 @@ io.on('connection', async (socket) => {
         socket.emit("adminName", userDatos)
         socket.emit("userName", userDatos)
         socket.emit("idCart", userDatos)
-
-        /*socket.on("getCart", async (args, callback) => {
-                const cart = await cartManager.getCartById(userDatos.id_cart)
-                const idProdsinCart = cart.products.map(prod => prod.id_prod)
-                const prodsInCart = await productMongo.findByIds(idProdsinCart)
-                callback({ cart, prodsInCart })
-                console.log(cart, prodsInCart)
-            })*/
-
-
-        /*socket.on("getCart", async (args, callback) => {
-            const cart = await cartManager.getCartById(userDatos.id_cart)
-            const idProdsinCart = cart.products.map(prod => prod.id_prod)
-            const prodsInCart = await productMongo.findByIds(idProdsinCart)
-            callback({ cart, prodsInCart })
-            console.log(cart, prodsInCart)
-        })*/
-
-
 
         //Recibo los campos cargados en form y los guardo en array products
         socket.on("newProduct", async (prod) => {
@@ -155,6 +173,7 @@ io.on('connection', async (socket) => {
             const products = await productMongo.findAll()
             io.emit("allProducts", products)
         })
+
         //Recibo los campos cargados en form y los guardo en chats
         socket.on("newChat", async (chat) => {
             console.log(chat)
@@ -173,6 +192,7 @@ io.on('connection', async (socket) => {
                 socket.emit("notGoToCart", "No tienes permisos para acceder a esta ruta");
             }
             if (userSessionRol === "Premium") {
+
                 socket.emit("redirectToCart", "/cart/realtimecart");
             }
         })
@@ -186,6 +206,60 @@ io.on('connection', async (socket) => {
             }
             if (userSessionRol === "Premium") {
                 socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+            }
+        })
+
+        //Cambio de user a premium --> VERIFICACIÓN DE STATUS: TRUE
+        socket.on("goToPremium", async () => {
+            //Verifico que estén los docs cargados
+            const statusUpdatedUser = await userManager.userToPremium()
+            console.log("STATUS INDEX", statusUpdatedUser)
+            if (statusUpdatedUser === true) {
+                //Busco el rol del usuario actual
+                const idUser = userDatos._id
+                const updateRol = await userManager.updateUser(idUser, { rol: "Premium" })
+                console.log("NUEVO ROL", updateRol)
+                socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+            }
+            if (statusUpdatedUser === false) { socket.emit("notGoToPremium", "No tienes permisos: faltan subir archivos para cambiar a Premium") }
+
+        })
+
+        //Cambio de premium a user
+        socket.on("goToUsuario", async () => {
+            //Busco el rol del usuario actual
+            const userSessionRol = userDatos.rol;
+            if (userSessionRol === "Administrador") {
+                socket.emit("notGoToUser", "No tienes permisos para acceder a esta ruta")
+            }
+            else if (userSessionRol === "Premium" || userSessionRol === "Usuario") {
+                const idUser = userDatos._id
+                const updateRol = await userManager.updateUser(idUser, { rol: "Usuario" })
+                socket.emit("redirectToUserProds", "/product/realtimeproductsUser")
+            }
+
+        })
+
+        //AGREGAR PRODUCTO AL CARRITO
+        socket.on("addProduct", async (prod) => {
+            const { _id } = prod
+            const id = userDatos.id_cart
+            //Busco el rol del usuario actual
+            const userSessionRol = userDatos.rol;
+            //Busco el email del owner en la info del producto
+            const product = await productManager.getProductById(_id)
+            const prodOwnerEmailOrAdmin = product.owner
+            //Busco el rol del usuario que creó el producto
+            const users = await userModel.find()
+            const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
+            const prodOwnerRol = prodOwner.rol
+            //Si el rol de la sesión es distinto al owner del prod: se puede comprar
+            if (userSessionRol !== prodOwnerRol) {
+                await cartManager.addProductInCart(id, { _id })
+                io.emit("prodInCart", _id)
+            }
+            else {
+                socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
             }
         })
 
@@ -223,37 +297,30 @@ io.on('connection', async (socket) => {
             io.emit("allProducts", products)
         })*/
 
-        //AGREGAR PRODUCTO AL CARRITO
-        socket.on("addProduct", async (prod) => {
-            const { _id } = prod
-            const id = userDatos.id_cart
-            //Busco el rol del usuario actual
-            const userSessionRol = userDatos.rol;
-            //Busco el email del owner en la info del producto
-            const product = await productManager.getProductById(_id)
-            const prodOwnerEmailOrAdmin = product.owner
-            //Busco el rol del usuario que creó el producto
-            const users = await userModel.find()
-            const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
-            const prodOwnerRol = prodOwner.rol
-            //Si el rol de la sesión es distinto al owner del prod: se puede comprar
-            if (userSessionRol !== prodOwnerRol) {
-                await cartManager.addProductInCart(id, { _id })
-                io.emit("prodInCart", _id)
-            }
-            else {
-                socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
-            }
 
-        })
+        //Emito productos del carrito para renderizarlos 
+        //Busco el rol del usuario actual
+        const userSessionRol = userDatos.rol;
+        if (userSessionRol === "Usuario" || userSessionRol === "Premium") {
+            const idCart = userDatos.id_cart
+            const cart = await cartManager.findOneById(idCart)
+            const idProdsInCart = cart.products.map(prod => prod.id_prod)
+            const quantityProdsInCart = cart.products.map(prod => prod.quantity)
+            const idsExtraidos = idProdsInCart.map((idObj) => idObj.toString());
+            const prodsInCart = await productMongo.findByIds(idsExtraidos)
+            const quantityByProductId = {};
+            prodsInCart.forEach((prod, index) => {
+                quantityByProductId[prod._id] = quantityProdsInCart[index];
+            });
+            socket.emit("getProdsInCart", prodsInCart, quantityByProductId)
+        }
+        else if (userSessionRol === "Administrador") { return }
 
+
+        //ACÁ CIERRA TODO EL CÓDIGO!
     }
     else return
 })
-
-
-
-
 
 
 //Implemento Passport
@@ -269,27 +336,17 @@ app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
 app.use('/product', express.static(__dirname + '/public/user'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
-
 app.use('/sessions', sessionRouter)
-
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
-
 //ERRORES
 app.use(errorHandler)
 app.use('/loggerTest', loggerRouter)
-
-//IMG
-app.post('/upload', upload.single('product'), (req, res) => {
-    res.send("Imagen subida")
-})
-
-
 //Uso HBS para mostrar en home el login
-app.get('/', async (req, res) => {
+/*app.get('/', async (req, res) => {
     const products = await productModel.find()
     res.render('sessions/login',
         { style: 'styles.css' })
-})
+})*/
