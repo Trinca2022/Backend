@@ -16,6 +16,11 @@ const goToPremium = () => {
     socket.emit("goToPremium")
 }
 
+//Emito en el front alert de error de permiso
+socket.on("notGoToPremium", (message) => {
+    alert(message);
+});
+
 
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {

@@ -56,11 +56,11 @@ const documentsStorage = multer.diskStorage({
         let fieldName = file.fieldname;
         let newFileName = '';
         if (fieldName === 'identificacion') {
-            newFileName = 'identificacion.jpg';
+            newFileName = 'identificacion.pdf';
         } else if (fieldName === 'domicilio') {
-            newFileName = 'domicilio.jpg';
+            newFileName = 'domicilio.pdf';
         } else if (fieldName === 'estadoCuenta') {
-            newFileName = 'estadoCuenta.jpg';
+            newFileName = 'estadoCuenta.pdf';
         }
         cb(null, `${newFileName}`);
     }
@@ -70,7 +70,6 @@ const profilesStorage = multer.diskStorage({
         cb(null, 'src/public/archivos/profiles')
     },
     filename: (req, file, cb) => {
-        //cb(null, `${file.originalname}`)
         cb(null, "profilePic.jpg")
     }
 })
@@ -210,13 +209,19 @@ io.on('connection', async (socket) => {
             }
         })
 
-        //Cambio de user a premium --> AGREGAR VERIFIC DE STATUS: TRUE
+        //Cambio de user a premium --> VERIFICACIÓN DE STATUS: TRUE
         socket.on("goToPremium", async () => {
-            //Busco el rol del usuario actual
-            const idUser = userDatos._id
-            const updateRol = await userManager.updateUser(idUser, { rol: "Premium" })
-            console.log("NUEVO ROL", updateRol)
-            socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+            //Verifico que estén los docs cargados
+            const statusUpdatedUser = await userManager.userToPremium()
+            console.log("STATUS INDEX", statusUpdatedUser)
+            if (statusUpdatedUser === true) {
+                //Busco el rol del usuario actual
+                const idUser = userDatos._id
+                const updateRol = await userManager.updateUser(idUser, { rol: "Premium" })
+                console.log("NUEVO ROL", updateRol)
+                socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+            }
+            if (statusUpdatedUser === false) { socket.emit("notGoToPremium", "No tienes permisos: faltan subir archivos para cambiar a Premium") }
 
         })
 
