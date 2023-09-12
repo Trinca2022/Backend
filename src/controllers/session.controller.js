@@ -28,6 +28,7 @@ export const loginPassportHandler = async (req, res) => {
             const fechaHoraActual = new Date();
             const fechaHoraFormateada = fechaHoraActual.toLocaleString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
+            console.log("DATE LOGIN", fechaHoraFormateada)
             res.redirect('/product/realtimeproductsAdmin')
         }
         if (rol === "Premium") {
@@ -35,6 +36,7 @@ export const loginPassportHandler = async (req, res) => {
             const fechaHoraActual = new Date();
             const fechaHoraFormateada = fechaHoraActual.toLocaleString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
+            console.log("DATE LOGIN", fechaHoraFormateada)
             res.redirect('/product/realtimeproductsAdmin')
         }
         if (rol === "Usuario") {

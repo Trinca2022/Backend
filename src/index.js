@@ -53,15 +53,25 @@ const documentsStorage = multer.diskStorage({
         cb(null, 'src/public/archivos/documents')
     },
     filename: (req, file, cb) => {
-        cb(null, `${file.originalname}`)
+        let fieldName = file.fieldname;
+        let newFileName = '';
+        if (fieldName === 'identificacion') {
+            newFileName = 'identificacion.jpg';
+        } else if (fieldName === 'domicilio') {
+            newFileName = 'domicilio.jpg';
+        } else if (fieldName === 'estadoCuenta') {
+            newFileName = 'estadoCuenta.jpg';
+        }
+        cb(null, `${newFileName}`);
     }
-})
+});
 const profilesStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'src/public/archivos/profiles')
     },
     filename: (req, file, cb) => {
-        cb(null, `${file.originalname}`)
+        //cb(null, `${file.originalname}`)
+        cb(null, "profilePic.jpg")
     }
 })
 const productsStorage = multer.diskStorage({
@@ -69,7 +79,7 @@ const productsStorage = multer.diskStorage({
         cb(null, 'src/public/archivos/products')
     },
     filename: (req, file, cb) => {
-        cb(null, `${file.originalname}`)
+        cb(null, "productPic.jpg")
     }
 })
 
@@ -152,11 +162,6 @@ io.on('connection', async (socket) => {
         socket.emit("userName", userDatos)
         socket.emit("idCart", userDatos)
 
-
-
-
-
-
         //Recibo los campos cargados en form y los guardo en array products
         socket.on("newProduct", async (prod) => {
             console.log(prod)
@@ -230,8 +235,6 @@ io.on('connection', async (socket) => {
 
         })
 
-
-
         //AGREGAR PRODUCTO AL CARRITO
         socket.on("addProduct", async (prod) => {
             const { _id } = prod
@@ -253,7 +256,6 @@ io.on('connection', async (socket) => {
             else {
                 socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
             }
-
         })
 
         //Elimino un producto
@@ -316,10 +318,6 @@ io.on('connection', async (socket) => {
 })
 
 
-
-
-
-
 //Implemento Passport
 app.use(passport.initialize());
 app.use(passport.session())
@@ -333,27 +331,17 @@ app.use('/chat', chatRouter)
 app.use('/product', express.static(__dirname + '/public'))
 app.use('/product', express.static(__dirname + '/public/user'))
 app.use('/chat', express.static(__dirname + '/public/chat'))
-
 app.use('/sessions', sessionRouter)
-
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
-
 //ERRORES
 app.use(errorHandler)
 app.use('/loggerTest', loggerRouter)
-
-/*//IMG
-app.post('/upload', upload.single('product'), (req, res) => {
-    res.send("Imagen subida")
-})*/
-
-
 //Uso HBS para mostrar en home el login
-app.get('/', async (req, res) => {
+/*app.get('/', async (req, res) => {
     const products = await productModel.find()
     res.render('sessions/login',
         { style: 'styles.css' })
-})
+})*/

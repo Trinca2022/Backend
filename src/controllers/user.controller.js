@@ -12,6 +12,7 @@ import { compareData } from "../utils/bcrypt.js";
 import crypto from 'crypto'
 import { uploadDocuments, uploadProductPic, uploadProfilePic } from "../index.js";
 import multer from "multer";
+import { sessionModel } from "../persistencia/models/Sessions.js";
 
 
 const userManager = new UserManager()
@@ -174,37 +175,224 @@ export const uploadFileViewHandler = (req, res) => {
 }
 
 
-/*Identificación, Comprobante de domicilio, Comprobante de estado de cuenta-->DOCS
---> se guardan en la carpeta de docs pero hay un campo para cada uno
-diferentes archivos-->diferentes carpetas
-
-*/
-//Carga de archivos
-export const uploadFileHandler = async (req, res, next) => {
+// Controlador de carga para Identificación
+export const uploadIdentHandler = async (req, res, next) => {
     try {
-        // Utilizamos el middleware de Multer para manejar la carga de archivos de documentos
-        uploadDocuments.array('document')(req, res, function (err) {
+        // Se cargan docs con Multer
+        uploadDocuments.single('identificacion')(req, res, function (err) {
             if (err instanceof multer.MulterError) {
-                // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
                 console.error('Error de Multer:', err.message);
                 res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                // El archivo se cargó con éxito
+                res.send("Carga exitosa de documento");
             }
-            else res.send("Carga exitosa de documento")
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Comprobante de Domicilio
+export const uploadAdressHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('domicilio')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                res.send("Carga exitosa de documento");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Comprobante de Estado de Cuenta
+export const uploadAccountHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('estadoCuenta')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                res.send("Carga exitosa de documento");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Foto de Perfil
+export const uploadProfilePicHandler = async (req, res, next) => {
+    try {
+        uploadProfilePic.single('profilePic')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                res.send("Carga exitosa de foto de perfil");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Controlador de carga para Foto de Producto
+export const uploadProductPicHandler = async (req, res, next) => {
+    try {
+        uploadProductPic.single('productPic')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                console.error('Error de Multer:', err.message);
+                res.status(400).send('Error de Multer: ' + err.message);
+            } else if (err) {
+                console.error('Error en la carga de los archivos:', err);
+                res.status(500).send('Ocurrió un error en la carga de los archivos');
+            } else {
+                res.send("Carga exitosa de foto de producto");
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
+
+
+/*
+export const uploadIdentHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('identificacion')(req, res, next);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+
+//Carga de archivos
+export const uploadAdressHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('domicilio')(req, res, next);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+
+//Carga de archivos
+export const uploadAccountHandler = async (req, res, next) => {
+    try {
+        uploadDocuments.single('estadoCuenta')(req, res, next);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+
+//Carga de archivos
+export const uploadProfilePicHandler = async (req, res, next) => {
+    try {
+        uploadProfilePic.single('profilePic')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                res.status(400).send('Error de Multer: ' + err.message);
+            }
         })
     } catch (error) {
-        next(error)
-        console.error('Error en la carga de los archivos:', error);
-        res.status(500).send('Ocurrió un error en la carga de los archivos');
+        next(error);
     }
 }
 
-//PROBAR ESTO PERO CON LA MISMA RUTA DOCS 
+//Carga de archivos
+export const uploadProductPicHandler = async (req, res, next) => {
+    try {
+        uploadProductPic.single('productPic')(req, res, function (err) {
+            if (err instanceof multer.MulterError) {
+                res.status(400).send('Error de Multer: ' + err.message);
+            }
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+
+*/
+
+
+
+
+
+
+/*
+//Carga de archivos
+export const uploadIdentHandler = async (req, res, next) => {
+    try {
+        //Se cargan docs con Multer
+        uploadDocuments.single('identificacion')(req, res, next);
+        //Busco el nombre y la ruta del doc
+        
+        res.send("Carga exitosa de documento");
+    }
+    catch (error) {
+        next(error);
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+};
+
+//Carga de archivos
+export const uploadAdressHandler = async (req, res, next) => {
+    try {
+        //Se cargan docs con Multer
+        uploadDocuments.single('domicilio')(req, res, next);
+        //Busco el nombre y la ruta del doc
+        
+        res.send("Carga exitosa de documento");
+    }
+    catch (error) {
+        next(error);
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+};
+
+//Carga de archivos
+export const uploadAccountHandler = async (req, res, next) => {
+    try {
+        //Se cargan docs con Multer
+        uploadDocuments.single('estadoCuenta')(req, res, next);
+        //Busco el nombre y la ruta del doc
+        
+        res.send("Carga exitosa de documento");
+    }
+    catch (error) {
+        next(error);
+        console.error('Error en la carga de los archivos:', error);
+        res.status(500).send('Ocurrió un error en la carga de los archivos');
+    }
+};
 
 //Carga de archivos
 export const uploadProfilePicHandler = async (req, res, next) => {
     try {
         // Utilizamos el middleware de Multer para manejar la carga de archivos de documentos
-        uploadProfilePic.single('document1')(req, res, function (err) {
+        uploadProfilePic.single('profilePic')(req, res, function (err) {
             if (err instanceof multer.MulterError) {
                 // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
                 console.error('Error de Multer:', err.message);
@@ -223,7 +411,7 @@ export const uploadProfilePicHandler = async (req, res, next) => {
 export const uploadProductPicHandler = async (req, res, next) => {
     try {
         // Utilizamos el middleware de Multer para manejar la carga de archivos de documentos
-        uploadProductPic.single('document2')(req, res, function (err) {
+        uploadProductPic.single('productPic')(req, res, function (err) {
             if (err instanceof multer.MulterError) {
                 // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
                 console.error('Error de Multer:', err.message);
@@ -237,33 +425,4 @@ export const uploadProductPicHandler = async (req, res, next) => {
         res.status(500).send('Ocurrió un error en la carga de los archivos');
     }
 }
-
-
-/*
-                // Utilizamos el middleware de Multer para manejar la carga de la foto de perfil
-                uploadProfilePic.single('document1')(req, res, function (err) {
-                    if (err instanceof multer.MulterError) {
-                        // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
-                        console.error('Error de Multer:', err.message);
-                        res.status(400).send('Error de Multer: ' + err.message);
-                    } else if (err) {
-                        // Ocurrió otro tipo de error
-                        console.error('Error desconocido:', err);
-                        res.status(500).send('Ocurrió un error desconocido');
-                    }
-                });
-        
-                // Utilizamos el middleware de Multer para manejar la carga de la foto de producto
-                uploadProductPic.single('document2')(req, res, function (err) {
-                    if (err instanceof multer.MulterError) {
-                        // Ocurrió un error de Multer (por ejemplo, tamaño máximo excedido)
-                        console.error('Error de Multer:', err.message);
-                        res.status(400).send('Error de Multer: ' + err.message);
-                    } else if (err) {
-                        // Ocurrió otro tipo de error
-                        console.error('Error desconocido:', err);
-                        res.status(500).send('Ocurrió un error desconocido');
-                    }
-                });
-        */
-
+*/

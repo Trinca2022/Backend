@@ -54,6 +54,7 @@ export class UserManager {
         rol,
         password,
         id_cart,
+        documents,
         status,
         last_connection }) {
         try {
@@ -66,6 +67,7 @@ export class UserManager {
                     "rol": rol,
                     "password": password,
                     "id_cart": id_cart,
+                    "documents": documents,
                     "status": status,
                     "last_connection": last_connection
                 }
@@ -83,10 +85,34 @@ export class UserManager {
             return 'Ha ocurrido un error al actualizar el usuario.';
         }
     }
+
+    //Método para cargar documentos al usuario
+
+    async addDocument(id) {
+        try {
+            //Busco el nombre y la ruta del doc
+            /* */
+            //Pusheo el doc y actualizo el usuario
+            const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+            if (latestSession) {
+                const data = JSON.parse(latestSession.session);
+                const userDatos = data.user;
+                const _id = userDatos._id;
+                const userFound = await getUserById(_id)
+                /*userFound.documents.push({
+            name: 'Nuevo Documento',
+            reference: 'Referencia del Nuevo Documento'
+            });
+            await userManager.updateUser(_id, { documents: userFound.documents });
+            */
+            }
+        }
+        catch (error) {
+            console.error('Error:', error);
+            return 'Ha ocurrido un error de carga';
+
+
+        }
+
+    }
 }
-
-
-
-
-
-
