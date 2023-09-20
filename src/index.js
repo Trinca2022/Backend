@@ -30,6 +30,7 @@ import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
 import { UserManager } from './services/userManager.js'
+import { SessionManager } from './services/sessionManager.js'
 
 
 //Utilizo los manager
@@ -37,6 +38,7 @@ const productManager = new ProductManager()
 const chatManager = new ChatManager()
 const cartManager = new CartManager()
 const userManager = new UserManager()
+const sessionManager = new SessionManager()
 
 
 //Creo y guardo productos/mensajes en mongodb
@@ -163,7 +165,7 @@ io.on('connection', async (socket) => {
 
         //Recibo los campos cargados en form y los guardo en array products
         socket.on("newProduct", async (prod) => {
-            console.log(prod)
+            //console.log(prod)
             //Desestructuración de las propiedades del objeto prod
             const { title, description, price, thumbnail, code, stock } = prod
             //Ejecuto el método addProduct de productManager y agrega el producto a los productos
@@ -195,6 +197,11 @@ io.on('connection', async (socket) => {
 
                 socket.emit("redirectToCart", "/cart/realtimecart");
             }
+            if (userSessionRol === "Usuario") {
+
+                socket.emit("redirectToCart", "/cart/realtimecart");
+            }
+
         })
 
         //Ir desde el carrito a productos según el rol
@@ -213,12 +220,24 @@ io.on('connection', async (socket) => {
         socket.on("goToPremium", async () => {
             //Verifico que estén los docs cargados
             const statusUpdatedUser = await userManager.userToPremium()
-            console.log("STATUS INDEX", statusUpdatedUser)
+            //console.log("STATUS INDEX", statusUpdatedUser)
             if (statusUpdatedUser === true) {
-                //Busco el rol del usuario actual
+                //Actualizo el rol del usuario actual
                 const idUser = userDatos._id
+                /*   let rolUser = userDatos.rol
+                   rolUser = "Premium"
+                   console.log("Rol sess iNDEX", rolUser)
+                   const newRol = await sessionModel.updateOne(
+                       { _id: idUser },
+                       { $set: { userDatos.rol= rolUser } }
+                   );
+   
+                   console.log("ROL SESS MANAGER", newRol);
+                   // const updateRolSess = await sessionManager.updateRolInSession("Premium")
+   */
                 const updateRol = await userManager.updateUser(idUser, { rol: "Premium" })
-                console.log("NUEVO ROL", updateRol)
+                //console.log("NUEVO ROL", updateRol)
+
                 socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
             }
             if (statusUpdatedUser === false) { socket.emit("notGoToPremium", "No tienes permisos: faltan subir archivos para cambiar a Premium") }

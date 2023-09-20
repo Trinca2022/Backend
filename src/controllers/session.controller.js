@@ -108,7 +108,7 @@ export const logoutHandler = async (req, res) => {
             console.log("DATE LOGOUT", fechaHoraFormateada)
             await req.session.destroy();
             res.redirect('/sessions/login');
-        } else logger.warning(error.message, "Error al buscar en la base de datos")
+        } else res.redirect('/sessions/login');
     } catch (err) {
         res.status(500).render('errors/base', {
             error: err
