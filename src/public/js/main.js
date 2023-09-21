@@ -126,7 +126,9 @@ socket.on("notGoToUser", (message) => {
 
 //Redirecciono a productos de USER
 socket.on("redirectToUserProds", (path) => {
+    console.log("Redirect prod user", path)
     window.location.href = path;
+
 });
 
 

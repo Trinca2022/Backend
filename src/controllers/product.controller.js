@@ -51,11 +51,15 @@ export const productsFilterHandler = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
+        const cartID = req.session.user.id_cart
+        const isPremium = req.session.user.rol === "Premium"
+
         const products = await productModel.find()
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsAdmin', { products: products, layout: 'mainrealtime' })
+        res.render('realtimeproductsAdmin', { cartID, isPremium, products: products, layout: 'mainrealtime' })
     }
     catch (error) {
+        console.log(error)
         next(error)
     }
 }
@@ -64,9 +68,10 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerUser = async (req, res, next) => {
     try {
+        const cartID = req.session.user.id_cart
         const products = await productModel.find()
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsUser', { products: products, layout: 'mainrealtimeUser' })
+        res.render('realtimeproductsUser', { cartID, products: products, layout: 'mainrealtimeUser' })
     }
     catch (error) {
         next(error)
@@ -92,8 +97,9 @@ export const getProductByIdHandler = async (req, res) => {
 export const getProductsHandler = async (req, res) => {
     try {
         //const products = await productManager.getProducts()
-        const products = await productModel.find()
+        const products = JSON.parse(JSON.stringify(await productModel.find()))
         //const prod = JSON.stringify(products)
+
         res.render('products', { products })
         //res.send(products);
         // res.send({ status: "success", payload: products, layout: 'products' });

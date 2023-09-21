@@ -142,6 +142,8 @@ app.use(session({
 //Config swagger
 app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(spec))
 
+
+///////// -------------------- LÓGICA DE SOCKET ---------------------------//////////
 //Conecto con cliente
 io.on('connection', async (socket) => {
     console.log('Cliente conectado')
@@ -336,11 +338,13 @@ io.on('connection', async (socket) => {
         else if (userSessionRol === "Administrador") { return }
 
 
-        //ACÁ CIERRA TODO EL CÓDIGO!
+
     }
     else return
 })
 
+
+///////////// -------------- TERMINA LÓGICA DE SOCKET ---------------------------///////////////
 
 //Implemento Passport
 app.use(passport.initialize());
