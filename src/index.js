@@ -146,17 +146,20 @@ app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(spec))
 ///////// -------------------- LÓGICA DE SOCKET ---------------------------//////////
 //Conecto con cliente
 io.on('connection', async (socket) => {
-    console.log('Cliente conectado')
+    console.log('Cliente conectado con socket')
     //Leo los productos/mensajes de mongodb
-    //const products = await productModel.find()
     const products = await productManager.getProducts()
     const chats = await chatManager.getMessages()
 
+
     //Leo info del usuario logueado desde la colección sessions de mongodb
     const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+    //REVISO QUE LA SESIÓN ESTÉ ACTIVA
     if (latestSession) {
         const data = JSON.parse(latestSession.session);
         const userDatos = data.user;
+
+
 
         //Emito el array con todos los productos/mensajes/sesiones
         socket.emit("allProducts", products)
@@ -165,9 +168,43 @@ io.on('connection', async (socket) => {
         socket.emit("userName", userDatos)
         socket.emit("idCart", userDatos)
 
+        /* socket.on('correoUsuario', async (userEmail) => {
+             console.log('Correo del usuario recibido en el servidor:', userEmail);
+             // BUSCAR INFO DE USER POR SU EMAIL
+             const user = await userModel.findOne({ userEmail }).lean().exec();
+               console.log("USER SOLUCIÓN", user);
+   
+               // Emitir los datos del usuario al cliente
+               io.emit("renderEmail", user);
+         });*/
+
+        socket.on('correoUsuario', async (email) => {
+            console.log('correoUsuario', email)
+        })
+
+        /*  socket.on('correoUsuario', async (email) => {
+              try {
+                  // Aquí puedes realizar la búsqueda de información del usuario en la base de datos
+                  //const usuario = await userModel.findOne({ userEmail }).lean().exec();
+  
+                  // Si encuentras el usuario, puedes enviar los datos al cliente
+                  if (usuario) {
+                      socket.emit('usuarioEncontrado', usuario);
+                  } else {
+                      // Si no se encuentra el usuario, puedes enviar un mensaje de error al cliente
+                      socket.emit('usuarioNoEncontrado', 'Usuario no encontrado');
+                  }
+              } catch (error) {
+                  // Manejo de errores
+                  console.error('Error al buscar el usuario:', error);
+                  socket.emit('error', 'Ocurrió un error al buscar el usuario');
+              }
+          });*/
+
+
         //Recibo los campos cargados en form y los guardo en array products
-        socket.on("newProduct", async (prod) => {
-            //console.log(prod)
+        socket.on("newProduct", async (prod, userEmail) => {
+            console.log(userEmail)
             //Desestructuración de las propiedades del objeto prod
             const { title, description, price, thumbnail, code, stock } = prod
             //Ejecuto el método addProduct de productManager y agrega el producto a los productos
@@ -342,6 +379,7 @@ io.on('connection', async (socket) => {
     }
     else return
 })
+
 
 
 ///////////// -------------- TERMINA LÓGICA DE SOCKET ---------------------------///////////////
