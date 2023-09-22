@@ -66,13 +66,13 @@ export class ProductManager {
         else return "Producto no encontrado"
     }
 
-    //Método getProductById --> busca un producto por su ID mongodb
+    //Método getProducts--> busca todos los productos
     async getProducts() {
         const productsFound = await productMongo.findAll()
         if (productsFound) {
             return productsFound
         }
-        else return "Producto no encontrado"
+        else return "Productos no encontrados"
     }
 
     //Método updateProduct --> actualiza campo de un producto con un ID existente

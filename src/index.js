@@ -10,6 +10,7 @@ import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
 import sessionRouter from './routes/session.routes.js'
 import userRouter from './routes/user.routes.js'
+import usersRouter from './routes/users.routes.js'
 import './utils/passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
@@ -400,6 +401,7 @@ app.use('/chat', express.static(__dirname + '/public/chat'))
 app.use('/sessions', sessionRouter)
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
+app.use('/users', usersRouter)
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
 //ERRORES
