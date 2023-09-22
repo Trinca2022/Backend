@@ -203,8 +203,7 @@ io.on('connection', async (socket) => {
 
 
         //Recibo los campos cargados en form y los guardo en array products
-        socket.on("newProduct", async (prod, userEmail) => {
-            console.log(userEmail)
+        socket.on("newProduct", async (prod) => {
             //Desestructuración de las propiedades del objeto prod
             const { title, description, price, thumbnail, code, stock } = prod
             //Ejecuto el método addProduct de productManager y agrega el producto a los productos

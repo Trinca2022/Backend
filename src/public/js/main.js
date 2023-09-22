@@ -66,7 +66,7 @@ productForm.addEventListener('submit', (e) => {
         thumbnail: prod.thumbnail,
         code: prod.code,
         stock: prod.stock
-    }, userEmail)
+    })
 
 })
 
