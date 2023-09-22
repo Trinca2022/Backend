@@ -6,10 +6,12 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 import { sessionModel } from "../persistencia/models/Sessions.js";
 import { userModel } from "../persistencia/models/Users.js";
 import { productMongo } from "../persistencia/DAOs/productMongo.js";
+import { UserManager } from "../services/userManager.js";
 
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const productManager = new ProductManager()
+const userManager = new userManager()
 
 //Manejo de la consulta con filtros que exporto a la ruta
 export const productsFilterHandler = async (req, res, next) => {
@@ -71,9 +73,44 @@ export const productsViewHandlerUser = async (req, res, next) => {
     try {
         const cartID = req.session.user.id_cart
         const products = await productModel.find()
+        const userEmail = req.session.user.email
+
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsUser', { cartID, products: products, layout: 'mainrealtimeUser' })
+        res.render('realtimeproductsUser', { cartID, userEmail, products: products, layout: 'mainrealtimeUser' })
     }
+    catch (error) {
+        next(error)
+    }
+}
+
+export const goToPremiumHandler = async (req, res, next) => {
+    try {//VALIDO DOCS PARA SER PREMIUM
+        const userID = req.session.user._id
+        const userFound = await userManager.getUserById(userID)
+        const documents = userFound.documents
+        const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
+        const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
+        const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
+
+        if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
+            const statusUser = userFound.status
+            return console.log(`Faltan cargar documentos. Estado:`, statusUser)
+        }
+        else {
+            const updatedUser = await userManager.updateUser(_id, { status: true });
+            const statusUpdatedUser = updatedUser.status
+
+            if (statusUpdatedUser === true) {
+                const updateRol = await userManager.updateUser(userID, { rol: "Premium" })
+            }
+            else return console.log("No actualizado, sigues teniendo el rol:", statusUpdatedUser)
+        }
+        req.session.user.rol = "Premium"
+        const isValidatedUser = req.session.user.rol === "Premium"
+        res.render('realtimeproductsAdmin', { adminOrPremiumEmail, isValidatedUser, products: products, layout: 'mainrealtime' })
+    }
+
+
     catch (error) {
         next(error)
     }

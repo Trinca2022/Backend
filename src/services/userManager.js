@@ -84,32 +84,34 @@ export class UserManager {
             return 'Ha ocurrido un error al actualizar el usuario.';
         }
     }
-
-    async userToPremium() {
-        try {
-            const _id = await sessionManager.findIdSession()
-            const userFound = await this.getUserById(_id)
-            const documents = userFound.documents
-            const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
-            const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
-            const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
-            if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
-                const statusUser = userFound.status
-                return statusUser
-                //console.log(`Faltan cargar documentos`);
-            } else {
-                const updatedUser = await this.updateUser(_id, { status: true });
-                const statusUpdatedUser = updatedUser.status
-                return statusUpdatedUser
+    /*
+        async userToPremium(_id) {
+            try {
+                //hecho con req.sess en prod controller
+                const _id = await sessionManager.findIdSession()
+    
+                const userFound = await this.getUserById(_id)
+                const documents = userFound.documents
+                const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
+                const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
+                const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
+                if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
+                    const statusUser = userFound.status
+                    return statusUser
+                    //console.log(`Faltan cargar documentos`);
+                } else {
+                    const updatedUser = await this.updateUser(_id, { status: true });
+                    const statusUpdatedUser = updatedUser.status
+                    return statusUpdatedUser
+                }
             }
-        }
-        catch (error) {
-            console.error('Error:', error);
-            return 'Ha ocurrido un error al actualizar el usuario.';
-
-        }
-
-    }
+            catch (error) {
+                console.error('Error:', error);
+                return 'Ha ocurrido un error al actualizar el usuario.';
+    
+            }
+    
+        }*/
 
 
 

@@ -21,8 +21,10 @@ export const createCartHandler = async (req, res) => {
 export const getCartByIdHandler = async (req, res, next) => {
     try {
         const cart = await cartManager.getCartById(req.params.id)
+        const isPremium = req.session.user.rol === "Premium"
+        const isUsuario = req.session.user.rol === "Usuario"
         //res.send(cart)
-        res.render('realtimecart', { cart: JSON.stringify(cart), layout: 'mainrealtimeCart' })
+        res.render('realtimecart', { isPremium, isUsuario, cart: JSON.stringify(cart), layout: 'mainrealtimeCart' })
 
     }
     catch (error) {

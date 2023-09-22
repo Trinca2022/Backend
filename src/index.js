@@ -176,11 +176,11 @@ io.on('connection', async (socket) => {
    
                // Emitir los datos del usuario al cliente
                io.emit("renderEmail", user);
-         });*/
+         });
 
         socket.on('correoUsuario', async (email) => {
             console.log('correoUsuario', email)
-        })
+        })*/
 
         /*  socket.on('correoUsuario', async (email) => {
               try {
@@ -224,6 +224,7 @@ io.on('connection', async (socket) => {
             io.emit("allChats", chats)
         })
 
+        /*//-----------------BORRAR--------------//
         //Ir al carrito según rol
         socket.on("goToCart", async () => {
             //Busco el rol del usuario actual
@@ -239,9 +240,11 @@ io.on('connection', async (socket) => {
 
                 socket.emit("redirectToCart", "/cart/realtimecart");
             }
-
         })
+        //----------------------------------------//
 
+
+        //-----------------BORRAR--------------//
         //Ir desde el carrito a productos según el rol
         socket.on("goToProds", async () => {
             //Busco el rol del usuario actual
@@ -253,7 +256,9 @@ io.on('connection', async (socket) => {
                 socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
             }
         })
-
+        //----------------------------------------//
+*/
+        //-----------------BORRAR--------------//
         //Cambio de user a premium --> VERIFICACIÓN DE STATUS: TRUE
         socket.on("goToPremium", async () => {
             //Verifico que estén los docs cargados
@@ -262,17 +267,6 @@ io.on('connection', async (socket) => {
             if (statusUpdatedUser === true) {
                 //Actualizo el rol del usuario actual
                 const idUser = userDatos._id
-                /*   let rolUser = userDatos.rol
-                   rolUser = "Premium"
-                   console.log("Rol sess iNDEX", rolUser)
-                   const newRol = await sessionModel.updateOne(
-                       { _id: idUser },
-                       { $set: { userDatos.rol= rolUser } }
-                   );
-   
-                   console.log("ROL SESS MANAGER", newRol);
-                   // const updateRolSess = await sessionManager.updateRolInSession("Premium")
-   */
                 const updateRol = await userManager.updateUser(idUser, { rol: "Premium" })
                 //console.log("NUEVO ROL", updateRol)
 
@@ -282,6 +276,10 @@ io.on('connection', async (socket) => {
 
         })
 
+        // ----------------------------------------//
+
+        /*
+        //-----------------BORRAR--------------//
         //Cambio de premium a user
         socket.on("goToUsuario", async () => {
             //Busco el rol del usuario actual
@@ -294,8 +292,9 @@ io.on('connection', async (socket) => {
                 const updateRol = await userManager.updateUser(idUser, { rol: "Usuario" })
                 socket.emit("redirectToUserProds", "/product/realtimeproductsUser")
             }
-
         })
+        //----------------------------------------//
+*/
 
         //AGREGAR PRODUCTO AL CARRITO
         socket.on("addProduct", async (prod) => {

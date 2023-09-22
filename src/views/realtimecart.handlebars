@@ -1,6 +1,13 @@
 <div id="userName"></div>
 
-<button onClick="goToProds()">Ir a productos</button>
+<!--<button onClick="goToProds()">Ir a productos</button>-->
+{{#if isPremium}}
+<button onClick="location.href='/product/realtimeproductsAdmin'">Ir a productos Premium</button>
+{{/if}}
+{{#if isUsuario}}
+<button onClick="location.href='/product/realtimeproductsUser'">Ir a productos Usuario</button>
+{{/if}}
+
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
 <button id="mostrarProds">Mostrar prods</button>
 
