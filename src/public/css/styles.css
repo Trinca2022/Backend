@@ -1,3 +1,9 @@
 body {
     background-color: rgb(242, 237, 243);
 }
+
+.cuadradoUsers {
+    margin: 10px;
+    padding: 10px;
+    background-color: lightblue;
+}

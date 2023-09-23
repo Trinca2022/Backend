@@ -402,6 +402,7 @@ app.use('/sessions', sessionRouter)
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
 app.use('/users', usersRouter)
+app.use('/users', express.static(__dirname + '/public'))
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
 //ERRORES

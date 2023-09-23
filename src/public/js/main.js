@@ -7,6 +7,10 @@ const productForm = document.getElementById("productForm")
 const productList = document.getElementById("productList")
 const adminName = document.getElementById("adminName")
 
+////
+//OBTENGO ELEMENTO DEL DOM POR EL ID USERS
+const usersList = document.getElementById("usersList")
+////
 
 // Obtener el elemento del DOM donde deseas mostrar la información del usuario
 const userContainer = document.getElementById("adminOrPremiumEmail");
@@ -97,6 +101,8 @@ socket.on("allProducts", products => {
     })
 })
 
+
+
 /*//Cuando se escucha el evento envío información del prod a actualizar al servidor
 const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
 actualizarProducto.addEventListener('click', (e) => {
@@ -152,6 +158,7 @@ socket.on("redirectToUserProds", (path) => {
     window.location.href = path;
 
 });
+
 
 
 
