@@ -65,39 +65,62 @@ export class CartManager {
             return error
         }
     }
+    /*
+        async addProductInCart(id, id_prod) {
+            try {
+                const cart = await cartModel.findById(id)
+                console.log("idcart", cart)
+                if (!cart) { return "Carrito inexistente" }
+                //Busco en ese cart el prod que tenga id_prod
+                // const product = cart.products.find(product => product.id_prod.toString() === id_prod._id.toString())
+                //const product = cart.products.find(product => product.id_prod.toString() === id_prod.toString())
+                // console.log("product a comprar", product)
+                const productInCart = cart.products.find(product => product.id_prod.toString() === id_prod._id.toString())
+                if(!productInCart){}
+                const idProductInCart = productInCart.id_prod.toString()
+                const infoProdInCart = await productMongo.findOneById(idProductInCart)
+                const priceProdInCart = infoProdInCart.price
+                console.log("PRECIO PROD", priceProdInCart)
+    
+                //Me fijo si existe el producto en el carrito
+                if (product) {
+                    //Existe el prodcuto -> Agrego +1 a la cantidad
+                    product.quantity++
+                }
+                else {
+                    //No existe el producto -> agrego el producto nuevo
+                    cart.products.push({ id_prod, quantity: 1 })
+                }
+                await cartModel.updateOne({ "_id": id }, {
+                    $set: { "products": cart.products }
+                })
+                return
+            }
+            catch (error) {
+                console.error('Error en la función addProductInCart:', error);
+                throw error;
+            }
+        }
+    */
 
     async addProductInCart(id, id_prod) {
-        try {
-            const cart = await cartModel.findById(id)
-            if (!cart) { return "Carrito inexistente" }
-            const product = cart.products.find(product => product.id_prod.toString() === id_prod._id.toString())
-
-            const productInCart = cart.products.find(product => product.id_prod.toString() === id_prod._id.toString())
-            const idProductInCart = productInCart.id_prod.toString()
-            const infoProdInCart = await productMongo.findOneById(idProductInCart)
-            const priceProdInCart = infoProdInCart.price
-            console.log("PRECIO PROD", priceProdInCart)
-
-            //Me fijo si existe el producto en el carrito
-            if (product) {
-                //Existe el prodcuto -> Agrego +1 a la cantidad
-                product.quantity++
-            }
-            else {
-                //No existe el producto -> agrego el producto nuevo
-                cart.products.push({ id_prod, quantity: 1 })
-            }
-            await cartModel.updateOne({ "_id": id }, {
-                $set: { "products": cart.products }
-            })
-            return
+        const cart = await cartModel.findById(id)
+        if (!cart) { return "Carrito inexistente" }
+        const product = cart.products.find(product => product.id_prod.toString() === id_prod)
+        //Me fijo si existe el producto en el carrito
+        if (product) {
+            //Existe el prodcuto -> Agrego +1 a la cantidad
+            product.quantity++
         }
-        catch (error) {
-            console.error('Error en la función addProductInCart:', error);
-            throw error;
+        else {
+            //No existe el producto -> agrego el producto nuevo
+            cart.products.push({ id_prod, quantity: 1 })
         }
+        await cartModel.updateOne({ "_id": id }, {
+            $set: { "products": cart.products }
+        })
+        return
     }
-
 
     //Método deleteProduct en Cart --> elimina producto con un ID existente
     async deleteProductInCart(id, id_prod) {

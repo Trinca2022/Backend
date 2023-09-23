@@ -172,13 +172,23 @@ export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
 
 //VISTA carga de archivos
 export const uploadFileViewHandler = (req, res) => {
-    res.render('register/uploadFile')
+    try {
+        const uID = req.session.user.id
+        // res.render('uploadFile', { uID, layout: 'mainrealtime' })
+        res.render('register/uploadFile', uID)
+    }
+    catch (error) {
+        console.log(error)
+        next(error)
+    }
+
 }
 
 
 // Controlador de carga para Identificación
 export const uploadIdentHandler = async (req, res, next) => {
     try {
+
         // Se cargan docs con Multer
         uploadDocuments.single('identificacion')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {

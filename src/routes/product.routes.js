@@ -15,7 +15,9 @@ productRouter.get("/", getProductsHandler)
 productRouter.get("/realtimeproductsAdmin", authAdminOrPrem, productsViewHandlerAdmin)
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproductsUser", authUser, productsViewHandlerUser, goToPremiumHandler)
+productRouter.get("/realtimeproductsUser", authUser, productsViewHandlerUser)
+
+productRouter.post("/realtimeproductsUser", goToPremiumHandler)
 
 //Consulta de productos por id
 productRouter.get("/:id", getProductByIdHandler)

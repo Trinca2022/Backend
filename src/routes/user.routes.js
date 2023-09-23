@@ -10,7 +10,7 @@ userRouter.get('/register', registerViewHandler)
 userRouter.post('/register', registerHandler)
 
 //Vista de carga de documentos de usuario
-userRouter.get('/:id/documents', uploadFileViewHandler)
+userRouter.get('/:uID/documents', uploadFileViewHandler)
 
 //HACER UNA RUTA /:ID/DOCUMENTS/XXX PARA CADA DOC y dif controllers
 

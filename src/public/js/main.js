@@ -10,10 +10,11 @@ const adminName = document.getElementById("adminName")
 
 // Obtener el elemento del DOM donde deseas mostrar la información del usuario
 const userContainer = document.getElementById("adminOrPremiumEmail");
-const userInfo = document.getElementById("userInfo");
+//const userInfo = document.getElementById("userInfo");
 
 // Obtener el contenido del div con el correo del usuario
 const userEmail = userContainer.textContent;
+
 
 /*
 // Manejar el evento 'renderEmail' para mostrar los datos del usuario
@@ -38,7 +39,7 @@ socket.on("adminName", userDatos => {
 
 //Envío evento al back para manejarlo
 const addProdInCart = (productId) => {
-    socket.emit("addProduct", { _id: productId })
+    socket.emit("addProductCart", { _id: productId }, userEmail)
 }
 
 //Envío evento al back para manejarlo
@@ -66,13 +67,13 @@ productForm.addEventListener('submit', (e) => {
         thumbnail: prod.thumbnail,
         code: prod.code,
         stock: prod.stock
-    })
+    }, userEmail)
 
 })
 
 //Función del Administrador para eliminar un producto
 const eliminarProducto = (productId) => {
-    socket.emit("deletedProduct", { _id: productId })
+    socket.emit("deletedProduct", { _id: productId }, userEmail)
 }
 
 
@@ -135,15 +136,17 @@ socket.on("notGoToCart", (message) => {
     alert(message);
 });
 
+/*
 //Redirecciono a carrito si es Premium
 socket.on("redirectToCart", (path) => {
     window.location.href = path;
-});
+});*/
 
+/*
 //Emito en el front alert de error de permiso
 socket.on("notGoToUser", (message) => {
     alert(message);
-});
+});*/
 
 
 //Redirecciono a productos de USER

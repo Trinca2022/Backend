@@ -1,14 +1,17 @@
+//import { logoutHandler } from "../controllers/session.controller.js";
+
+
 //Autenticación para poder acceder a la vista de productos
 export const authAdminOrPrem = (req, res, next) => {
     if (!req.session.user) {
         //return res.send("Error de autenticación")
-        return res.redirect('/sessions/login');
+        return res.redirect('/sessions/logout');
     }
     const { rol } = req.session.user
     if (rol === "Administrador" || "Premium") {
         return next()
     }
-    return res.redirect('/sessions/login');
+    return res.redirect('/sessions/logout');
 }
 
 
@@ -16,24 +19,24 @@ export const authAdminOrPrem = (req, res, next) => {
 export const authUser = (req, res, next) => {
     if (!req.session.user) {
         // return res.send("Error de autenticación")
-        return res.redirect('/sessions/login')
+        return res.redirect('/sessions/logout')
     }
     const { rol } = req.session.user
     if (rol === "Usuario") {
         return next()
     }
-    return res.redirect('/sessions/login');
+    return res.redirect('/sessions/logout');
 }
 
 //Autenticación para poder acceder a la vista de productos
 export const authUserOrPrem = (req, res, next) => {
     if (!req.session.user) {
         //return res.send("Error de autenticación")
-        return res.redirect('/sessions/login');
+        return res.redirect('/sessions/logout');
     }
     const { rol } = req.session.user
     if (rol === "Usuario" || "Premium") {
         return next()
     }
-    return res.redirect('/sessions/login');
+    return res.redirect('/sessions/logout');
 }

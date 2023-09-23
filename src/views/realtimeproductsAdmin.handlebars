@@ -1,7 +1,10 @@
 <div id="adminName"></div>
-<div id="adminOrPremiumEmail">{{adminOrPremiumEmail}}</div>
-<div id="userInfo"></div>
-
+<div>
+    <h1>Bienvenida/o {{uRol}} {{uName}}</h1>
+</div>
+<h2> <span style="display: inline-block; margin-right: 10px;">Email:</span>
+    <span id="adminOrPremiumEmail">{{adminOrPremiumEmail}}</span>
+</h2><br>
 
 {{#if isPremium}}
 <button onclick="location.href='/cart/{{cartID}}'">Ir al carrito</button>

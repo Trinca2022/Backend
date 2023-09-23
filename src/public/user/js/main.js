@@ -5,10 +5,17 @@ const socket = io()
 const userName = document.getElementById("userName")
 const productList = document.getElementById("productList")
 
+
+// Obtener el elemento del DOM donde deseas mostrar la información del usuario
+const userContainer = document.getElementById("userEmail");
+// Obtener el contenido del div con el correo del usuario
+const userEmail = userContainer.textContent;
+
+
 //USUARIO AGREGA PROD AL CARRITO
 
 const addProdInCart = (productId) => {
-    socket.emit("addProduct", { _id: productId })
+    socket.emit("addProduct", { _id: productId }, userEmail)
 }
 
 //Envío evento al back para manejarlo
