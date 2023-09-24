@@ -73,8 +73,10 @@ export class CartManager {
         try {
             const cart = await cartModel.findById(id)
             if (!cart) { return "Carrito inexistente" }
-
+            const infoProdInCart = await productManager.getProductById(id_prod)
+            const priceProdInCart = infoProdInCart.price
             const product = cart.products.find(product => product.id_prod.toString() === id_prod)
+
 
             console.log("loco", product)
 
@@ -82,12 +84,10 @@ export class CartManager {
             if (product) {
                 //Existe el prodcuto -> Agrego +1 a la cantidad
                 product.quantity++
-                console.log("agrego cantidad 1")
             }
             else {
                 //No existe el producto -> agrego el producto nuevo
-                cart.products.push({ id_prod, quantity: 1 })
-                console.log("hay que agregar el articulo")
+                cart.products.push({ id_prod, quantity: 1, price: priceProdInCart })
             }
             await cartModel.updateOne({ "_id": id }, {
                 $set: { "products": cart.products }

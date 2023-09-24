@@ -32,7 +32,9 @@ export const getCartByIdHandler = async (req, res, next) => {
         //const idxProd = productsInCart.id_prod.id_prod
         //console.log("IDS PRODS", idxProd)
 
-
+        for (const product of productsInCart) {
+            product.price = product.quantity * product.id_prod.price;
+        }
         // const totalPriceProd = await cartManager.totalPriceProd(cartID,)
         res.render('realtimecart', {
             cart: JSON.stringify(cart),
