@@ -13,7 +13,6 @@ const userEmail = userContainer.textContent;
 
 
 //USUARIO AGREGA PROD AL CARRITO
-
 const addProdInCart = (productId) => {
     socket.emit("addProduct", { _id: productId }, userEmail)
 }
@@ -42,7 +41,7 @@ socket.on("allProducts", products => {
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
-            <button onClick="addProdInCart('${prod._id}')">Comprar producto</button>
+            <button onClick="addProdInCart('${prod._id}')">Agregar al carrito</button>
             </div>
             </div>`
     }

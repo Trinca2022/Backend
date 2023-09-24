@@ -28,6 +28,7 @@ socket.on("renderEmail", (user) => {
   `;
 });*/
 
+/*
 //Recibo el nombre y el rol del usuario logueado y los renderizo
 //Usuario de mongo
 socket.on("adminName", userDatos => {
@@ -35,7 +36,7 @@ socket.on("adminName", userDatos => {
     <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
         <hr>
         `;
-});
+});*/
 
 //Envío evento al back para manejarlo
 const addProdInCart = (productId) => {
@@ -91,7 +92,7 @@ socket.on("allProducts", products => {
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
             <button onClick="eliminarProducto('${prod._id}')">Eliminar producto</button>
-            <button onClick="addProdInCart('${prod._id}')">Comprar producto</button>
+            <button onClick="addProdInCart('${prod._id}')">Agregar al carrito</button>
             </div>
             </div>`
 
@@ -131,10 +132,11 @@ socket.on("productNotBuyed", (message) => {
     alert(message);
 });
 
+/*
 //Emito en el front alert de error de permiso
 socket.on("notGoToCart", (message) => {
     alert(message);
-});
+});*/
 
 /*
 //Redirecciono a carrito si es Premium
@@ -148,14 +150,14 @@ socket.on("notGoToUser", (message) => {
     alert(message);
 });*/
 
-
+/*
 //Redirecciono a productos de USER
 socket.on("redirectToUserProds", (path) => {
     console.log("Redirect prod user", path)
     window.location.href = path;
 
 });
-
+*/
 
 
 

@@ -301,7 +301,7 @@ io.on('connection', async (socket) => {
     //AGREGAR PRODUCTO AL CARRITO
     socket.on("addProductCart", async (prod, userEmail) => {
         const { _id } = prod
-        console.log(_id)
+        console.log("ID PROD A COMPRAR", _id)
         //const id = userDatos.id_cart
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
         const id = usuario.id_cart.toString()

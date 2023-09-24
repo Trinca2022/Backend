@@ -20,13 +20,28 @@ export const createCartHandler = async (req, res) => {
 //Consulta de carrito
 export const getCartByIdHandler = async (req, res, next) => {
     try {
-        const cart = await cartManager.getCartById(req.params.id)
+        const cartID = req.params.id
+        const cart = await cartManager.getCartById(cartID)
+        // console.log("carrrrttt", cart)
         const isPremium = req.session.user.rol === "Premium"
         const isUsuario = req.session.user.rol === "Usuario"
-        //res.send(cart)
-        res.render('realtimecart', { isPremium, isUsuario, cart: JSON.stringify(cart), layout: 'mainrealtimeCart' })
+
+        const productsInCart = JSON.parse(JSON.stringify(cart.products))
+        console.log(productsInCart)
+        //const prodInCartPrice = products
+        //const idxProd = productsInCart.id_prod.id_prod
+        //console.log("IDS PRODS", idxProd)
+
+
+        // const totalPriceProd = await cartManager.totalPriceProd(cartID,)
+        res.render('realtimecart', {
+            cart: JSON.stringify(cart),
+            layout: 'mainrealtimeCart', productsInCart, isPremium, isUsuario
+        })
 
     }
+
+
     catch (error) {
         next(error)
     }
@@ -42,10 +57,15 @@ export const addProductInCartHandler = async (req, res) => {
 
 //Elimino producto según ID_PROD con método DELETE
 export const deleteProductInCartHandler = async (req, res) => {
-    const id = req.params.id;
-    const id_prod = req.params.id_prod;
-    const message = await cartManager.deleteProductInCart(id, id_prod)
-    res.send(message)
+    try {
+        const id = req.params.id;
+        const id_prod = req.params.id_prod;
+        const message = await cartManager.deleteProductInCart(id, id_prod)
+        res.send(message)
+    }
+    catch (error) {
+        next(error)
+    }
 }
 
 //Actualizo cantidad producto según ID_PROD con método PUT
