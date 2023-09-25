@@ -25,6 +25,7 @@ export const getCartByIdHandler = async (req, res, next) => {
         // console.log("carrrrttt", cart)
         const isPremium = req.session.user.rol === "Premium"
         const isUsuario = req.session.user.rol === "Usuario"
+        console.log("bool", isPremium)
 
         const productsInCart = JSON.parse(JSON.stringify(cart.products))
         console.log(productsInCart)

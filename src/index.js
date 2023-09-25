@@ -301,11 +301,12 @@ io.on('connection', async (socket) => {
     //AGREGAR PRODUCTO AL CARRITO
     socket.on("addProductCart", async (prod, userEmail) => {
         const { _id } = prod
-        console.log("ID PROD A COMPRAR", _id)
+        // console.log("ID PROD A COMPRAR", _id)
         //const id = userDatos.id_cart
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
+        // console.log("usuario index", usuario)
         const id = usuario.id_cart.toString()
-        console.log("id cart QUE compra ", id)
+        // console.log("id cart QUE compra ", id)
         //Busco el rol del usuario actual
         // const userSessionRol = userDatos.rol;
         const userSessionRol = usuario.rol
@@ -317,11 +318,11 @@ io.on('connection', async (socket) => {
         const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
 
         const prodOwnerRol = prodOwner.rol
-        //Si el rol de la sesión es distinto al owner del prod: se puede comprar
-        if (userSessionRol !== prodOwnerRol) {
+        //Si el rol de la sesión es distinto al owner del prod: se puede comprar, siempre y cuando el rol sea distinto a Amin
+        if (userSessionRol !== prodOwnerRol && userSessionRol !== "Administrador") {
             //await cartManager.addProductInCart(id, { _id })
             await cartManager.addProductInCart(id, _id)
-            console.log("PROD COMPRADO CON EXITT")
+            // console.log("PROD COMPRADO CON EXITT")
             io.emit("prodInCart", _id)
         }
         else {
@@ -331,8 +332,10 @@ io.on('connection', async (socket) => {
 
     //Elimino un producto
     socket.on("deletedProduct", async (prod, userEmail) => {
-
-        const { _id } = prod
+        //const { _id } = prod
+        //const { owner } = prod
+        const { _id, owner } = prod
+        console.log("owner proddddd", _id, owner)
         //Busco el rol del usuario actual
         //const userSessionRol = userDatos.rol;
 
@@ -357,6 +360,10 @@ io.on('connection', async (socket) => {
             const products = await productMongo.findAll()
             const filteredProducts = products.filter((product) => product._id.toString() !== _id);
             io.emit("allProducts", filteredProducts)
+            //ENVÍO DE MAIL AL PREMIUM CUANDO ADMIN O PREMIUM ELIMINA UN PRODUCTO PROPIO
+            if (prodOwnerRol === "Premium") {
+
+            }
         }
         else {
             socket.emit("productNotDeleted", "No tienes permisos para eliminar este producto.");
