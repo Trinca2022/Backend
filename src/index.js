@@ -320,10 +320,12 @@ io.on('connection', async (socket) => {
         const prodOwnerRol = prodOwner.rol
         //Si el rol de la sesión es distinto al owner del prod: se puede comprar, siempre y cuando el rol sea distinto a Amin
         if (userSessionRol !== prodOwnerRol && userSessionRol !== "Administrador") {
-            //await cartManager.addProductInCart(id, { _id })
-            await cartManager.addProductInCart(id, _id)
+
+            const message = await cartManager.addProductInCart(id, _id)
+            console.log("messageee", message)
             // console.log("PROD COMPRADO CON EXITT")
-            io.emit("prodInCart", _id)
+            io.emit("prodInCart", message, _id)
+
         }
         else {
             socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
@@ -332,10 +334,10 @@ io.on('connection', async (socket) => {
 
     //Elimino un producto
     socket.on("deletedProduct", async (prod, userEmail) => {
-        //const { _id } = prod
+        //const _id = prod._id
         //const { owner } = prod
-        const { _id, owner } = prod
-        console.log("owner proddddd", _id, owner)
+        const { _id } = prod
+        console.log("owner proddddd", _id, prod._id)
         //Busco el rol del usuario actual
         //const userSessionRol = userDatos.rol;
 
@@ -361,9 +363,7 @@ io.on('connection', async (socket) => {
             const filteredProducts = products.filter((product) => product._id.toString() !== _id);
             io.emit("allProducts", filteredProducts)
             //ENVÍO DE MAIL AL PREMIUM CUANDO ADMIN O PREMIUM ELIMINA UN PRODUCTO PROPIO
-            if (prodOwnerRol === "Premium") {
-
-            }
+            //if (prodOwnerRol === "Premium") {}
         }
         else {
             socket.emit("productNotDeleted", "No tienes permisos para eliminar este producto.");

@@ -25,21 +25,17 @@ export const getCartByIdHandler = async (req, res, next) => {
         // console.log("carrrrttt", cart)
         const isPremium = req.session.user.rol === "Premium"
         const isUsuario = req.session.user.rol === "Usuario"
-        console.log("bool", isPremium)
-
         const productsInCart = JSON.parse(JSON.stringify(cart.products))
-        console.log(productsInCart)
-        //const prodInCartPrice = products
-        //const idxProd = productsInCart.id_prod.id_prod
-        //console.log("IDS PRODS", idxProd)
-
+        //  console.log(productsInCart)
+        let totalPrice = 0
         for (const product of productsInCart) {
             product.price = product.quantity * product.id_prod.price;
+            totalPrice += product.price
         }
         // const totalPriceProd = await cartManager.totalPriceProd(cartID,)
         res.render('realtimecart', {
             cart: JSON.stringify(cart),
-            layout: 'mainrealtimeCart', productsInCart, isPremium, isUsuario
+            layout: 'mainrealtimeCart', productsInCart, isPremium, isUsuario, totalPrice
         })
 
     }

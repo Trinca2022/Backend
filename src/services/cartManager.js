@@ -75,24 +75,32 @@ export class CartManager {
             if (!cart) { return "Carrito inexistente" }
             const infoProdInCart = await productManager.getProductById(id_prod)
             const priceProdInCart = infoProdInCart.price
+            const stockProdInCart = infoProdInCart.stock
+            console.log("stockkk", stockProdInCart)
             const product = cart.products.find(product => product.id_prod.toString() === id_prod)
 
-
-            console.log("loco", product)
-
             //Me fijo si existe el producto en el carrito
-            if (product) {
+            if (product && product.quantity < stockProdInCart) {
                 //Existe el prodcuto -> Agrego +1 a la cantidad
                 product.quantity++
+
             }
-            else {
-                //No existe el producto -> agrego el producto nuevo
+            else if (product && product.quantity >= stockProdInCart) { return "¡EXCEDE STOCK DISPONIBLE!" }
+            else if (!product && stockProdInCart > 0) { //No existe el producto -> agrego el producto nuevo
                 cart.products.push({ id_prod, quantity: 1, price: priceProdInCart })
+
             }
+            else if (!product && stockProdInCart == 0) { return "YA NO HAY STOCK" }
+
+            /* ORIGINAL:
+             else {
+                 //No existe el producto -> agrego el producto nuevo
+                 cart.products.push({ id_prod, quantity: 1, price: priceProdInCart })
+             }*/
             await cartModel.updateOne({ "_id": id }, {
                 $set: { "products": cart.products }
             })
-            return
+            return "¡PRODUCTO AGREGADO AL CARRITO!"
         }
         catch (error) {
             console.error('Error en la función addProductInCart:', error);
@@ -214,53 +222,6 @@ export class CartManager {
             }
         }*/
 
-
-    async totalPriceProd(id, id_prod) {
-        try {
-            const cart = await cartModel.findById(id)
-            if (!cart) { return "Carrito inexistente" }
-            const prodInCart = JSON.parse(JSON.stringify(cart.products.find(prod => prod.id_prod.toString() === id_prod)))
-            //console.log("accesoprod", product.id_prod)
-            if (prodInCart) {
-                const prodInCartID = product.id_prod
-                const infoProdInCart = await productManager.getProductById(prodInCartID)
-                const prodInCartPrice = infoProdInCart.price
-                //console.log("priceeeee", prodInCartPrice)
-                //console.log()
-                let totalPriceProd = 0;
-                totalPriceProd += prodInCart.quantity * prodInCartPrice;
-                return totalPriceProd
-            }
-        }
-        catch (error) {
-            console.error('Error de cálculo precio x cantidad:', error);
-            throw error;
-        }
-    }
-
-
-    async totalPrice(id) {
-        try {
-            const cart = await cartModel.findById(id)
-            if (!cart) { return "Carrito inexistente" }
-            const productsInCart = JSON.parse(JSON.stringify(cart.products))
-            //console.log("accesoprod", product.id_prod)
-
-            const prodInCartID = product.id_prod
-            const infoProdInCart = await productManager.getProductById(prodInCartID)
-            const prodInCartPrice = infoProdInCart.price
-            //console.log("priceeeee", prodInCartPrice)
-            //console.log()
-            let totalPriceProd = 0;
-            totalPriceProd += prodInCart.quantity * prodInCartPrice;
-            return totalPriceProd
-
-        }
-        catch (error) {
-            console.error('Error de cálculo precio x cantidad:', error);
-            throw error;
-        }
-    }
 
     //Método deleteProduct en Cart --> elimina producto con un ID existente
     async deleteProductInCart(id, id_prod) {
