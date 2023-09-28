@@ -73,8 +73,8 @@ productForm.addEventListener('submit', (e) => {
 })
 
 //Función del Administrador para eliminar un producto
-const eliminarProducto = (productId, productOwner) => {
-    socket.emit("deletedProduct", { _id: productId, owner: productOwner }, userEmail)
+const eliminarProducto = (productId) => {
+    socket.emit("deletedProduct", { _id: productId }, userEmail)
 }
 
 
@@ -91,7 +91,7 @@ socket.on("allProducts", products => {
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
-            <button onClick="eliminarProducto('${prod._id}', '${prod.owner}')">Eliminar producto</button>
+            <button onClick="eliminarProducto('${prod._id}')">Eliminar producto</button>
             <button onClick="addProdInCart('${prod._id}')">Agregar al carrito</button>
             </div>
             </div>`

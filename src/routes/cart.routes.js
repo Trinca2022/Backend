@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addProductInCartHandler, createCartHandler, deleteProductInCartHandler, deleteProductsInCartHandler, getCartByIdHandler, updateCartHandler, updateProductInCartHandler } from "../controllers/cart.controller.js";
+import { addProductInCartHandler, createCartHandler, deleteProductInCartHandler, deleteProductsInCartHandler, endPurchaseHandler, getCartByIdHandler, updateCartHandler, updateProductInCartHandler } from "../controllers/cart.controller.js";
 
 const cartRouter = Router()
 
@@ -24,6 +24,8 @@ cartRouter.delete("/:id", deleteProductsInCartHandler)
 //Actualizo carrito entero con método PUT
 cartRouter.put("/:id", updateCartHandler)
 
-//cartRouter.post("/:id/purchase", createOrderHandler)
+/*cartRouter.post("/:id/purchase", createOrderHandler)*/
+
+cartRouter.post("/:id", endPurchaseHandler)
 
 export default cartRouter

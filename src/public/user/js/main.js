@@ -14,7 +14,7 @@ const userEmail = userContainer.textContent;
 
 //USUARIO AGREGA PROD AL CARRITO
 const addProdInCart = (productId) => {
-    socket.emit("addProduct", { _id: productId }, userEmail)
+    socket.emit("addProductCart", { _id: productId }, userEmail)
 }
 
 //Envío evento al back para manejarlo
@@ -63,5 +63,8 @@ socket.on("redirectToPremiumProds", (path) => {
     window.location.href = path;
 });
 
+socket.on("prodInCart", (message) => {
+    alert(message)
+});
 
 

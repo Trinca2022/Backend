@@ -13,12 +13,42 @@
 
 <!--<button onclick="goToPremium()">Cambiar a PREMIUM</button>-->
 
-<button onclick="upgradeToPremium()">Cambiar a PREMIUM</button>
-
-
-{{#if isValidatedUser}}{{/if}}
-
+<!--<button onclick="upgradeToPremium()">Cambiar a PREMIUM</button>-->
+<button id="upgradeButton">Cambiar a PREMIUM</button>
 <script>
+    // Obtén una referencia al botón por su ID
+    const upgradeButton = document.getElementById('upgradeButton');
+
+    // Agrega un controlador de eventos al botón
+    if (upgradeButton) {
+        upgradeButton.addEventListener('click', function () {
+            fetch('/product/realtimeproductsUser', {
+                method: 'POST', // Cambia el método a 'POST'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({}),
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        // Manejar la respuesta exitosa aquí (si es necesario)
+                        console.log('Usuario actualizado a PREMIUM');
+                    } else {
+                        // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+                        console.error('Error en la solicitud POST:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud POST:', error);
+                });
+        });
+    }
+</script>
+
+
+<!--{{#if isValidatedUser}}{{/if}}-->
+
+<!--<script>
     function upgradeToPremium() {
         fetch('/product/realtimeproductsUser', {
             method: 'POST', // Cambia el método a 'POST'
@@ -41,7 +71,7 @@
             });
     }
 
-</script>
+</script>-->
 
 
 

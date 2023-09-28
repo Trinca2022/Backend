@@ -53,7 +53,9 @@ export const productsFilterHandler = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
-        const cartID = req.session.user.id_cart
+        const user = req.session.user
+        const cartID = user.id_cart.toString()
+
         const isPremium = req.session.user.rol === "Premium"
         const adminOrPremiumEmail = req.session.user.email
         const uName = req.session.user.nombre
@@ -235,10 +237,11 @@ export const addProductHandler = async (req, res, next) => {
             })
         }
         //Busco en la sesión actual el email para agregarlo
-        const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
-        const data = JSON.parse(latestSession.session);
-        const userDatos = data.user;
-        const userEmail = userDatos.email;
+        const userEmail = req.session.user.email
+        /* const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+         const data = JSON.parse(latestSession.session);
+         const userDatos = data.user;
+         const userEmail = userDatos.email;*/
         const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, owner: userEmail })
         res.send(prodNew)
         //res.send({ status: "success", payload: prodNew });
@@ -252,10 +255,14 @@ export const addProductHandler = async (req, res, next) => {
 //Manejo función que actualiza un producto y exporto a la ruta
 export const updateProductHandler = async (req, res, next) => {
     try {
-        const id = req.params.id
-        const { title, description, price, thumbnail, code, stock, status } = req.body
-        const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
-        res.send(mensaje)
+        const userRol = req.session.user.rol
+        if (userRol === "Administrador") {
+            const id = req.params.id
+            const { title, description, price, thumbnail, code, stock, status } = req.body
+            const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
+            res.send(mensaje)
+        }
+        else return "Sin permisos para actualizar producto"
     }
     catch (error) {
         next(error)

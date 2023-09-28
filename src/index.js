@@ -31,6 +31,7 @@ import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
 import { UserManager } from './services/userManager.js'
 import { SessionManager } from './services/sessionManager.js'
+import { transporter } from './utils/nodemailer.js'
 
 
 //Utilizo los manager
@@ -301,7 +302,7 @@ io.on('connection', async (socket) => {
     //AGREGAR PRODUCTO AL CARRITO
     socket.on("addProductCart", async (prod, userEmail) => {
         const { _id } = prod
-        // console.log("ID PROD A COMPRAR", _id)
+        console.log("ID PROD A COMPRAR", _id)
         //const id = userDatos.id_cart
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
         // console.log("usuario index", usuario)
@@ -334,18 +335,11 @@ io.on('connection', async (socket) => {
 
     //Elimino un producto
     socket.on("deletedProduct", async (prod, userEmail) => {
-        //const _id = prod._id
-        //const { owner } = prod
         const { _id } = prod
-        console.log("owner proddddd", _id, prod._id)
         //Busco el rol del usuario actual
-        //const userSessionRol = userDatos.rol;
-
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
         console.log("email QUE BORRA", userEmail)
-        // console.log("USUARIO QUE BORRA", usuario)
-        //Busco el rol del usuario actual
-        // const userSessionRol = userDatos.rol;
+        // console.log("USUARIO QUE BORRA", 
         const userSessionRol = usuario.rol
         //Busco el email del owner en la info del producto
         const product = await productManager.getProductById(_id)
@@ -362,8 +356,14 @@ io.on('connection', async (socket) => {
             const products = await productMongo.findAll()
             const filteredProducts = products.filter((product) => product._id.toString() !== _id);
             io.emit("allProducts", filteredProducts)
-            //ENVÍO DE MAIL AL PREMIUM CUANDO ADMIN O PREMIUM ELIMINA UN PRODUCTO PROPIO
-            //if (prodOwnerRol === "Premium") {}
+            //ENVÍO DE MAIL AL PREMIUM CUANDO ADMIN O PREMIUM ELIMINA UN PRODUCTO DE PREMIUM
+            if (prodOwnerRol === "Premium") {
+                await transporter.sendMail({
+                    to: prodOwnerEmailOrAdmin,
+                    subject: 'Producto eliminado',
+                    text: `Se ha eliminado tu producto con ID ${_id} de la base de datos`
+                })
+            }
         }
         else {
             socket.emit("productNotDeleted", "No tienes permisos para eliminar este producto.");
@@ -377,6 +377,9 @@ io.on('connection', async (socket) => {
         const products = await productModel.find()
         io.emit("allProducts", products)
     })*/
+
+
+
 
     /*
         //Emito productos del carrito para renderizarlos 

@@ -2,14 +2,14 @@
 <!--
 <button onClick="goToProds()">Ir a productos</button>-->
 {{#if isPremium}}
-<button onClick="location.href='/product/realtimeproductsAdmin'">Volver a productos</button>
+<button onClick="location.href='/product/realtimeproductsAdmin/'">Volver a productos</button>
 {{/if}}
 {{#if isUsuario}}
 <button onClick="location.href='/product/realtimeproductsUser'">Volver a productos</button>
 {{/if}}
 
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
-<button id="mostrarProds">Mostrar prods</button>
+
 
 <hr>
 
@@ -40,4 +40,31 @@
     <h3>Total a pagar: ${{totalPrice}}</h3>
 </div>
 
-<button onclick="location.href='/sessions/logout'">Finalizar compra</button>
+<button onclick="endPurchase()">Finalizar compra</button>
+
+<script>
+    function endPurchase() {
+        const cartID = {{ cartID }
+    }; // Accede a cartID desde tu plantilla
+
+    fetch(`/cart/${cartID}`, {
+        method: 'POST', // Cambia el método a 'POST'
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+    })
+        .then(response => {
+            if (response.status === 200) {
+                // Manejar la respuesta exitosa aquí (si es necesario)
+                console.log('Éxito al finalizar compra');
+            } else {
+                // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+                console.error('Error en la solicitud POST:', response.status);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud POST:', error);
+        });
+    }
+</script>

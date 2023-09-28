@@ -1,4 +1,5 @@
 import { CartManager } from "../services/cartManager.js";
+import { cartModel } from "../persistencia/models/Cart.js";
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const cartManager = new CartManager()
@@ -20,8 +21,11 @@ export const createCartHandler = async (req, res) => {
 //Consulta de carrito
 export const getCartByIdHandler = async (req, res, next) => {
     try {
-        const cartID = req.params.id
-        const cart = await cartManager.getCartById(cartID)
+        const cartID = req.session.user.id_cart
+        // const cartID = req.params.id
+        //const cart = await cartManager.getCartById(cartID)
+        //const cart = await cartManager.findOneById(cartID)
+        const cart = await cartModel.findById(cartID)
         // console.log("carrrrttt", cart)
         const isPremium = req.session.user.rol === "Premium"
         const isUsuario = req.session.user.rol === "Usuario"
@@ -35,14 +39,15 @@ export const getCartByIdHandler = async (req, res, next) => {
         // const totalPriceProd = await cartManager.totalPriceProd(cartID,)
         res.render('realtimecart', {
             cart: JSON.stringify(cart),
-            layout: 'mainrealtimeCart', productsInCart, isPremium, isUsuario, totalPrice
+            layout: 'mainrealtimeCart', productsInCart, isPremium, isUsuario, totalPrice, cartID
         })
 
     }
 
 
     catch (error) {
-        next(error)
+        //next(error)
+        console.log("error en get cart handler", error)
     }
 }
 
@@ -98,3 +103,8 @@ export const createOrderHandler = async (req, res) => {
     await cartManager.createCart(products)
     res.send("Carrito creado")
 }*/
+
+export const endPurchaseHandler = async (req, res, next) => {
+    try { }
+    catch { }
+}
