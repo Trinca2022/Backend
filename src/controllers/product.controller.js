@@ -57,13 +57,14 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
         // const cartID = user.id_cart.toString()
         const cartID = req.session.user.id_cart
         const isPremium = req.session.user.rol === "Premium"
+        const isAdmin = req.session.user.rol === "Administrador"
         const adminOrPremiumEmail = req.session.user.email
         const uName = req.session.user.nombre
         const uRol = req.session.user.rol
 
         const products = await productModel.find()
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsAdmin', { uRol, uName, adminOrPremiumEmail, cartID, isPremium, products: products, layout: 'mainrealtime' })
+        res.render('realtimeproductsAdmin', { uRol, uName, adminOrPremiumEmail, cartID, isPremium, isAdmin, products: products, layout: 'mainrealtime' })
     }
     catch (error) {
         console.log(error)

@@ -10,6 +10,7 @@ import cartRouter from './routes/cart.routes.js'
 import chatRouter from './routes/chat.routes.js'
 import sessionRouter from './routes/session.routes.js'
 import userRouter from './routes/user.routes.js'
+import usersRouter from './routes/users.routes.js'
 import './utils/passportStrategies.js'
 import { __dirname, __filename } from './path.js'
 import { engine } from 'express-handlebars'
@@ -429,11 +430,25 @@ app.use('/chat', express.static(__dirname + '/public/chat'))
 app.use('/sessions', sessionRouter)
 app.use('/register', userRouter)
 app.use('/ticket', ticketRouter)
+app.use('/users', usersRouter)
+app.use('/users', express.static(__dirname + '/public'))
 //RUTA DE FAKER
 app.use('/mockingproducts', getProductFaker)
 //ERRORES
 app.use(errorHandler)
 app.use('/loggerTest', loggerRouter)
+//Envía al login desde pag principal
+app.use((req, res, next) => {
+    if (req.method === 'GET' && req.url === '/') {
+        // Redirige la solicitud GET de la ruta raíz a la ruta de inicio de sesión
+        res.redirect('/sessions/login');
+    } else {
+        // Continúa con el flujo normal de la aplicación para otras rutas
+        next();
+    }
+});
+
+
 //Uso HBS para mostrar en home el login
 /*app.get('/', async (req, res) => {
     const products = await productModel.find()

@@ -15,7 +15,9 @@
 {{/if}}
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
 <!--<button onclick="goToUsuario()">Cambiar a USUARIO</button>-->
-<button onclick="goToUserAdmin()">Administrar usuarios</button>
+{{#if isAdmin}}
+<button onclick="location.href='/users'">Administrar usuarios</button>
+{{/if}}
 <hr>
 
 <h2>Agregar un producto</h2>
