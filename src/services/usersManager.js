@@ -7,10 +7,11 @@ export class UsersManager {
         this.path = path
     }
 
+    //
 
 
-    //Método getProducts--> busca todos los productos
-    async getProducts() {
+    //Método getUsers--> busca todos los users
+    async getUsers() {
         const usersFound = await usersMongo.findAll()
         if (usersFound) {
             return usersFound

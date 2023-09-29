@@ -1,6 +1,6 @@
 <div id="userName"></div>
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
-<button onclick="location.href='/product/realtimeproductsUser'">Ir a productos</button>
+<button onclick="location.href='/product/realtimeproductsAdmin'">Ir a productos</button>
 
 
 <hr>
@@ -16,6 +16,11 @@
         <h4 class="card-title">Email: {{this.email}}</h4>
         <h5 class="card-title">Rol: {{this.rol}}</h5>
         <h5 class="card-title">Última conexión: {{this.last_connection}}</h5>
+
+        {{#if this.inactiveUser}}
+        <button class="btn">Eliminar Usuario</button>
+        {{/if}}
+
     </div>
 
     {{/each}}

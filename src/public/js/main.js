@@ -12,6 +12,10 @@ const adminName = document.getElementById("adminName")
 const usersList = document.getElementById("usersList")
 ////
 
+
+
+
+
 // Obtener el elemento del DOM donde deseas mostrar la información del usuario
 const userContainer = document.getElementById("adminOrPremiumEmail");
 const userInfo = document.getElementById("userInfo");

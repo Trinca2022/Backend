@@ -1,4 +1,3 @@
-import { userModel } from "../persistencia/models/Users.js";
 import { UsersManager } from "../services/usersManager.js";
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
@@ -8,8 +7,18 @@ const usersManager = new UsersManager()
 export const getUsersHandler = async (req, res) => {
     try {
         const isAdmin = req.session.user.rol === "Admin"
-        const users = JSON.parse(JSON.stringify(await userModel.find()))
-        console.log("hola", users)
+        const users = JSON.parse(JSON.stringify(await usersManager.getUsers())).map((user) => ({
+            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (2 * 24 * 60 * 60 * 1000)
+        }))
+        JSON.parse(JSON.stringify(await usersManager.getUsers())).forEach((user) => {
+            console.log(new Date(user.last_connection).getTime() + (2 * 24 * 60 * 60 * 1000))
+            console.log(new Date(user.last_connection).getTime())
+            console.log(user.last_connection)
+
+        })
+
+        console.log(users)
+
 
 
         res.render('users', { isAdmin, users })

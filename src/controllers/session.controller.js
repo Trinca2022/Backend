@@ -26,7 +26,7 @@ export const loginPassportHandler = async (req, res) => {
         if (rol === "Administrador") {
             const { _id } = req.session.user
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
             console.log("DATE LOGIN", fechaHoraFormateada)
             res.redirect('/product/realtimeproductsAdmin')
@@ -34,7 +34,7 @@ export const loginPassportHandler = async (req, res) => {
         if (rol === "Premium") {
             const { _id } = req.session.user
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
             console.log("DATE LOGIN", fechaHoraFormateada)
             res.redirect('/product/realtimeproductsAdmin')
@@ -42,7 +42,7 @@ export const loginPassportHandler = async (req, res) => {
         if (rol === "Usuario") {
             const { _id } = req.session.user
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
             console.log("DATE LOGIN", fechaHoraFormateada)
             res.redirect('/product/realtimeproductsUser')
@@ -68,21 +68,21 @@ export const loginGithubHandler = async (req, res) => {
         if (rol === "Administrador") {
             const { _id } = req.session.user
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
             res.redirect('/product/realtimeproductsAdmin')
         }
         if (rol === "Premium") {
             const { _id } = req.session.user
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
             res.redirect('/product/realtimeproductsAdmin')
         }
         if (rol === "Usuario") {
             const { _id } = req.session.user
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada })
             res.redirect('/product/realtimeproductsUser')
         }
@@ -103,7 +103,7 @@ export const logoutHandler = async (req, res) => {
             const userDatos = data.user;
             const _id = userDatos._id;
             const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+            const fechaHoraFormateada = fechaHoraActual.toString();
             await userManager.updateUser(_id, { last_connection: fechaHoraFormateada });
             console.log("DATE LOGOUT", fechaHoraFormateada)
             await req.session.destroy();

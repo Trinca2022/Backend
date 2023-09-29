@@ -389,6 +389,19 @@ io.on('connection', async (socket) => {
 app.use(passport.initialize());
 app.use(passport.session())
 
+
+/////////
+app.use((req, res, next) => {
+    if (req.method === 'GET' && req.url === '/') {
+        // Redirige la solicitud GET de la ruta raíz a la ruta de inicio de sesión
+        res.redirect('/sessions/login');
+    } else {
+        // Continúa con el flujo normal de la aplicación para otras rutas
+        next();
+    }
+});
+//////////
+
 //Configuro rutas
 app.use('/product', productRouter)
 app.use('/products', productRouter)
