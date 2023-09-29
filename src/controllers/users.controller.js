@@ -10,16 +10,12 @@ export const getUsersHandler = async (req, res) => {
         const users = JSON.parse(JSON.stringify(await usersManager.getUsers())).map((user) => ({
             ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (2 * 24 * 60 * 60 * 1000)
         }))
-        JSON.parse(JSON.stringify(await usersManager.getUsers())).forEach((user) => {
-            console.log(new Date(user.last_connection).getTime() + (2 * 24 * 60 * 60 * 1000))
+        /*JSON.parse(JSON.stringify(await usersManager.getUsers())).forEach((user) => {
+            console.log(new Date(user.last_connection).getTime() + (2))
             console.log(new Date(user.last_connection).getTime())
             console.log(user.last_connection)
 
-        })
-
-        console.log(users)
-
-
+        })*/
 
         res.render('users', { isAdmin, users })
     }
