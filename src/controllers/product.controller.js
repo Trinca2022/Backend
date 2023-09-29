@@ -53,9 +53,9 @@ export const productsFilterHandler = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
-        const user = req.session.user
-        const cartID = user.id_cart.toString()
-
+        //const user = req.session.user
+        // const cartID = user.id_cart.toString()
+        const cartID = req.session.user.id_cart
         const isPremium = req.session.user.rol === "Premium"
         const adminOrPremiumEmail = req.session.user.email
         const uName = req.session.user.nombre
@@ -276,13 +276,8 @@ export const deleteProductHandler = async (req, res, next) => {
         const id = req.params.id
         //const mensaje = await productManager.deleteProduct(id)
         // res.send(mensaje)
-
-        //Busco el rol del usuario actual
-        const data = JSON.parse(latestSession.session);
-        const userDatos = data.user;
-        const userRol = userDatos.rol;
         //Busco el email del owner en la info del producto
-        const product = await productManager.getProductById(_id)
+        const product = await productManager.getProductById(id)
         const prodOwnerEmail = product.owner
         //Busco el rol del usuario que creó el producto
         const users = await userModel.find()

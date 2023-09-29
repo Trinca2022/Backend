@@ -1,0 +1,70 @@
+<!--<div id="userName"></div>-->
+<!--
+<button onClick="goToProds()">Ir a productos</button>
+{{#if isPremium}}
+<button onClick="location.href='/product/realtimeproductsAdmin/'">Volver a productos</button>
+{{/if}}
+{{#if isUsuario}}
+<button onClick="location.href='/product/realtimeproductsUser'">Volver a productos</button>
+{{/if}}-->
+<!--
+<button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
+
+
+<hr>
+
+<div id="idCart"></div>
+<div id="prodsInCart"></div>
+
+<h1>Productos en carrito:</h1>
+<ul>
+    <!--
+    {{#each productsInCart}}
+    <div class="card"
+        style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
+        <h3 class="card-title">{{this.id_prod.title}}</h3>
+        <div class="card-body">
+            <p class="card-text"><br><br>
+                Cantidad elegida: {{this.quantity}}.<br>
+
+                Precio por unidad {{this.id_prod.price}} </p>
+
+            Precio total: {{this.price}}
+        </div>
+    </div>
+    {{/each}}
+
+</ul>
+
+<div>
+    <h3>Total a pagar: ${{totalPrice}}</h3>
+</div>
+
+<button onclick="endPurchase()">Finalizar compra</button>-->
+<!--
+<script>
+    function endPurchase() {
+        const cartID = {{ cartID }
+    }; // Accede a cartID desde tu plantilla
+
+    fetch(`/cart/${cartID}`, {
+        method: 'POST', // Cambia el método a 'POST'
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+    })
+        .then(response => {
+            if (response.status === 200) {
+                // Manejar la respuesta exitosa aquí (si es necesario)
+                console.log('Éxito al finalizar compra');
+            } else {
+                // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+                console.error('Error en la solicitud POST:', response.status);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la solicitud POST:', error);
+        });
+    }
+</script>-->

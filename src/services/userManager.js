@@ -1,8 +1,8 @@
 import { userModel } from "../persistencia/models/Users.js"
 import { logger } from "../utils/logger.js";
-import { SessionManager } from "./sessionManager.js";
+//import { SessionManager } from "./sessionManager.js";
 
-const sessionManager = new SessionManager()
+//const sessionManager = new SessionManager()
 
 export class UserManager {
     constructor(path) {

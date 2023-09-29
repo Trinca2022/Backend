@@ -1,0 +1,7 @@
+<h1>¡Compra realizada con éxito!</h1>
+<button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
+<button onclick="location.href='/cart/{{cartID}}'">Ir al carrito</button>
+<h2>Número de ticket: {{newTicket.code}}</h2>
+<h2>Fecha de la compra: {{newTicket.purchase_datetime}}</h2>
+<h2>Total a pagar: ${{newTicket.amount}}</h2>
+<h2>Comprador/a: {{newTicket.purchaser}}</h2>

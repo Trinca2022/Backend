@@ -97,18 +97,15 @@ export const loginGithubHandler = async (req, res) => {
 // Manejo del logout para destruir la sesión que exporto a la ruta
 export const logoutHandler = async (req, res) => {
     try {
-        const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
-        if (latestSession) {
-            const data = JSON.parse(latestSession.session);
-            const userDatos = data.user;
-            const _id = userDatos._id;
-            const fechaHoraActual = new Date();
-            const fechaHoraFormateada = fechaHoraActual.toLocaleString();
-            await userManager.updateUser(_id, { last_connection: fechaHoraFormateada });
-            console.log("DATE LOGOUT", fechaHoraFormateada)
-            await req.session.destroy();
-            res.redirect('/sessions/login');
-        } else res.redirect('/sessions/login');
+        // const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+        const uID = req.session.user._id
+        const fechaHoraActual = new Date();
+        const fechaHoraFormateada = fechaHoraActual.toLocaleString();
+        await userManager.updateUser(uID, { last_connection: fechaHoraFormateada });
+        console.log("DATE LOGOUT", fechaHoraFormateada)
+        await req.session.destroy();
+        res.redirect('/sessions/login');
+
     } catch (err) {
         res.status(500).render('errors/base', {
             error: err

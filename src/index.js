@@ -30,7 +30,7 @@ import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
 import { UserManager } from './services/userManager.js'
-import { SessionManager } from './services/sessionManager.js'
+//import { SessionManager } from './services/sessionManager.js'
 import { transporter } from './utils/nodemailer.js'
 
 
@@ -38,8 +38,8 @@ import { transporter } from './utils/nodemailer.js'
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
 const cartManager = new CartManager()
-const userManager = new UserManager()
-const sessionManager = new SessionManager()
+//const userManager = new UserManager()
+//const sessionManager = new SessionManager()
 
 
 //Creo y guardo productos/mensajes en mongodb
@@ -307,7 +307,7 @@ io.on('connection', async (socket) => {
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
         // console.log("usuario index", usuario)
         const id = usuario.id_cart.toString()
-        // console.log("id cart QUE compra ", id)
+        console.log("id cart QUE compra ", id)
         //Busco el rol del usuario actual
         // const userSessionRol = userDatos.rol;
         const userSessionRol = usuario.rol

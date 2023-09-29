@@ -10,49 +10,15 @@ const adminName = document.getElementById("adminName")
 
 // Obtener el elemento del DOM donde deseas mostrar la información del usuario
 const userContainer = document.getElementById("adminOrPremiumEmail");
-//const userInfo = document.getElementById("userInfo");
 
 // Obtener el contenido del div con el correo del usuario
 const userEmail = userContainer.textContent;
 
 
-/*
-// Manejar el evento 'renderEmail' para mostrar los datos del usuario
-socket.on("renderEmail", (user) => {
-    console.log('Datos del usuario recibidos en el cliente:', user);
-    // Actualizar el contenido del elemento del DOM con los datos del usuario
-    userInfo.innerHTML = `
-    <h1>HOLIS ${user.nombre}</h1>
-    <hr>
-    <!-- Agregar más campos según tus necesidades -->
-  `;
-});*/
-
-/*
-//Recibo el nombre y el rol del usuario logueado y los renderizo
-//Usuario de mongo
-socket.on("adminName", userDatos => {
-    adminName.innerHTML = `
-    <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
-        <hr>
-        `;
-});*/
-
 //Envío evento al back para manejarlo
 const addProdInCart = (productId) => {
     socket.emit("addProductCart", { _id: productId }, userEmail)
 }
-
-//Envío evento al back para manejarlo
-const goToCart = () => {
-    socket.emit("goToCart")
-}
-
-//Envío evento al back para manejarlo
-const goToUsuario = () => {
-    socket.emit("goToUsuario")
-}
-
 
 //Cuando se escucha el evento envío información de los prods al servidor
 productForm.addEventListener('submit', (e) => {
@@ -76,7 +42,6 @@ productForm.addEventListener('submit', (e) => {
 const eliminarProducto = (productId) => {
     socket.emit("deletedProduct", { _id: productId }, userEmail)
 }
-
 
 //Recibo los prods guardados en el servidor y los renderizo
 socket.on("allProducts", products => {
@@ -103,6 +68,53 @@ socket.on("prodInCart", (message) => {
     alert(message)
 });
 
+//Emito en el front error de eliminación
+socket.on("productNotDeleted", (message) => {
+    alert(message);
+});
+
+//Emito en el front error de eliminación
+socket.on("productNotBuyed", (message) => {
+    alert(message);
+});
+
+
+
+
+/*
+// Manejar el evento 'renderEmail' para mostrar los datos del usuario
+socket.on("renderEmail", (user) => {
+    console.log('Datos del usuario recibidos en el cliente:', user);
+    // Actualizar el contenido del elemento del DOM con los datos del usuario
+    userInfo.innerHTML = `
+    <h1>HOLIS ${user.nombre}</h1>
+    <hr>
+    <!-- Agregar más campos según tus necesidades -->
+  `;
+});*/
+
+/*
+//Recibo el nombre y el rol del usuario logueado y los renderizo
+//Usuario de mongo
+socket.on("adminName", userDatos => {
+    adminName.innerHTML = `
+    <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
+        <hr>
+        `;
+});*/
+
+
+/*//Envío evento al back para manejarlo
+const goToCart = () => {
+    socket.emit("goToCart")
+}*/
+
+/*
+//Envío evento al back para manejarlo
+const goToUsuario = () => {
+    socket.emit("goToUsuario")
+}*/
+
 /*//Cuando se escucha el evento envío información del prod a actualizar al servidor
 const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
 actualizarProducto.addEventListener('click', (e) => {
@@ -126,15 +138,7 @@ actualizarProducto.addEventListener('click', (e) => {
 
 
 
-//Emito en el front error de eliminación
-socket.on("productNotDeleted", (message) => {
-    alert(message);
-});
 
-//Emito en el front error de eliminación
-socket.on("productNotBuyed", (message) => {
-    alert(message);
-});
 
 /*
 //Emito en el front alert de error de permiso

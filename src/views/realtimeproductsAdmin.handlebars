@@ -8,6 +8,9 @@
 
 {{#if isPremium}}
 <button onclick="location.href='/cart/{{cartID}}'">Ir al carrito</button>
+
+{{/if}}
+{{#if isPremium}}
 <button onclick="location.href='/product/realtimeproductsUser'">Cambiar a USUARIO</button>
 {{/if}}
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>

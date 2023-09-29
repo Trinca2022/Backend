@@ -1,5 +1,5 @@
 import { ticketModel } from '../persistencia/models/Tickets.js'
-import { CartManager } from './cartManager.js'
+//import { CartManager } from './cartManager.js'
 import { randomUUID } from 'node:crypto';
 
 //Genero una clase TicketManager
@@ -9,27 +9,15 @@ export class TicketManager {
     }
 
     //Mét create ticket
-    async createTicket({ code, purchase_datetime, amount, purchaser }) {
+    async createTicket(amount, purchaser) {
         try {
-            const ticket = {
-                code: randomUUID(),
-                purchase_datetime: new Date(),
-                amount: "" //cartManager.totalAmount(),
-
-
-            }
-
-
-
-            await ticketModel.create({
-                "code": code,
-                "purchase_datetime": purchase_datetime,
+            const ticket = await ticketModel.create({
+                "code": randomUUID(),
+                "purchase_datetime": new Date(),
                 "amount": amount,
                 "purchaser": purchaser
             })
-            return "Ticket creado"
-
-
+            return ticket
         }
         catch (error) {
             console.log(error)
