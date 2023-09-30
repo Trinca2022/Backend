@@ -1,12 +1,40 @@
-<div id="userName"></div>
+<h1>Tu carrito</h1>
 
-<button onClick="goToProds()">Ir a productos</button>
+{{#if isPremium}}
+<button onClick="location.href='/product/realtimeproductsAdmin'">Volver a productos PREMIUM</button>
+{{/if}}
+
+{{#if isUsuario}}
+<button onClick="location.href='/product/realtimeproductsUser'">Volver a productos USER</button>
+{{/if}}
+
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
-<button id="mostrarProds">Mostrar prods</button>
 
 <hr>
 
-<div id="idCart"></div>
-<div id="prodsInCart"></div>
+<!--<div id="idCart"></div>
+<div id="prodsInCart"></div>-->
 
-<button onclick="location.href='/sessions/logout'">Finalizar compra</button>
+<h2>Productos elegidos:</h2>
+<ul>
+    {{#each productsInCart}}
+    <div class="card"
+        style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
+        <h3 class="card-title">{{this.id_prod.title}}</h3>
+        <div class="card-body">
+            <p class="card-text"><br><br>
+                Cantidad elegida: {{this.quantity}}.<br>
+
+                Precio por unidad {{this.id_prod.price}} </p>
+
+            Precio total: {{this.price}}
+        </div>
+    </div>
+    {{/each}}
+</ul>
+
+<div>
+    <h3>Total a pagar: ${{totalPrice}}</h3>
+</div>
+
+<button onclick="location.href='/cart/{{cartID}}/purchase'">Finalizar compra</button>

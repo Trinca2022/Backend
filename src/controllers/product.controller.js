@@ -6,10 +6,12 @@ import { generateProductErrorInfo } from "../services/errors/info.js";
 import { sessionModel } from "../persistencia/models/Sessions.js";
 import { userModel } from "../persistencia/models/Users.js";
 import { productMongo } from "../persistencia/DAOs/productMongo.js";
+import { UserManager } from "../services/userManager.js";
 
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const productManager = new ProductManager()
+const userManager = new UserManager()
 
 //Manejo de la consulta con filtros que exporto a la ruta
 export const productsFilterHandler = async (req, res, next) => {
@@ -51,11 +53,21 @@ export const productsFilterHandler = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
+        //const user = req.session.user
+        // const cartID = user.id_cart.toString()
+        const cartID = req.session.user.id_cart
+        const isPremium = req.session.user.rol === "Premium"
+        const isAdmin = req.session.user.rol === "Administrador"
+        const adminOrPremiumEmail = req.session.user.email
+        const uName = req.session.user.nombre
+        const uRol = req.session.user.rol
+
         const products = await productModel.find()
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsAdmin', { products: products, layout: 'mainrealtime' })
+        res.render('realtimeproductsAdmin', { uRol, uName, adminOrPremiumEmail, cartID, isPremium, isAdmin, products: products, layout: 'mainrealtime' })
     }
     catch (error) {
+        console.log(error)
         next(error)
     }
 }
@@ -64,14 +76,122 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerUser = async (req, res, next) => {
     try {
+        const cartID = req.session.user.id_cart
         const products = await productModel.find()
+        const userEmail = req.session.user.email
+        const uName = req.session.user.nombre
+        const uRol = req.session.user.rol
+        const uID = req.session.user._id
+
         //Envío array al cliente para renderizar
-        res.render('realtimeproductsUser', { products: products, layout: 'mainrealtimeUser' })
+        res.render('realtimeproductsUser', { uID, uName, uRol, cartID, userEmail, products: products, layout: 'mainrealtimeUser' })
+
     }
     catch (error) {
         next(error)
     }
 }
+
+export const goToPremiumHandler = async (req, res, next) => {
+    try {
+        //VALIDO DOCS PARA SER PREMIUM
+        const userID = req.session.user._id
+        // console.log(userID)
+        const userFound = await userManager.getUserById(userID)
+        const documents = userFound.documents
+        //console.log(documents)
+        const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
+        const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
+        const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
+        if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
+            const statusUser = userFound.status;
+
+            //return res.send("Faltan cargar documentos"); // Agrega el return aquí
+            return console.log(`Faltan cargar documentos. Estado:`, statusUser);
+
+        }
+        else {
+            const updatedUser = await userManager.updateUser(userID, { status: true });
+            const statusUpdatedUser = updatedUser.status;
+            console.log("status docs cargados todos", statusUpdatedUser);
+            const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
+            const newRol = req.session.user.rol = "Premium";
+            console.log("status docs cargados todos", newRol);
+            // return console.log("hola")
+            return next()
+            //res.redirect('/product/realtimeproductsAdmin')
+        }
+    }
+    /*
+            if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
+                const statusUser = userFound.status;
+    
+                res.send("Faltan cargar documentos"); // Agrega el return aquí
+                return console.log(`Faltan cargar documentos. Estado:`, statusUser);
+            }
+            else {
+                const updatedUser = await userManager.updateUser(userID, { status: true });
+                const statusUpdatedUser = updatedUser.status;
+                console.log("status docs cargados todos", statusUpdatedUser);
+                if (statusUpdatedUser === true) {
+                    const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
+                    const newRol = req.session.user.rol = "Premium";
+                    console.log("status docs cargados todos", newRol);
+                    // return console.log("hola")
+                    return next()
+                    //res.redirect('/product/realtimeproductsAdmin')
+                }
+                /*else {
+                    return console.log("No actualizado, sigues teniendo el rol:", statusUpdatedUser);
+                }*/
+
+
+    catch (error) {
+        next(error);
+    }
+    // next()
+}
+
+/*if (identificacionDocument & domicilioDocument & estadoCuentaDocument) { 
+
+const updatedUser = await userManager.updateUser(userID, { status: true });
+            const statusUpdatedUser = updatedUser.status;
+            console.log("status docs cargados todos", statusUpdatedUser);
+            
+                const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
+                const newRol = req.session.user.rol = "Premium";
+                console.log("status docs cargados todos", newRol);
+                // return console.log("hola")
+}
+                //res.redirect('/product/realtimeproductsAdmin')}
+                else {return console.log(`Faltan cargar documentos. Estado:`, statusUser);}
+
+
+
+(!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
+            const statusUser = userFound.status;
+
+            res.send("Faltan cargar documentos"); // Agrega el return aquí
+            return console.log(`Faltan cargar documentos. Estado:`, statusUser);
+        }
+        else {
+            const updatedUser = await userManager.updateUser(userID, { status: true });
+            const statusUpdatedUser = updatedUser.status;
+            console.log("status docs cargados todos", statusUpdatedUser);
+            if (statusUpdatedUser === true) {
+                const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
+                const newRol = req.session.user.rol = "Premium";
+                console.log("status docs cargados todos", newRol);
+                // return console.log("hola")
+                return next()
+                //res.redirect('/product/realtimeproductsAdmin')
+            }
+            /*else {
+                return console.log("No actualizado, sigues teniendo el rol:", statusUpdatedUser);
+            }
+        }
+    } */
+
 
 //Manejo búsqueda por ID que exporto a la ruta
 export const getProductByIdHandler = async (req, res) => {
@@ -92,8 +212,9 @@ export const getProductByIdHandler = async (req, res) => {
 export const getProductsHandler = async (req, res) => {
     try {
         //const products = await productManager.getProducts()
-        const products = await productModel.find()
+        const products = JSON.parse(JSON.stringify(await productModel.find()))
         //const prod = JSON.stringify(products)
+
         res.render('products', { products })
         //res.send(products);
         // res.send({ status: "success", payload: products, layout: 'products' });
@@ -118,10 +239,11 @@ export const addProductHandler = async (req, res, next) => {
             })
         }
         //Busco en la sesión actual el email para agregarlo
-        const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
-        const data = JSON.parse(latestSession.session);
-        const userDatos = data.user;
-        const userEmail = userDatos.email;
+        const userEmail = req.session.user.email
+        /* const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+         const data = JSON.parse(latestSession.session);
+         const userDatos = data.user;
+         const userEmail = userDatos.email;*/
         const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, owner: userEmail })
         res.send(prodNew)
         //res.send({ status: "success", payload: prodNew });
@@ -135,10 +257,14 @@ export const addProductHandler = async (req, res, next) => {
 //Manejo función que actualiza un producto y exporto a la ruta
 export const updateProductHandler = async (req, res, next) => {
     try {
-        const id = req.params.id
-        const { title, description, price, thumbnail, code, stock, status } = req.body
-        const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
-        res.send(mensaje)
+        const userRol = req.session.user.rol
+        if (userRol === "Administrador") {
+            const id = req.params.id
+            const { title, description, price, thumbnail, code, stock, status } = req.body
+            const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock, status })
+            res.send(mensaje)
+        }
+        else return "Sin permisos para actualizar producto"
     }
     catch (error) {
         next(error)
@@ -152,13 +278,8 @@ export const deleteProductHandler = async (req, res, next) => {
         const id = req.params.id
         //const mensaje = await productManager.deleteProduct(id)
         // res.send(mensaje)
-
-        //Busco el rol del usuario actual
-        const data = JSON.parse(latestSession.session);
-        const userDatos = data.user;
-        const userRol = userDatos.rol;
         //Busco el email del owner en la info del producto
-        const product = await productManager.getProductById(_id)
+        const product = await productManager.getProductById(id)
         const prodOwnerEmail = product.owner
         //Busco el rol del usuario que creó el producto
         const users = await userModel.find()

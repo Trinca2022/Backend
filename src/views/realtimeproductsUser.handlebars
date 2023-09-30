@@ -1,9 +1,86 @@
-<div id="userName"></div>
+<!--<div id="userName"></div>-->
+<div>
+    <h1>Bienvenida/o {{uRol}} {{uName}}</h1>
+</div>
+<h2> <span style="display: inline-block; margin-right: 10px;">Email:</span>
+    <span id="userEmail">{{userEmail}}</span>
+</h2><br>
+
+
 <button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
 <button onclick="location.href='/chat/realtimechat'">Ir al chat</button>
-<button onclick="location.href='/cart/realtimecart'">Ir al carrito</button>
+<button onclick="location.href='/cart/{{cartID}}'">Ir al carrito</button>
+
 <button onclick="goToPremium()">Cambiar a PREMIUM</button>
-<button onclick="location.href='/register/:id/documents'">Subir documento</button>
+
+<!--<button onclick="upgradeToPremium()">Cambiar a PREMIUM</button>
+<button id="upgradeButton">Cambiar a PREMIUM</button>
+<script>
+    // Obtén una referencia al botón por su ID
+    const upgradeButton = document.getElementById('upgradeButton');
+
+    // Agrega un controlador de eventos al botón
+    if (upgradeButton) {
+        upgradeButton.addEventListener('click', function () {
+            fetch('/product/realtimeproductsUser', {
+                method: 'POST', // Cambia el método a 'POST'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({}),
+            })
+                .then(response => {
+                    if (response.status === 200) {
+                        // Manejar la respuesta exitosa aquí (si es necesario)
+                        console.log('POST FUNCIONANDO');
+                    } else {
+                        // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+                        console.error('Error en la solicitud POST:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud POST:', error);
+                });
+        });
+    }
+</script>
+
+
+<!--{{#if isValidatedUser}}{{/if}}-->
+
+<!--<script>
+    function upgradeToPremium() {
+        fetch('/product/realtimeproductsUser', {
+            method: 'POST', // Cambia el método a 'POST'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({}),
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    // Manejar la respuesta exitosa aquí (si es necesario)
+                    console.log('Usuario actualizado a PREMIUM');
+                } else {
+                    // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+                    console.error('Error en la solicitud POST:', response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud POST:', error);
+            });
+    }
+
+</script>-->
+
+
+
+<div style="display: flex; align-items: center;">
+    <h3 style="margin-right: 10px;">Si querés ser usuario PREMIUM, cargá los documentos haciendo click acá</h3>
+    <button onclick="location.href='/register/:id/documents'">Subir documento</button>
+</div>
+
+
 
 <hr>
 

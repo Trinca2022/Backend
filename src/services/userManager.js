@@ -1,8 +1,8 @@
 import { userModel } from "../persistencia/models/Users.js"
 import { logger } from "../utils/logger.js";
-import { SessionManager } from "./sessionManager.js";
+//import { SessionManager } from "./sessionManager.js";
 
-const sessionManager = new SessionManager()
+//const sessionManager = new SessionManager()
 
 export class UserManager {
     constructor(path) {
@@ -85,10 +85,12 @@ export class UserManager {
         }
     }
 
-    async userToPremium() {
+    async userToPremium(id) {
         try {
-            const _id = await sessionManager.findIdSession()
-            const userFound = await this.getUserById(_id)
+            //hecho con req.sess en prod controller
+            //  const _id = await sessionManager.findIdSession()
+
+            const userFound = await this.getUserById(id)
             const documents = userFound.documents
             const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
             const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
@@ -98,7 +100,7 @@ export class UserManager {
                 return statusUser
                 //console.log(`Faltan cargar documentos`);
             } else {
-                const updatedUser = await this.updateUser(_id, { status: true });
+                const updatedUser = await this.updateUser(id, { status: true });
                 const statusUpdatedUser = updatedUser.status
                 return statusUpdatedUser
             }

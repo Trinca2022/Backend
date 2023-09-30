@@ -5,15 +5,21 @@ const socket = io()
 const userName = document.getElementById("userName")
 const productList = document.getElementById("productList")
 
-//USUARIO AGREGA PROD AL CARRITO
 
+// Obtener el elemento del DOM donde deseas mostrar la información del usuario
+const userContainer = document.getElementById("userEmail");
+// Obtener el contenido del div con el correo del usuario
+const userEmail = userContainer.textContent;
+
+
+//USUARIO AGREGA PROD AL CARRITO
 const addProdInCart = (productId) => {
-    socket.emit("addProduct", { _id: productId })
+    socket.emit("addProductCart", { _id: productId }, userEmail)
 }
 
 //Envío evento al back para manejarlo
 const goToPremium = () => {
-    socket.emit("goToPremium")
+    socket.emit("goToPremium", userEmail)
 }
 
 //Emito en el front alert de error de permiso
@@ -35,7 +41,7 @@ socket.on("allProducts", products => {
             Stock: ${prod.stock}.<br>
             Descripción: ${prod.description}.<br>
             El precio es $${prod.price} </p>
-            <button onClick="addProdInCart('${prod._id}')">Comprar producto</button>
+            <button onClick="addProdInCart('${prod._id}')">Agregar al carrito</button>
             </div>
             </div>`
     }
@@ -54,8 +60,15 @@ socket.on("userName", userDatos => {
 
 //Redirecciono a productos de premium
 socket.on("redirectToPremiumProds", (path) => {
-    window.location.href = path;
+    alert("Iniciá sesión nuevamente")
+    setTimeout(() => {
+        // Redirige a la página especificada
+        window.location.href = path;
+    }, 1000);
 });
 
+socket.on("prodInCart", (message) => {
+    alert(message)
+});
 
 

@@ -66,16 +66,16 @@ export class ProductManager {
         else return "Producto no encontrado"
     }
 
-    //Método getProductById --> busca un producto por su ID mongodb
+    //Método getProducts --> busca todos los productos
     async getProducts() {
         const productsFound = await productMongo.findAll()
         if (productsFound) {
             return productsFound
         }
-        else return "Producto no encontrado"
+        else return "Productos no encontrados"
     }
 
-    //Método updateProduct --> actualiza campo de un producto con un ID existente
+    /*//Método updateProduct --> actualiza campo de un producto con un ID existente
     async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {
         const productFound = await productMongo.findOneById(id)
         if (productFound) {
@@ -96,6 +96,35 @@ export class ProductManager {
         }
         else
             return 'Not found'
+    }*/
+
+    async updateProduct(id, {
+        title, description, price, thumbnail, code, stock, status }) {
+        try {
+            const updatedProd = await productModel.findOneAndUpdate(
+                { "_id": id }, {
+                $set: {
+                    "title": title,
+                    "description": description,
+                    "price": price,
+                    "thumbnail": thumbnail,
+                    "code": code,
+                    "stock": stock,
+                    "status": status
+                }
+            },
+                { new: true } // Devuelve el documento actualizado
+            );
+
+            if (updatedProd) {
+                return updatedProd;
+            } else {
+                return 'Producto no encontrado.';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return 'Ha ocurrido un error al actualizar el producto.';
+        }
     }
 
 

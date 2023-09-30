@@ -12,11 +12,11 @@ import { compareData } from "../utils/bcrypt.js";
 import crypto from 'crypto'
 import { uploadDocuments, uploadProductPic, uploadProfilePic } from "../index.js";
 import multer from "multer";
-import { SessionManager } from "../services/sessionManager.js";
+//import { SessionManager } from "../services/sessionManager.js";
 
 
 const userManager = new UserManager()
-const sessionManager = new SessionManager()
+//const sessionManager = new SessionManager()
 
 //Manejo de la VISTA de registro que exporto a la ruta
 export const registerViewHandler = (req, res) => {
@@ -172,13 +172,23 @@ export const registerPasswordRecoveryNEWHandler = async (req, res, next) => {
 
 //VISTA carga de archivos
 export const uploadFileViewHandler = (req, res) => {
-    res.render('register/uploadFile')
+    try {
+        const uID = req.session.user.id
+        // res.render('uploadFile', { uID, layout: 'mainrealtime' })
+        res.render('register/uploadFile', uID)
+    }
+    catch (error) {
+        console.log(error)
+        next(error)
+    }
+
 }
 
 
 // Controlador de carga para Identificación
 export const uploadIdentHandler = async (req, res, next) => {
     try {
+        const uID = req.session.user._id
         // Se cargan docs con Multer
         uploadDocuments.single('identificacion')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
@@ -188,13 +198,13 @@ export const uploadIdentHandler = async (req, res, next) => {
                 console.error('Error en la carga de los archivos:', err);
                 res.status(500).send('Ocurrió un error en la carga de los archivos');
             } else {
-                const _id = await sessionManager.findIdSession()
-                const userFound = await userManager.getUserById(_id)
+                // const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(uID)
                 await userFound.documents.push({
                     name: 'identificacion.pdf',
                     reference: '/public/archivos/documents'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de documento");
             }
         });
@@ -206,6 +216,7 @@ export const uploadIdentHandler = async (req, res, next) => {
 // Controlador de carga para Comprobante de Domicilio
 export const uploadAdressHandler = async (req, res, next) => {
     try {
+        const uID = req.session.user._id
         uploadDocuments.single('domicilio')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
                 console.error('Error de Multer:', err.message);
@@ -214,13 +225,13 @@ export const uploadAdressHandler = async (req, res, next) => {
                 console.error('Error en la carga de los archivos:', err);
                 res.status(500).send('Ocurrió un error en la carga de los archivos');
             } else {
-                const _id = await sessionManager.findIdSession()
-                const userFound = await userManager.getUserById(_id)
+                // const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(uID)
                 await userFound.documents.push({
                     name: 'domicilio.pdf',
                     reference: '/public/archivos/documents'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de documento");
 
             }
@@ -233,6 +244,7 @@ export const uploadAdressHandler = async (req, res, next) => {
 // Controlador de carga para Comprobante de Estado de Cuenta
 export const uploadAccountHandler = async (req, res, next) => {
     try {
+        const uID = req.session.user._id
         uploadDocuments.single('estadoCuenta')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
                 console.error('Error de Multer:', err.message);
@@ -241,13 +253,13 @@ export const uploadAccountHandler = async (req, res, next) => {
                 console.error('Error en la carga de los archivos:', err);
                 res.status(500).send('Ocurrió un error en la carga de los archivos');
             } else {
-                const _id = await sessionManager.findIdSession()
-                const userFound = await userManager.getUserById(_id)
+                // const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(uID)
                 await userFound.documents.push({
                     name: 'estadoCuenta.pdf',
                     reference: '/public/archivos/documents'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de documento");
             }
         });
@@ -259,6 +271,7 @@ export const uploadAccountHandler = async (req, res, next) => {
 // Controlador de carga para Foto de Perfil
 export const uploadProfilePicHandler = async (req, res, next) => {
     try {
+        const uID = req.session.user._id
         uploadProfilePic.single('profilePic')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
                 console.error('Error de Multer:', err.message);
@@ -267,15 +280,15 @@ export const uploadProfilePicHandler = async (req, res, next) => {
                 console.error('Error en la carga de los archivos:', err);
                 res.status(500).send('Ocurrió un error en la carga de los archivos');
             } else {
-                const _id = await sessionManager.findIdSession()
-                console.log("_id", _id)
-                const userFound = await userManager.getUserById(_id)
+                // const _id = await sessionManager.findIdSession()
+                //console.log("_id", _id)
+                const userFound = await userManager.getUserById(uID)
 
                 await userFound.documents.push({
                     name: 'profilePic.jpg',
                     reference: '/public/archivos/profiles'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de foto de perfil");
             }
         });
@@ -287,6 +300,7 @@ export const uploadProfilePicHandler = async (req, res, next) => {
 // Controlador de carga para Foto de Producto
 export const uploadProductPicHandler = async (req, res, next) => {
     try {
+        const uID = req.session.user._id
         uploadProductPic.single('productPic')(req, res, async function (err) {
             if (err instanceof multer.MulterError) {
                 console.error('Error de Multer:', err.message);
@@ -295,13 +309,13 @@ export const uploadProductPicHandler = async (req, res, next) => {
                 console.error('Error en la carga de los archivos:', err);
                 res.status(500).send('Ocurrió un error en la carga de los archivos');
             } else {
-                const _id = await sessionManager.findIdSession()
-                const userFound = await userManager.getUserById(_id)
+                //  const _id = await sessionManager.findIdSession()
+                const userFound = await userManager.getUserById(uID)
                 await userFound.documents.push({
                     name: 'productPic.jpg',
                     reference: '/public/archivos/products'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de foto de producto");
             }
         });

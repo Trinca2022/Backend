@@ -1,8 +1,23 @@
-<div id="adminName"></div>
+<!--<div id="adminName"></div>-->
+<div>
+    <h1>Bienvenida/o {{uRol}} {{uName}}</h1>
+</div>
+<h2> <span style="display: inline-block; margin-right: 10px;">Email:</span>
+    <span id="adminOrPremiumEmail">{{adminOrPremiumEmail}}</span>
+</h2><br>
 
-<button onClick="goToCart()">Ir al carrito</button>
-<button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
+{{#if isPremium}}
+<button onclick="location.href='/cart/{{cartID}}'">Ir al carrito</button>
 <button onclick="goToUsuario()">Cambiar a USUARIO</button>
+{{/if}}
+<!--{{#if isPremium}}
+<button onclick="location.href='/product/realtimeproductsUser'">Cambiar a USUARIO</button>
+{{/if}}-->
+<button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
+
+{{#if isAdmin}}
+<button onclick="location.href='/users'">Administrar usuarios</button>
+{{/if}}
 <hr>
 
 <h2>Agregar un producto</h2>

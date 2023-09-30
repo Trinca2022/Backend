@@ -1,0 +1,34 @@
+<div id="userName"></div>
+<button onclick="location.href='/sessions/logout'">Cerrar sesión</button>
+<button onclick="location.href='/product/realtimeproductsAdmin'">Ir a productos</button>
+
+
+<hr>
+
+
+<h2>Usuarios:</h2>
+
+<ul>
+
+    {{#each users}}
+    <div class="cuadradoUsers">
+        <h3 class="card-title">Nombre y Apellido: {{this.nombre}} {{this.apellido}}</h3>
+        <h4 class="card-title">Email: {{this.email}}</h4>
+        <h5 class="card-title">Rol: {{this.rol}}</h5>
+        <h5 class="card-title">Última conexión: {{this.last_connection}}</h5>
+
+        {{#if this.inactiveUser}}
+        <button class="btn">Eliminar Usuario</button>
+        {{/if}}
+
+    </div>
+
+    {{/each}}
+
+
+</ul>
+
+</div>
+
+{{#if this.inactiveUser}}
+{{/if}}

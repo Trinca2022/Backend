@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addProductHandler, deleteProductHandler, getProductByIdHandler, getProductsHandler, productsFilterHandler, productsViewHandlerAdmin, productsViewHandlerUser, updateProductHandler } from "../controllers/product.controller.js";
+import { addProductHandler, deleteProductHandler, getProductByIdHandler, getProductsHandler, goToPremiumHandler, productsFilterHandler, productsViewHandlerAdmin, productsViewHandlerUser, updateProductHandler } from "../controllers/product.controller.js";
 import { authAdminOrPrem } from "../middlewares/authSessions/authSessions.js";
 import { authUser } from "../middlewares/authSessions/authSessions.js";
 
@@ -16,6 +16,8 @@ productRouter.get("/realtimeproductsAdmin", authAdminOrPrem, productsViewHandler
 
 //Envío el array de productos inicial al cliente a través de socket
 productRouter.get("/realtimeproductsUser", authUser, productsViewHandlerUser)
+
+productRouter.post("/realtimeproductsUser", goToPremiumHandler)
 
 //Consulta de productos por id
 productRouter.get("/:id", getProductByIdHandler)
