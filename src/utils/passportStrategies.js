@@ -4,6 +4,7 @@ import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as GithubStrategy } from 'passport-github2'
 import { compareData } from './bcrypt.js'
 import { cartModel } from "../persistencia/models/Cart.js";
+import config from "../config/config.js";
 
 
 
@@ -40,7 +41,7 @@ passport.use(
         {
             clientID: 'Iv1.863d8d4eacf90fe8',
             clientSecret: '85322465a58c1e30eba3a569721b3642763c8ece',
-            callbackURL: 'http://localhost:4000/sessions/github',
+            callbackURL: `${config.SITE}/sessions/github`,
         },
         async (req, accessToken, refreshToken, profile, done) => {
             const { name, email } = profile._json

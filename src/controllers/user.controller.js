@@ -12,6 +12,7 @@ import { compareData } from "../utils/bcrypt.js";
 import crypto from 'crypto'
 import { uploadDocuments, uploadProductPic, uploadProfilePic } from "../index.js";
 import multer from "multer";
+import config from "../config/config.js";
 //import { SessionManager } from "../services/sessionManager.js";
 
 
@@ -41,7 +42,7 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         //Almaceno la hora de expiracion
         const expirationTime = Date.now() + 60 * 60 * 1000;
         // Construyo el enlace
-        const enlace = ` http://localhost:4000/register/passwordRecovery/validation?token=${token}`;
+        const enlace = `${config.SITE}/register/passwordRecovery/validation?token=${token}`;
         // Almaceno el enlace y su tiempo de expiración
         links[token] = expirationTime;
         if (!user) {

@@ -17,5 +17,6 @@ export default {
     SESSION_SECRET: process.env.SESSION_SECRET,
     PORT: process.env.PORT,
     GMAIL_USER: process.env.GMAIL_USER,
-    GMAIL_PASSWORD: process.env.GMAIL_PASSWORD
+    GMAIL_PASSWORD: process.env.GMAIL_PASSWORD,
+    SITE: process.env.SITE
 }
