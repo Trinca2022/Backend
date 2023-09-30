@@ -1,4 +1,5 @@
 import { UsersManager } from "../services/usersManager.js";
+import { transporter } from "../utils/nodemailer.js";
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const usersManager = new UsersManager()
@@ -8,7 +9,7 @@ export const getUsersHandler = async (req, res) => {
     try {
         const isAdmin = req.session.user.rol === "Administrador"
         const users = JSON.parse(JSON.stringify(await usersManager.getUsers())).map((user) => ({
-            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (10 * 1000)//getTime() + (2 * 24 * 60 * 60 * 1000)
+            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (30 * 1000)//getTime() + (2 * 24 * 60 * 60 * 1000)
         }))
         res.render('users', { isAdmin, users })
     }
@@ -24,9 +25,11 @@ export const getUsersHandler = async (req, res) => {
 export const deleteUsersHandler = async (req, res, next) => {
     try {
         const userID = req.params.id
+
         const user = await usersManager.getUserById(userID)
         console.log("userr", user)
         const uEmail = user.email
+        console.log("email a del", uEmail)
 
         await transporter.sendMail({
             to: uEmail,

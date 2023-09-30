@@ -369,7 +369,7 @@ io.on('connection', async (socket) => {
                 await transporter.sendMail({
                     to: prodOwnerEmailOrAdmin,
                     subject: 'Producto eliminado',
-                    text: `Se ha eliminado tu producto con ID ${_id} de la base de datos`
+                    text: `Se ha eliminado tu producto con ID ${_id}`
                 })
             }
         }
