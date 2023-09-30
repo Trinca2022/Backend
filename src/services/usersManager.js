@@ -27,14 +27,10 @@ export class UsersManager {
 
     //Método deleteProduct --> elimina producto con un ID existente
     async deleteUser(id) {
-        const userFound = await productMongo.findOneById(id)
+        const userFound = await usersMongo.findOneById(id)
         if (userFound) {
             await usersMongo.deleteOne({ "_id": id })
-            return (`El user cuyo id es ${userFound.id} se ha eliminado`)
-        }
-        else {
-            return userFound
+            return `El user cuyo id es ${userFound.id} se ha eliminado`
         }
     }
-
 }

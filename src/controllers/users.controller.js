@@ -8,7 +8,7 @@ export const getUsersHandler = async (req, res) => {
     try {
         const isAdmin = req.session.user.rol === "Administrador"
         const users = JSON.parse(JSON.stringify(await usersManager.getUsers())).map((user) => ({
-            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (2 * 60 * 60 * 1000)//getTime() + (2 * 24 * 60 * 60 * 1000)
+            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (10 * 1000)//getTime() + (2 * 24 * 60 * 60 * 1000)
         }))
         res.render('users', { isAdmin, users })
     }
@@ -23,11 +23,23 @@ export const getUsersHandler = async (req, res) => {
 //Manejo función que elimina un producto y exporto a la ruta
 export const deleteUsersHandler = async (req, res, next) => {
     try {
-        const users = JSON.parse(JSON.stringify(await usersManager.getUsers()))
-        console.log("usersss", users)
+        const userID = req.params.id
+        const user = await usersManager.getUserById(userID)
+        console.log("userr", user)
+        const uEmail = user.email
 
+        await transporter.sendMail({
+            to: uEmail,
+            subject: 'Usuario eliminado',
+            text: `Se ha eliminado tu usuario por inactividad`
+        })
 
+        await usersManager.deleteUser(userID)
+        //const users = JSON.parse(JSON.stringify(await usersManager.getUsers()))
+        //console.log("usersss", users)
+        //res.json(users)
 
+        res.status(200).send("OK")
     }
     catch (error) {
         next(error)

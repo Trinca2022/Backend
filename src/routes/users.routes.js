@@ -6,6 +6,6 @@ const usersRouter = Router()
 
 usersRouter.get("/", authAdminOrPrem, getUsersHandler)
 
-usersRouter.delete("/delete", deleteUsersHandler)
+usersRouter.delete("/:id", authAdminOrPrem, deleteUsersHandler)
 
 export default usersRouter

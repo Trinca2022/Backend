@@ -53,6 +53,20 @@ export const productsFilterHandler = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
+        const uID = req.session.user._id
+        // console.log("iddd", uID)
+        if (req.session.user.rol === "Usuario") {
+            const statusUpdatedUser = await userManager.userToPremium(uID)
+            if (statusUpdatedUser === true) {
+                //Actualizo el rol del usuario actual
+                await userManager.updateUser(uID, { rol: "Premium" })
+                req.session.user.rol = "Premium"
+            }
+            else {
+                throw Error("USUARIO NO PUEDE SER PREMIUM")
+            }
+
+        }
         //const user = req.session.user
         // const cartID = user.id_cart.toString()
         const cartID = req.session.user.id_cart
@@ -76,6 +90,14 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
 //Envío el array de productos inicial al cliente a través de socket
 export const productsViewHandlerUser = async (req, res, next) => {
     try {
+        if (req.session.user.rol === "Premium" || req.session.user.rol === "Usuario") {
+            const idUser = req.session.user._id.toString()
+            await userManager.updateUser(idUser, { rol: "Usuario" })
+            req.session.user.rol = "Usuario"
+        }
+        else { throw Error("No podés ser USUARIO") }
+
+
         const cartID = req.session.user.id_cart
         const products = await productModel.find()
         const userEmail = req.session.user.email

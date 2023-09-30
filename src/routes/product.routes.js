@@ -12,10 +12,10 @@ const productRouter = Router() //Guardo todas las rutas en productRouter
 productRouter.get("/", getProductsHandler)
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproductsAdmin", authAdminOrPrem, productsViewHandlerAdmin)
+productRouter.get("/realtimeproductsAdmin", productsViewHandlerAdmin)
 
 //Envío el array de productos inicial al cliente a través de socket
-productRouter.get("/realtimeproductsUser", authUser, productsViewHandlerUser)
+productRouter.get("/realtimeproductsUser", productsViewHandlerUser)
 
 productRouter.post("/realtimeproductsUser", goToPremiumHandler)
 
