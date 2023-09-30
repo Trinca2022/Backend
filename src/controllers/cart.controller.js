@@ -1,10 +1,12 @@
 import { CartManager } from "../services/cartManager.js";
 //import { cartModel } from "../persistencia/models/Cart.js";
 import { TicketManager } from "../services/ticketManager.js";
+import { ProductManager } from "../services/productManager.js";
 
 //Utilizo las funciones creadas en los managers (services), para ejecutar req, res y enviarlo a la ruta
 const cartManager = new CartManager()
 const ticketManager = new TicketManager()
+const productManager = new ProductManager()
 
 /*//Creo carrito mediante método POST
 export const createCartHandler = async (req, res) => {
@@ -65,24 +67,24 @@ export const getTicketHandler = async (req, res, next) => {
         const cart = await cartManager.getCartById(cartID)
         //console.log("cart", cart)
         const productsInCart = JSON.parse(JSON.stringify(cart.products))
+        //console.log("productsInCart", productsInCart[0].id_prod.stock)
         let totalPrice = 0
         for (const product of productsInCart) {
             // console.log("prod adentro for", product)
             product.price = product.quantity * product.id_prod?.price ?? 0;
             totalPrice += product.price
+            //console.log("stockk", (product.id_prod.stock - product.quantity))
+            // if(product.quantity >= product.id_prod.stock){}
+            const prodPostCompra = await productManager.updateProduct(product.id_prod._id, { stock: (product.id_prod.stock - product.quantity) })
+            //console.log("stock new", prodPostCompra)
         }
-        // HACER UNA FN PARA QUE NO SE GENERE UN TICKET CADA VEZ QUE CLICK BUTTON
-        // si el producto tiene suficiente stock restarlo del stock y seguir
-        //si el prod no tiene suficiente stock no sumarlo
-        //devolver array con ids que no se compraron
+
         const ticket = await ticketManager.createTicket(totalPrice, uEmail)
         const newTicket = JSON.parse(JSON.stringify(ticket))
-
-
-
-
-
+        const cartVac = await cartManager.deleteProductsInCart(cartID)
+        console.log("caert vacio", cart)
         res.render('purchase', { layout: 'mainrealtimeCart', cartID, newTicket })
+
     }
     catch (error) {
         console.log("error en get cart purchase", error)
@@ -152,15 +154,3 @@ export const updateCartHandler =
         const message = await cartManager.updateCart(id, newProducts)
         res.send(message)
     }
-
-/*//Creo orden
-export const createOrderHandler = async (req, res) => {
-    const id_cart = req.params.id_cart;
-    await cartManager.createCart(products)
-    res.send("Carrito creado")
-}*/
-
-export const endPurchaseHandler = async (req, res, next) => {
-    try { }
-    catch { }
-}

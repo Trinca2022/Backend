@@ -96,18 +96,19 @@ export const goToPremiumHandler = async (req, res, next) => {
     try {
         //VALIDO DOCS PARA SER PREMIUM
         const userID = req.session.user._id
-        console.log(userID)
+        // console.log(userID)
         const userFound = await userManager.getUserById(userID)
         const documents = userFound.documents
-        console.log(documents)
+        //console.log(documents)
         const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
         const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
         const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
         if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
             const statusUser = userFound.status;
 
-            res.send("Faltan cargar documentos"); // Agrega el return aquí
+            //return res.send("Faltan cargar documentos"); // Agrega el return aquí
             return console.log(`Faltan cargar documentos. Estado:`, statusUser);
+
         }
         else {
             const updatedUser = await userManager.updateUser(userID, { status: true });

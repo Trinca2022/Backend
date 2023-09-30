@@ -10,3 +10,21 @@ export const createTicketHandler = async (req, res) => {
     const ticket = await ticketManager.createTicket({ code, purchase_datetime, amount, purchaser })
     res.send(ticket)
 }
+/*
+export const ticketHandler = async (req, res, next) => {
+    try {
+        //const user = req.session.user
+        // const cartID = user.id_cart.toString()
+
+        const isPremium = req.session.user.rol === "Premium"
+        const isAdmin = req.session.user.rol === "Administrador"
+
+        const products = await productModel.find()
+        //Envío array al cliente para renderizar
+        res.render('realtimeproductsAdmin', { adminOrPremiumEmail, cartID, isPremium, isAdmin, products: products, layout: 'mainrealtime' })
+    }
+    catch (error) {
+        console.log(error)
+        next(error)
+    }
+}*/

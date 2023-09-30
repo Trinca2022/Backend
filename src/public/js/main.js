@@ -78,6 +78,27 @@ socket.on("productNotBuyed", (message) => {
     alert(message);
 });
 
+//Envío evento al back para manejarlo
+const goToUsuario = () => {
+    socket.emit("goToUsuario", userEmail)
+}
+
+
+//Redirecciono a productos de USER
+socket.on("redirectToUserProds", (path) => {
+    alert("Iniciá sesión nuevamente")
+    setTimeout(() => {
+        // Redirige a la página especificada
+        window.location.href = path;
+    }, 1000);
+
+});
+
+/*
+//Emito en el front alert de error de permiso
+socket.on("notGoToUser", (message) => {
+    alert(message);
+});*/
 
 
 
@@ -109,11 +130,8 @@ const goToCart = () => {
     socket.emit("goToCart")
 }*/
 
-/*
-//Envío evento al back para manejarlo
-const goToUsuario = () => {
-    socket.emit("goToUsuario")
-}*/
+
+
 
 /*//Cuando se escucha el evento envío información del prod a actualizar al servidor
 const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
@@ -152,20 +170,9 @@ socket.on("redirectToCart", (path) => {
     window.location.href = path;
 });*/
 
-/*
-//Emito en el front alert de error de permiso
-socket.on("notGoToUser", (message) => {
-    alert(message);
-});*/
 
-/*
-//Redirecciono a productos de USER
-socket.on("redirectToUserProds", (path) => {
-    console.log("Redirect prod user", path)
-    window.location.href = path;
 
-});
-*/
+
 
 
 

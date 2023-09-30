@@ -85,7 +85,10 @@ export class CartManager {
                 product.quantity++
 
             }
-            else if (product && product.quantity >= stockProdInCart) { return "¡EXCEDE STOCK DISPONIBLE!" }
+            else if (product && product.quantity >= stockProdInCart) {
+
+                return `¡EXCEDE STOCK DISPONIBLE! SE AGREGÓ AL CARRITO SÓLO ${stockProdInCart} UNIDADES`
+            }
             else if (!product && stockProdInCart > 0) { //No existe el producto -> agrego el producto nuevo
                 cart.products.push({ id_prod, quantity: 1, price: priceProdInCart })
 
@@ -270,9 +273,10 @@ export class CartManager {
         const cart = await cartModel.findById(id)
         if (!cart) { return "Carrito inexistente" }
         else {
-            await cartModel.updateOne({ "_id": id }, {
-                $set: { "cart": {} }
-            })
+            await cartModel.findOneAndUpdate({ "_id": id }, {
+                $set: { "products": [] }
+            },
+                { new: true })
             return (`Carrito vaciado`)
         }
     }
@@ -288,18 +292,18 @@ export class CartManager {
         return
     }
 
-
-    async totalPrice() {
-        try {
-            const productInCart = cart.products.find(product => product.id_prod.toString() === id_prod._id.toString())
-            const idProductInCart = productInCart.id_prod.toString()
-            const infoProdInCart = await productMongo.findOneById(idProductInCart)
-            const priceProdInCart = infoProdInCart.price
-
-        }
-        catch (error) {
-            logger.fatal(error.message, "Error")
-        }
-    }
+    /*
+        async totalPrice() {
+            try {
+                const productInCart = cart.products.find(product => product.id_prod.toString() === id_prod._id.toString())
+                const idProductInCart = productInCart.id_prod.toString()
+                const infoProdInCart = await productMongo.findOneById(idProductInCart)
+                const priceProdInCart = infoProdInCart.price
+    
+            }
+            catch (error) {
+                logger.fatal(error.message, "Error")
+            }
+        }*/
 
 }

@@ -204,7 +204,7 @@ export const uploadIdentHandler = async (req, res, next) => {
                     name: 'identificacion.pdf',
                     reference: '/public/archivos/documents'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de documento");
             }
         });
@@ -231,7 +231,7 @@ export const uploadAdressHandler = async (req, res, next) => {
                     name: 'domicilio.pdf',
                     reference: '/public/archivos/documents'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de documento");
 
             }
@@ -259,7 +259,7 @@ export const uploadAccountHandler = async (req, res, next) => {
                     name: 'estadoCuenta.pdf',
                     reference: '/public/archivos/documents'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de documento");
             }
         });
@@ -281,14 +281,14 @@ export const uploadProfilePicHandler = async (req, res, next) => {
                 res.status(500).send('Ocurrió un error en la carga de los archivos');
             } else {
                 // const _id = await sessionManager.findIdSession()
-                console.log("_id", _id)
+                //console.log("_id", _id)
                 const userFound = await userManager.getUserById(uID)
 
                 await userFound.documents.push({
                     name: 'profilePic.jpg',
                     reference: '/public/archivos/profiles'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de foto de perfil");
             }
         });
@@ -315,7 +315,7 @@ export const uploadProductPicHandler = async (req, res, next) => {
                     name: 'productPic.jpg',
                     reference: '/public/archivos/products'
                 });
-                userManager.updateUser(_id, { documents: userFound.documents });
+                userManager.updateUser(uID, { documents: userFound.documents });
                 res.send("Carga exitosa de foto de producto");
             }
         });

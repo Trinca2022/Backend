@@ -19,7 +19,7 @@ const addProdInCart = (productId) => {
 
 //Envío evento al back para manejarlo
 const goToPremium = () => {
-    socket.emit("goToPremium")
+    socket.emit("goToPremium", userEmail)
 }
 
 //Emito en el front alert de error de permiso
@@ -60,7 +60,11 @@ socket.on("userName", userDatos => {
 
 //Redirecciono a productos de premium
 socket.on("redirectToPremiumProds", (path) => {
-    window.location.href = path;
+    alert("Iniciá sesión nuevamente")
+    setTimeout(() => {
+        // Redirige a la página especificada
+        window.location.href = path;
+    }, 1000);
 });
 
 socket.on("prodInCart", (message) => {

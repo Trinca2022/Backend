@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addProductInCartHandler, createCartHandler, deleteProductInCartHandler, deleteProductsInCartHandler, endPurchaseHandler, getCartByIdHandler, getTicketHandler, updateCartHandler, updateProductInCartHandler } from "../controllers/cart.controller.js";
+import { addProductInCartHandler, createCartHandler, deleteProductInCartHandler, deleteProductsInCartHandler, getCartByIdHandler, getTicketHandler, updateCartHandler, updateProductInCartHandler } from "../controllers/cart.controller.js";
 
 const cartRouter = Router()
 
@@ -28,6 +28,6 @@ cartRouter.put("/:id", updateCartHandler)
 
 /*cartRouter.post("/:id/purchase", createOrderHandler)*/
 
-cartRouter.post("/:id", endPurchaseHandler)
+//cartRouter.post("/:id", endPurchaseHandler)
 
 export default cartRouter
