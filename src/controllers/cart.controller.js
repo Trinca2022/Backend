@@ -70,14 +70,19 @@ export const getTicketHandler = async (req, res, next) => {
         //console.log("productsInCart", productsInCart[0].id_prod.stock)
         let totalPrice = 0
         for (const product of productsInCart) {
-            // console.log("prod adentro for", product)
             product.price = product.quantity * product.id_prod?.price ?? 0;
-            totalPrice += product.price
-            //console.log("stockk", (product.id_prod.stock - product.quantity))
-            // if(product.quantity >= product.id_prod.stock){}
-            const prodPostCompra = await productManager.updateProduct(product.id_prod._id, { stock: (product.id_prod.stock - product.quantity) })
-            //console.log("stock new", prodPostCompra)
+            totalPrice += product.price;
+
+            // Calcula el nuevo stock
+            const newStock = product.id_prod.stock - product.quantity;
+
+            // Asegúrate de que el stock nunca sea menor que cero
+            const updatedStock = Math.max(newStock, 0);
+
+            // Actualiza el producto en la base de datos con el nuevo stock
+            const prodPostCompra = await productManager.updateProduct(product.id_prod._id, { stock: updatedStock });
         }
+
 
         const ticket = await ticketManager.createTicket(totalPrice, uEmail)
         const newTicket = JSON.parse(JSON.stringify(ticket))

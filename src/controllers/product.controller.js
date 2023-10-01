@@ -62,8 +62,21 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
                 await userManager.updateUser(uID, { rol: "Premium" })
                 req.session.user.rol = "Premium"
             }
+            /* else {
+                 throw Error("USUARIO NO PUEDE SER PREMIUM")
+             }*/
             else {
-                throw Error("USUARIO NO PUEDE SER PREMIUM")
+
+                const alertScript = `
+                            <script>
+                                alert('No tienes permisos: faltan subir archivos para cambiar a Premium');
+                                window.location.href = '/product/realtimeproductsUser';
+                            </script>
+                        `;
+
+                res.send(alertScript);
+
+
             }
 
         }

@@ -134,7 +134,7 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: config.URL_MONGODB_ATLAS,
         mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-        //ttl: 1000
+        ttl: 3600
     }),
     secret: config.SESSION_SECRET,
     resave: true,
@@ -263,49 +263,49 @@ io.on('connection', async (socket) => {
 */
     //-----------------BORRAR--------------//
     //Cambio de user a premium --> VERIFICACIÓN DE STATUS: TRUE
-
-    socket.on("goToPremium", async (userEmail) => {
-        const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
-        // console.log("usuario index", usuario)
-        const id = usuario._id.toString()
-        //Verifico que estén los docs cargados
-        const statusUpdatedUser = await userManager.userToPremium(id)
-        //console.log("STATUS INDEX", statusUpdatedUser)
-        if (statusUpdatedUser === true) {
-            //Actualizo el rol del usuario actual
-            // const idUser = userDatos._id
-            const updateRol = await userManager.updateUser(id, { rol: "Premium" })
-            console.log("NUEVO ROL", updateRol)
-            socket.emit("redirectToPremiumProds", "/sessions/logout");
-            // socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
-        }
-        if (statusUpdatedUser === false) { socket.emit("notGoToPremium", "No tienes permisos: faltan subir archivos para cambiar a Premium") }
-
-    })
-
-    // ----------------------------------------//
-
-
-    //-----------------BORRAR--------------//
-    //Cambio de premium a user
-    socket.on("goToUsuario", async (userEmail) => {
-        //Busco el rol del usuario actual
-        //const userSessionRol = userDatos.rol;
-        const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
-        // console.log("usuario index", usuario)
-        const userSessionRol = usuario.rol
-        if (userSessionRol === "Administrador") {
-            socket.emit("notGoToUser", "No tienes permisos para acceder a esta ruta")
-        }
-        else if (userSessionRol === "Premium" || userSessionRol === "Usuario") {
-            const idUser = usuario._id.toString()
-            const updateRol = await userManager.updateUser(idUser, { rol: "Usuario" })
-            socket.emit("redirectToUserProds", "/sessions/logout")
-            //socket.emit("redirectToUserProds", "/product/realtimeproductsUser")
-        }
-    })
-    //----------------------------------------//
-
+    /*
+        socket.on("goToPremium", async (userEmail) => {
+            const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
+            // console.log("usuario index", usuario)
+            const id = usuario._id.toString()
+            //Verifico que estén los docs cargados
+            const statusUpdatedUser = await userManager.userToPremium(id)
+            //console.log("STATUS INDEX", statusUpdatedUser)
+            if (statusUpdatedUser === true) {
+                //Actualizo el rol del usuario actual
+                // const idUser = userDatos._id
+                const updateRol = await userManager.updateUser(id, { rol: "Premium" })
+                console.log("NUEVO ROL", updateRol)
+                socket.emit("redirectToPremiumProds", "/sessions/logout");
+                // socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
+            }
+            if (statusUpdatedUser === false) { socket.emit("notGoToPremium", "No tienes permisos: faltan subir archivos para cambiar a Premium") }
+    
+        })
+    
+        // ----------------------------------------//
+    */
+    /*
+        //-----------------BORRAR--------------//
+        //Cambio de premium a user
+        socket.on("goToUsuario", async (userEmail) => {
+            //Busco el rol del usuario actual
+            //const userSessionRol = userDatos.rol;
+            const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
+            // console.log("usuario index", usuario)
+            const userSessionRol = usuario.rol
+            if (userSessionRol === "Administrador") {
+                socket.emit("notGoToUser", "No tienes permisos para acceder a esta ruta")
+            }
+            else if (userSessionRol === "Premium" || userSessionRol === "Usuario") {
+                const idUser = usuario._id.toString()
+                const updateRol = await userManager.updateUser(idUser, { rol: "Usuario" })
+                socket.emit("redirectToUserProds", "/sessions/logout")
+                //socket.emit("redirectToUserProds", "/product/realtimeproductsUser")
+            }
+        })
+        //----------------------------------------//
+    */
 
     //AGREGAR PRODUCTO AL CARRITO
     socket.on("addProductCart", async (prod, userEmail) => {
@@ -328,7 +328,9 @@ io.on('connection', async (socket) => {
 
         const prodOwnerRol = prodOwner.rol
         //Si el rol de la sesión es distinto al owner del prod: se puede comprar, siempre y cuando el rol sea distinto a Amin
-        if (userSessionRol !== prodOwnerRol && userSessionRol !== "Administrador") {
+        //ACÁ LA VALIDACIÓN DEBERÍA SER SI LOS MAILS SON DISTINTOS
+        if (userEmail !== prodOwnerEmailOrAdmin && userSessionRol !== "Administrador") {
+            //if (userSessionRol !== prodOwnerRol && userSessionRol !== "Administrador") {
 
             const message = await cartManager.addProductInCart(id, _id)
             console.log("messageee", message)
