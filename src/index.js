@@ -213,6 +213,7 @@ io.on('connection', async (socket) => {
         //Cargo prods en mongoose
         await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true, owner: usuario.email })
         //const products = await productModel.find()
+        console.log("thum", thumbnail)
         const products = await productMongo.findAll()
         io.emit("allProducts", products)
     })
