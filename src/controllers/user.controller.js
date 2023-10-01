@@ -57,7 +57,7 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         await transporter.sendMail({
             to: email,
             subject: 'Restablecer contraseña',
-            text: `LINK: ${enlace}`
+            text: `CLICK EN ESTE LINK PARA RESTABLECER CONTRASEÑA: ${enlace}`
         })
         res.redirect('/sessions/login')
     }

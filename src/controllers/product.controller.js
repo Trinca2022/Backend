@@ -74,9 +74,11 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
                             </script>
                         `;
 
+
+
                 res.send(alertScript);
 
-
+                throw Error("USUARIO NO PUEDE SER PREMIUM")
             }
 
         }
