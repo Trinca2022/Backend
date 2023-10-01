@@ -83,12 +83,14 @@ export const getTicketHandler = async (req, res, next) => {
             const prodPostCompra = await productManager.updateProduct(product.id_prod._id, { stock: updatedStock });
         }
 
-
-        const ticket = await ticketManager.createTicket(totalPrice, uEmail)
-        const newTicket = JSON.parse(JSON.stringify(ticket))
-        const cartVac = await cartManager.deleteProductsInCart(cartID)
-        console.log("caert vacio", cart)
-        res.render('purchase', { layout: 'mainrealtimeCart', cartID, newTicket })
+        if (totalPrice !== 0) {
+            const ticket = await ticketManager.createTicket(totalPrice, uEmail)
+            const newTicket = JSON.parse(JSON.stringify(ticket))
+            await cartManager.deleteProductsInCart(cartID)
+            // console.log("caert vacio", cart)
+            res.render('purchase', { layout: 'mainrealtimeCart', cartID, newTicket })
+        }
+        else res.send("Carrito vacío!")
 
     }
     catch (error) {
@@ -96,22 +98,6 @@ export const getTicketHandler = async (req, res, next) => {
         next(error)
     }
 }
-
-
-/**/
-/*
-export const getCartByIdHandler = async (req, res, next) => {
-    try {
-        const cart = await cartManager.getCartById(req.params.id)
-        //res.send(cart)
-        res.render('realtimecart', { cart: JSON.stringify(cart), layout: 'mainrealtimeCart' })
-        //res.send("HOLAAAA MALDITO CART")
-
-    }
-    catch (error) {
-        next(error)
-    }
-}*/
 
 
 //Agrego producto al carrito
@@ -147,7 +133,9 @@ export const updateProductInCartHandler = async (req, res) => {
 //Elimino TODOS los productos del carrito según su ID con método DELETE
 export const deleteProductsInCartHandler = async (req, res) => {
     const id = req.params.id;
+    console.log("VACIAR CART", id)
     const message = await cartManager.deleteProductsInCart(id)
+
     res.send(message)
 }
 

@@ -7,8 +7,11 @@ const ticketManager = new TicketManager()
 export const createTicketHandler = async (req, res) => {
     const { code, purchase_datetime, amount, purchaser } = req.body
     //await ticketManager.createTicket()
-    const ticket = await ticketManager.createTicket({ code, purchase_datetime, amount, purchaser })
-    res.send(ticket)
+    if (amount !== 0) {
+        const ticket = await ticketManager.createTicket({ code, purchase_datetime, amount, purchaser })
+        res.send(ticket)
+    }
+    else { res.send("Carrito vacío!") }
 }
 /*
 export const ticketHandler = async (req, res, next) => {

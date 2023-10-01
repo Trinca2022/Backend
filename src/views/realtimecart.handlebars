@@ -16,9 +16,10 @@
 <div id="prodsInCart"></div>-->
 
 <h2>Productos elegidos:</h2>
-<ul>
+
+<div id="prods">
     {{#each productsInCart}}
-    <div class="card"
+    <div id="prods" class="card"
         style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
         <h3 class="card-title">{{this.id_prod.title}}</h3>
         <div class="card-body">
@@ -31,10 +32,32 @@
         </div>
     </div>
     {{/each}}
-</ul>
 
-<div>
-    <h3>Total a pagar: ${{totalPrice}}</h3>
+
+    <div>
+        <h3 id="totalPrice">Total a pagar: ${{totalPrice}}</h3>
+    </div>
+
+    <button onclick="deleteProductsInCart('{{cartID}}')">Vaciar carrito</button>
+
+    <button onclick="location.href='/cart/{{cartID}}/purchase'">Finalizar compra</button>
+
 </div>
-
-<button onclick="location.href='/cart/{{cartID}}/purchase'">Finalizar compra</button>
+<script>
+    function deleteProductsInCart(cartID) {
+        fetch(`/cart/${cartID}`, {
+            method: 'DELETE',
+        }).then(response => {
+            if (response.ok) {
+                document.getElementById(`prods`).remove()
+                //document.getElementById(`totalPrice`).remove()
+                console.log('DELETE FUNCIONANDO');
+            } else {
+                // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+                console.error('Error en la solicitud DELETE:', response.status);
+            }
+        }).catch(error => {
+            console.error('Error en la solicitud DELETE:', error);
+        });
+    }
+</script>
