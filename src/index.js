@@ -184,8 +184,8 @@ io.on('connection', async (socket) => {
         //Busco el email del owner en la info del producto
         const product = await productManager.getProductById(_id)
         const prodOwnerEmailOrAdmin = product.owner
-        //SI EL MAIL DE LA SESIÓN ES DISTINTO AL DEL OWNER SE PUEDE COMPRAR, siempre y cuando el rol sea distinto a Amin
-        if (userEmail !== prodOwnerEmailOrAdmin && userSessionRol !== "Administrador") {
+        //SI EL MAIL DE LA SESIÓN ES DISTINTO AL DEL OWNER SE PUEDE COMPRAR, siempre y cuando el rol sea distinto a Amin o si es USUARIO
+        if (userEmail !== prodOwnerEmailOrAdmin && userSessionRol !== "Administrador" || userSessionRol === "Usuario") {
             const message = await cartManager.addProductInCart(id, _id)
             io.emit("prodInCart", message, _id)
         }
