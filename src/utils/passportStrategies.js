@@ -41,7 +41,8 @@ passport.use(
         {
             clientID: 'Iv1.863d8d4eacf90fe8',
             clientSecret: '85322465a58c1e30eba3a569721b3642763c8ece',
-            callbackURL: `${config.SITE}/sessions/github`,
+            //callbackURL: `${config.SITE}/sessions/github`,
+            callbackURL: `/sessions/github`,
         },
         async (req, accessToken, refreshToken, profile, done) => {
             const { name, email } = profile._json

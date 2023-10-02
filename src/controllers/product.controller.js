@@ -3,9 +3,7 @@ import { ProductManager } from "../services/productManager.js";
 import createError from "../services/errors/customError.js";
 import errorTypes from "../services/errors/errorTypes.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
-
 import { userModel } from "../persistencia/models/Users.js";
-
 import { UserManager } from "../services/userManager.js";
 
 
@@ -54,7 +52,6 @@ export const productsFilterHandler = async (req, res, next) => {
 export const productsViewHandlerAdmin = async (req, res, next) => {
     try {
         const uID = req.session.user._id
-        // console.log("iddd", uID)
         if (req.session.user.rol === "Usuario") {
             const statusUpdatedUser = await userManager.userToPremium(uID)
             if (statusUpdatedUser === true) {
@@ -68,25 +65,9 @@ export const productsViewHandlerAdmin = async (req, res, next) => {
                 return res.send('No tienes permisos: faltan subir archivos para cambiar a Premium')
 
             }
-            /*else {
-                throw Error("USUARIO NO PUEDE SER PREMIUM")
-            }*//*
-            else {
-                const alertScript = `
-                            <script>
-                            window.location.href = '/product/realtimeproductsUser';
-                                alert('No tienes permisos: faltan subir archivos para cambiar a Premium');
-                                
-                            </script>
-                        `;
-                res.send(alertScript);
-                return next()
-
-            }*/
 
         }
-        //const user = req.session.user
-        // const cartID = user.id_cart.toString()
+
         const cartID = req.session.user.id_cart
         const isPremium = req.session.user.rol === "Premium"
         const isAdmin = req.session.user.rol === "Administrador"
@@ -114,18 +95,14 @@ export const productsViewHandlerUser = async (req, res, next) => {
             req.session.user.rol = "Usuario"
         }
         else { throw Error("No podés ser USUARIO") }
-
-
         const cartID = req.session.user.id_cart
         const products = await productModel.find()
         const userEmail = req.session.user.email
         const uName = req.session.user.nombre
         const uRol = req.session.user.rol
         const uID = req.session.user._id
-
         //Envío array al cliente para renderizar
         res.render('realtimeproductsUser', { uID, uName, uRol, cartID, userEmail, products: products, layout: 'mainrealtimeUser' })
-
     }
     catch (error) {
         next(error)
@@ -136,107 +113,36 @@ export const goToPremiumHandler = async (req, res, next) => {
     try {
         //VALIDO DOCS PARA SER PREMIUM
         const userID = req.session.user._id
-        // console.log(userID)
         const userFound = await userManager.getUserById(userID)
         const documents = userFound.documents
-        //console.log(documents)
         const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');
         const domicilioDocument = documents.find(doc => doc.name === 'domicilio.pdf');
         const estadoCuentaDocument = documents.find(doc => doc.name === 'estadoCuenta.pdf');
         if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
             const statusUser = userFound.status;
-
-            //return res.send("Faltan cargar documentos"); // Agrega el return aquí
             return console.log(`Faltan cargar documentos. Estado:`, statusUser);
-
         }
         else {
             const updatedUser = await userManager.updateUser(userID, { status: true });
             const statusUpdatedUser = updatedUser.status;
-            console.log("status docs cargados todos", statusUpdatedUser);
             const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
             const newRol = req.session.user.rol = "Premium";
-            console.log("status docs cargados todos", newRol);
-            // return console.log("hola")
+
             return next()
-            //res.redirect('/product/realtimeproductsAdmin')
+
         }
     }
-    /*
-            if (!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
-                const statusUser = userFound.status;
-    
-                res.send("Faltan cargar documentos"); // Agrega el return aquí
-                return console.log(`Faltan cargar documentos. Estado:`, statusUser);
-            }
-            else {
-                const updatedUser = await userManager.updateUser(userID, { status: true });
-                const statusUpdatedUser = updatedUser.status;
-                console.log("status docs cargados todos", statusUpdatedUser);
-                if (statusUpdatedUser === true) {
-                    const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
-                    const newRol = req.session.user.rol = "Premium";
-                    console.log("status docs cargados todos", newRol);
-                    // return console.log("hola")
-                    return next()
-                    //res.redirect('/product/realtimeproductsAdmin')
-                }
-                /*else {
-                    return console.log("No actualizado, sigues teniendo el rol:", statusUpdatedUser);
-                }*/
+
 
 
     catch (error) {
         next(error);
     }
-    // next()
+
 }
-
-/*if (identificacionDocument & domicilioDocument & estadoCuentaDocument) { 
-
-const updatedUser = await userManager.updateUser(userID, { status: true });
-            const statusUpdatedUser = updatedUser.status;
-            console.log("status docs cargados todos", statusUpdatedUser);
-            
-                const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
-                const newRol = req.session.user.rol = "Premium";
-                console.log("status docs cargados todos", newRol);
-                // return console.log("hola")
-}
-                //res.redirect('/product/realtimeproductsAdmin')}
-                else {return console.log(`Faltan cargar documentos. Estado:`, statusUser);}
-
-
-
-(!identificacionDocument || !domicilioDocument || !estadoCuentaDocument) {
-            const statusUser = userFound.status;
-
-            res.send("Faltan cargar documentos"); // Agrega el return aquí
-            return console.log(`Faltan cargar documentos. Estado:`, statusUser);
-        }
-        else {
-            const updatedUser = await userManager.updateUser(userID, { status: true });
-            const statusUpdatedUser = updatedUser.status;
-            console.log("status docs cargados todos", statusUpdatedUser);
-            if (statusUpdatedUser === true) {
-                const updateRol = await userManager.updateUser(userID, { rol: "Premium" });
-                const newRol = req.session.user.rol = "Premium";
-                console.log("status docs cargados todos", newRol);
-                // return console.log("hola")
-                return next()
-                //res.redirect('/product/realtimeproductsAdmin')
-            }
-            /*else {
-                return console.log("No actualizado, sigues teniendo el rol:", statusUpdatedUser);
-            }
-        }
-    } */
-
-
 //Manejo búsqueda por ID que exporto a la ruta
 export const getProductByIdHandler = async (req, res) => {
     const product = await productManager.getProductById(req.params.id)
-    console.log(product)
     //res.send({ status: "success", payload: product });
     res.render('product', {
         title: product.title,
@@ -251,13 +157,12 @@ export const getProductByIdHandler = async (req, res) => {
 //Manejo búsqueda por ID que exporto a la ruta
 export const getProductsHandler = async (req, res) => {
     try {
-        //const products = await productManager.getProducts()
+
         const products = JSON.parse(JSON.stringify(await productModel.find()))
-        //const prod = JSON.stringify(products)
+
 
         res.render('products', { products })
-        //res.send(products);
-        // res.send({ status: "success", payload: products, layout: 'products' });
+
     }
     catch (error) {
         console.error(error);
@@ -283,7 +188,7 @@ export const addProductHandler = async (req, res, next) => {
 
         const prodNew = await productManager.addProduct({ title, description, price, thumbnail, code, stock, status, owner: userEmail })
         res.send(prodNew)
-        //res.send({ status: "success", payload: prodNew });
+
     }
     catch (error) {
         next(error)
@@ -314,7 +219,6 @@ export const deleteProductHandler = async (req, res, next) => {
     try {
         const id = req.params.id
         //const mensaje = await productManager.deleteProduct(id)
-        // res.send(mensaje)
         //Busco el email del owner en la info del producto
         const product = await productManager.getProductById(id)
         const prodOwnerEmail = product.owner

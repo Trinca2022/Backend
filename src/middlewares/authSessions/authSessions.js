@@ -1,10 +1,6 @@
-//import { logoutHandler } from "../controllers/session.controller.js";
-
-
 //Autenticación para poder acceder a la vista de productos
 export const authAdminOrPrem = (req, res, next) => {
     if (!req.session.user) {
-        //return res.send("Error de autenticación")
         return res.redirect('/sessions/logout');
     }
     const { rol } = req.session.user
@@ -18,7 +14,6 @@ export const authAdminOrPrem = (req, res, next) => {
 //Autenticación para poder acceder a la vista de productos
 export const authUser = (req, res, next) => {
     if (!req.session.user) {
-        // return res.send("Error de autenticación")
         return res.redirect('/sessions/logout')
     }
     const { rol } = req.session.user
@@ -31,7 +26,6 @@ export const authUser = (req, res, next) => {
 //Autenticación para poder acceder a la vista de productos
 export const authUserOrPrem = (req, res, next) => {
     if (!req.session.user) {
-        //return res.send("Error de autenticación")
         return res.redirect('/sessions/logout');
     }
     const { rol } = req.session.user

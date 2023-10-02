@@ -1,5 +1,4 @@
 import { CartManager } from "../services/cartManager.js";
-//import { cartModel } from "../persistencia/models/Cart.js";
 import { TicketManager } from "../services/ticketManager.js";
 import { ProductManager } from "../services/productManager.js";
 
@@ -7,13 +6,6 @@ import { ProductManager } from "../services/productManager.js";
 const cartManager = new CartManager()
 const ticketManager = new TicketManager()
 const productManager = new ProductManager()
-
-/*//Creo carrito mediante método POST
-export const createCartHandler = async (req, res) => {
-    const products = req.body
-    await cartManager.createCart(products)
-    res.send("Carrito creado")
-}*/
 
 //Creo carrito mediante método POST
 export const createCartHandler = async (req, res) => {
@@ -25,27 +17,22 @@ export const createCartHandler = async (req, res) => {
 //Consulta de carrito
 export const getCartByIdHandler = async (req, res, next) => {
     try {
-        //const cartID = req.session.user.id_cart
+
         const cartID = req.params.id
         const cart = await cartManager.getCartById(cartID)
-        //const cart = await cartManager.findOneById(cartID)
-        //const cart = await cartModel.findById(cartID)
-        //console.log("carrrrttt")
+
         const isPremium = req.session.user.rol === "Premium"
-        console.log("isPremium???", isPremium)
         const isUsuario = req.session.user.rol === "Usuario"
         const productsInCart = JSON.parse(JSON.stringify(cart.products))
         //const productsInCart = cart.products;
 
         let totalPrice = 0
         for (const product of productsInCart) {
-            // console.log("prod adentro for", product)
+
             product.price = product.quantity * product.id_prod?.price ?? 0;
             totalPrice += product.price
         }
 
-        // const totalPriceProd = await cartManager.totalPriceProd(cartID,)
-        //console.log("prooodd1114")
         res.render('realtimecart', {
             cart: JSON.stringify(cart),
             layout: 'mainrealtimeCart', productsInCart, isPremium, isUsuario, totalPrice, cartID
@@ -65,9 +52,9 @@ export const getTicketHandler = async (req, res, next) => {
         const cartID = req.session.user.id_cart
         const uEmail = req.session.user.email
         const cart = await cartManager.getCartById(cartID)
-        //console.log("cart", cart)
+
         const productsInCart = JSON.parse(JSON.stringify(cart.products))
-        //console.log("productsInCart", productsInCart[0].id_prod.stock)
+
         let totalPrice = 0
         for (const product of productsInCart) {
             product.price = product.quantity * product.id_prod?.price ?? 0;
@@ -80,14 +67,13 @@ export const getTicketHandler = async (req, res, next) => {
             const updatedStock = Math.max(newStock, 0);
 
             // Actualiza el producto en la base de datos con el nuevo stock
-            const prodPostCompra = await productManager.updateProduct(product.id_prod._id, { stock: updatedStock });
+            await productManager.updateProduct(product.id_prod._id, { stock: updatedStock });
         }
 
         if (totalPrice !== 0) {
             const ticket = await ticketManager.createTicket(totalPrice, uEmail)
             const newTicket = JSON.parse(JSON.stringify(ticket))
             await cartManager.deleteProductsInCart(cartID)
-            // console.log("caert vacio", cart)
             res.render('purchase', { layout: 'mainrealtimeCart', cartID, newTicket })
         }
         else res.send("Carrito vacío!")
@@ -133,7 +119,6 @@ export const updateProductInCartHandler = async (req, res) => {
 //Elimino TODOS los productos del carrito según su ID con método DELETE
 export const deleteProductsInCartHandler = async (req, res) => {
     const id = req.params.id;
-    console.log("VACIAR CART", id)
     const message = await cartManager.deleteProductsInCart(id)
 
     res.send(message)
