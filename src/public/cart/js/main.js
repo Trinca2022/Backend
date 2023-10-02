@@ -5,7 +5,6 @@ const socket = io()
 //Obtengo elementos del DOM por el ID
 const userName = document.getElementById("userName")
 const idCart = document.getElementById("idCart")
-//const mostrarProds = document.getElementById("mostrarProds")
 const showProdsInCart = document.getElementById("prodsInCart")
 
 //Envío evento al back para manejarlo
@@ -50,26 +49,6 @@ socket.on("getProdsInCart", (prodsInCart, quantityByProductId) => {
       </div>`;
     });
 });
-
-
-/*
-socket.on("getProdsInCart", prodsInCart, quantityProdsInCart => {
-    showProdsInCart.innerHTML = ""
-    prodsInCart.forEach(prod => {
-        showProdsInCart.innerHTML += `<div class="card" style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
-        <h3 class="card-title">${prod.title}</h3>
-        <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}"
-        class="card-img-top" alt="...">
-        <div class="card-body">
-        <p class="card-text">Propietario/a: ${prod.owner}.<br>Código: ${prod.code}.<br>
-            Stock: ${prod.stock}.<br>
-            Descripción: ${prod.description}.<br>
-            El precio es $${prod.price} </p>
-            </div>
-            </div>`
-
-    })
-});*/
 
 
 //Redirecciono a productos de usuario
