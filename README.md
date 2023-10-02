@@ -32,7 +32,7 @@ El proyecto ha sido desplegado y está disponible en el siguiente enlace:
 
 Si necesitas acceder como usuario administrador, utiliza las siguientes credenciales:
 
-- **Usuario:** admincoder@coder.com
+- **Usuario:** adminCoder@coder.com
 - **Contraseña:** adminCod3r123
 
 ¡Gracias por ser parte de mi proyecto!
