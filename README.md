@@ -1,6 +1,6 @@
-# <font color="gold"> CODER HOUSE - PROGRAMACIÓN BACKEND</font>
+# CODER HOUSE - PROGRAMACIÓN BACKEND
 
-Bienvenido al repositorio de Programación Backend de Coder House, Comisión 51225.
+Bienvenido a mi repositorio del proyecto final de Programación Backend de Coder House, Comisión 51225.
 
 ## AMBIENTES
 
