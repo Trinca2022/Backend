@@ -1,6 +1,6 @@
 # CODER HOUSE - PROGRAMACIÓN BACKEND
 
-Bienvenido a mi repositorio del proyecto final de Programación Backend de Coder House. Comisión 51225.
+Bienvenido a mi repositorio del proyecto final de Programación Backend de Coder House. Comisión: 51225.
 
 ## AMBIENTES
 
