@@ -40,7 +40,8 @@ export const registerPasswordRecoveryHandler = async (req, res, next) => {
         //Genero un token unico para el enlace
         const token = crypto.randomBytes(20).toString('hex')
         //Almaceno la hora de expiracion
-        const expirationTime = Date.now() + 60 * 60 * 1000;
+        //const expirationTime = Date.now() + 60 * 60 * 1000;
+        const expirationTime = Date.now() + 60 * 1000;
         // Construyo el enlace
         const enlace = `${config.SITE}/register/passwordRecovery/validation?token=${token}`;
         // Almaceno el enlace y su tiempo de expiración

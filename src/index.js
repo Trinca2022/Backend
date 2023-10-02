@@ -20,7 +20,7 @@ import { ChatManager } from './services/chatManager.js'
 import './config/dbConfig.js'//Config mongoose
 import { productModel } from './persistencia/models/Products.js'
 import { CartManager } from './services/cartManager.js'
-import { sessionModel } from './persistencia/models/Sessions.js'
+
 import ticketRouter from './routes/ticket.routes.js'
 import { productMongo } from './persistencia/DAOs/productMongo.js'
 import { userModel } from './persistencia/models/Users.js'
@@ -153,56 +153,9 @@ io.on('connection', async (socket) => {
     const products = await productManager.getProducts()
     const chats = await chatManager.getMessages()
 
-    /*
-        //Leo info del usuario logueado desde la colección sessions de mongodb
-        const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
-        //REVISO QUE LA SESIÓN ESTÉ ACTIVA
-        if (latestSession) {
-            const data = JSON.parse(latestSession.session);
-            const userDatos = data.user;
-    */
-
-
     //Emito el array con todos los productos/mensajes/sesiones
     socket.emit("allProducts", products)
     socket.emit("allChats", chats)
-    //socket.emit("adminName", userDatos)
-    //socket.emit("userName", userDatos)
-    //socket.emit("idCart", userDatos)
-
-    /* socket.on('correoUsuario', async (userEmail) => {
-         console.log('Correo del usuario recibido en el servidor:', userEmail);
-         // BUSCAR INFO DE USER POR SU EMAIL
-         const user = await userModel.findOne({ userEmail }).lean().exec();
-           console.log("USER SOLUCIÓN", user);
- 
-           // Emitir los datos del usuario al cliente
-           io.emit("renderEmail", user);
-     });
-
-    socket.on('correoUsuario', async (email) => {
-        console.log('correoUsuario', email)
-    })*/
-
-    /*  socket.on('correoUsuario', async (email) => {
-          try {
-              // Aquí puedes realizar la búsqueda de información del usuario en la base de datos
-              //const usuario = await userModel.findOne({ userEmail }).lean().exec();
- 
-              // Si encuentras el usuario, puedes enviar los datos al cliente
-              if (usuario) {
-                  socket.emit('usuarioEncontrado', usuario);
-              } else {
-                  // Si no se encuentra el usuario, puedes enviar un mensaje de error al cliente
-                  socket.emit('usuarioNoEncontrado', 'Usuario no encontrado');
-              }
-          } catch (error) {
-              // Manejo de errores
-              console.error('Error al buscar el usuario:', error);
-              socket.emit('error', 'Ocurrió un error al buscar el usuario');
-          }
-      });*/
-
 
     //Recibo los campos cargados en form y los guardo en array products
     socket.on("newProduct", async (prod, userEmail) => {
@@ -228,85 +181,6 @@ io.on('connection', async (socket) => {
         io.emit("allChats", chats)
     })
 
-    /*//-----------------BORRAR--------------//
-    //Ir al carrito según rol
-    socket.on("goToCart", async () => {
-        //Busco el rol del usuario actual
-        const userSessionRol = userDatos.rol;
-        if (userSessionRol === "Administrador") {
-            socket.emit("notGoToCart", "No tienes permisos para acceder a esta ruta");
-        }
-        if (userSessionRol === "Premium") {
-
-            socket.emit("redirectToCart", "/cart/realtimecart");
-        }
-        if (userSessionRol === "Usuario") {
-
-            socket.emit("redirectToCart", "/cart/realtimecart");
-        }
-    })
-    //----------------------------------------//
-
-
-    //-----------------BORRAR--------------//
-    //Ir desde el carrito a productos según el rol
-    socket.on("goToProds", async () => {
-        //Busco el rol del usuario actual
-        const userSessionRol = userDatos.rol;
-        if (userSessionRol === "Usuario") {
-            socket.emit("redirectToUserProds", "/product/realtimeproductsUser");
-        }
-        if (userSessionRol === "Premium") {
-            socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
-        }
-    })
-    //----------------------------------------//
-*/
-    //-----------------BORRAR--------------//
-    //Cambio de user a premium --> VERIFICACIÓN DE STATUS: TRUE
-    /*
-        socket.on("goToPremium", async (userEmail) => {
-            const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
-            // console.log("usuario index", usuario)
-            const id = usuario._id.toString()
-            //Verifico que estén los docs cargados
-            const statusUpdatedUser = await userManager.userToPremium(id)
-            //console.log("STATUS INDEX", statusUpdatedUser)
-            if (statusUpdatedUser === true) {
-                //Actualizo el rol del usuario actual
-                // const idUser = userDatos._id
-                const updateRol = await userManager.updateUser(id, { rol: "Premium" })
-                console.log("NUEVO ROL", updateRol)
-                socket.emit("redirectToPremiumProds", "/sessions/logout");
-                // socket.emit("redirectToPremiumProds", "/product/realtimeproductsAdmin");
-            }
-            if (statusUpdatedUser === false) { socket.emit("notGoToPremium", "No tienes permisos: faltan subir archivos para cambiar a Premium") }
-    
-        })
-    
-        // ----------------------------------------//
-    */
-    /*
-        //-----------------BORRAR--------------//
-        //Cambio de premium a user
-        socket.on("goToUsuario", async (userEmail) => {
-            //Busco el rol del usuario actual
-            //const userSessionRol = userDatos.rol;
-            const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
-            // console.log("usuario index", usuario)
-            const userSessionRol = usuario.rol
-            if (userSessionRol === "Administrador") {
-                socket.emit("notGoToUser", "No tienes permisos para acceder a esta ruta")
-            }
-            else if (userSessionRol === "Premium" || userSessionRol === "Usuario") {
-                const idUser = usuario._id.toString()
-                const updateRol = await userManager.updateUser(idUser, { rol: "Usuario" })
-                socket.emit("redirectToUserProds", "/sessions/logout")
-                //socket.emit("redirectToUserProds", "/product/realtimeproductsUser")
-            }
-        })
-        //----------------------------------------//
-    */
 
     //AGREGAR PRODUCTO AL CARRITO
     socket.on("addProductCart", async (prod, userEmail) => {
@@ -328,8 +202,8 @@ io.on('connection', async (socket) => {
         const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
 
         const prodOwnerRol = prodOwner.rol
-        //Si el rol de la sesión es distinto al owner del prod: se puede comprar, siempre y cuando el rol sea distinto a Amin
-        //ACÁ LA VALIDACIÓN DEBERÍA SER SI LOS MAILS SON DISTINTOS
+
+        //SI EL MAIL DE LA SESIÓN ES DISTINTO AL DEL OWNER SE PUEDE COMPRAR, siempre y cuando el rol sea distinto a Amin
         if (userEmail !== prodOwnerEmailOrAdmin && userSessionRol !== "Administrador") {
             //if (userSessionRol !== prodOwnerRol && userSessionRol !== "Administrador") {
 
@@ -381,46 +255,8 @@ io.on('connection', async (socket) => {
         }
     })
 
-    /*//ACTUALIZO PRODUCTO
-    socket.on("updatedProduct", async (prod) => {
-        const { _id, title, description, price, thumbnail, code, stock } = prod
-        await productMongo.updateOne(_id, { title, description, price, thumbnail, code, stock, status: true })
-        const products = await productModel.find()
-        io.emit("allProducts", products)
-    })*/
-
-
-
-
-    /*
-        //Emito productos del carrito para renderizarlos 
-        //Busco el rol del usuario actual
-        // const userSessionRol = userDatos.rol;
-        const usuario = await userModel.findOne({ userEmail }).lean().exec();
-        //Busco el rol del usuario actual
-        // const userSessionRol = userDatos.rol;
-        const userSessionRol = usuario.rol
-        if (userSessionRol === "Usuario" || userSessionRol === "Premium") {
-            const idCart = userDatos.id_cart
-            const cart = await cartManager.findOneById(idCart)
-            const idProdsInCart = cart.products.map(prod => prod.id_prod)
-            const quantityProdsInCart = cart.products.map(prod => prod.quantity)
-            const idsExtraidos = idProdsInCart.map((idObj) => idObj.toString());
-            const prodsInCart = await productMongo.findByIds(idsExtraidos)
-            const quantityByProductId = {};
-            prodsInCart.forEach((prod, index) => {
-                quantityByProductId[prod._id] = quantityProdsInCart[index];
-            });
-            socket.emit("getProdsInCart", prodsInCart, quantityByProductId)
-        }
-        else if (userSessionRol === "Administrador") { return }*/
-
-
 
 })
-//else return})
-
-
 
 ///////////// -------------- TERMINA LÓGICA DE SOCKET ---------------------------///////////////
 
@@ -457,11 +293,3 @@ app.use((req, res, next) => {
         next();
     }
 });
-
-
-//Uso HBS para mostrar en home el login
-/*app.get('/', async (req, res) => {
-    const products = await productModel.find()
-    res.render('sessions/login',
-        { style: 'styles.css' })
-})*/

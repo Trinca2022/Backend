@@ -1,6 +1,6 @@
 import { userModel } from "../persistencia/models/Users.js"
 import { UserManager } from "../services/userManager.js"
-import { sessionModel } from "../persistencia/models/Sessions.js"
+
 
 const userManager = new UserManager()
 
@@ -97,7 +97,7 @@ export const loginGithubHandler = async (req, res) => {
 // Manejo del logout para destruir la sesión que exporto a la ruta
 export const logoutHandler = async (req, res) => {
     try {
-        // const latestSession = await sessionModel.findOne().sort({ $natural: -1 }).exec();
+
         const uID = req.session.user._id
         const fechaHoraActual = new Date();
         const fechaHoraFormateada = fechaHoraActual.toString();

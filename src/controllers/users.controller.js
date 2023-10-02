@@ -9,7 +9,8 @@ export const getUsersHandler = async (req, res) => {
     try {
         const isAdmin = req.session.user.rol === "Administrador"
         const users = JSON.parse(JSON.stringify(await usersManager.getUsers())).map((user) => ({
-            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (2 * 24 * 60 * 60 * 1000)
+            ...user, inactiveUser: Date.now() >= new Date(user.last_connection).getTime() + (20 * 1000)
+            //(2 * 24 * 60 * 60 * 1000)
         }))
         res.render('users', { isAdmin, users })
     }
