@@ -23,6 +23,11 @@ npm run testing
 Puedes encontrar la documentación de este proyecto en el siguiente enlace:
 [http://localhost:4000/docs/](http://localhost:4000/docs/)
 
+## DEPLOY
+
+El proyecto ha sido desplegado y está disponible en el siguiente enlace:
+[https://donjulio.onrender.com/](https://donjulio.onrender.com/)
+
 ## USUARIO ADMINISTRADOR
 
 Si necesitas acceder como usuario administrador, utiliza las siguientes credenciales:
