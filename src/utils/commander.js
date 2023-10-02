@@ -8,6 +8,5 @@ program
     .option('-t --timeout <timeout>', 'the timeout to read')
     .parse(process.argv)
 
-//console.log(+program.opts().port)
 
 export default program

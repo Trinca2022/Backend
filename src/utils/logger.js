@@ -80,9 +80,3 @@ export const addLogger = (req, res, next) => {
     logger.info(`${req.method} en ${req.url} - ${new Date().toLocaleTimeString()}`)
     next();
 }
-
-/*export const addLogger = (req, res, next) => {
-    //Usamos logger dependiendo del modo de ejecucion
-    req.logger = options.mode === "production" ? prodLogger : devLogger;
-    next();
-}*/

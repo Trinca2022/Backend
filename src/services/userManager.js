@@ -1,8 +1,6 @@
 import { userModel } from "../persistencia/models/Users.js"
 import { logger } from "../utils/logger.js";
-//import { SessionManager } from "./sessionManager.js";
 
-//const sessionManager = new SessionManager()
 
 export class UserManager {
     constructor(path) {
@@ -87,9 +85,6 @@ export class UserManager {
 
     async userToPremium(id) {
         try {
-            //hecho con req.sess en prod controller
-            //  const _id = await sessionManager.findIdSession()
-
             const userFound = await this.getUserById(id)
             const documents = userFound.documents
             const identificacionDocument = documents.find(doc => doc.name === 'identificacion.pdf');

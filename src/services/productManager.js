@@ -75,28 +75,6 @@ export class ProductManager {
         else return "Productos no encontrados"
     }
 
-    /*//Método updateProduct --> actualiza campo de un producto con un ID existente
-    async updateProduct(id, { title, description, price, thumbnail, code, stock, status }) {
-        const productFound = await productMongo.findOneById(id)
-        if (productFound) {
-            await productMongo.updateOne({ "_id": id }, {
-                $set: {
-                    "title": title,
-                    "description": description,
-                    "price": price,
-                    "thumbnail": thumbnail,
-                    "code": code,
-                    "stock": stock,
-                    "status": status
-                }
-            })
-
-            await productMongo.createOne()
-            return (`El producto cuyo id es ${productFound.id} se ha actualizado`)
-        }
-        else
-            return 'Not found'
-    }*/
 
     async updateProduct(id, {
         title, description, price, thumbnail, code, stock, status }) {

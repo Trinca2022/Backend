@@ -1,5 +1,4 @@
 import { ticketModel } from '../persistencia/models/Tickets.js'
-//import { CartManager } from './cartManager.js'
 import { randomUUID } from 'node:crypto';
 
 //Genero una clase TicketManager

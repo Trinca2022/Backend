@@ -101,9 +101,3 @@ function esURL(url) {
     return regex.test(url);
 }
 
-
-
-
-
-//${prod.thumbnail ? `<img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}" class="card-img-top" alt="...">` : ''}
-

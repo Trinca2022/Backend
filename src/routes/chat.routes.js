@@ -6,7 +6,6 @@ const chatRouter = Router()
 //Autenticación para poder acceder a la vista de productos
 const authUser = (req, res, next) => {
     if (!req.session.user)
-        //return res.send("Error de autenticación")
         return res.redirect('/sessions/login');
     const { rol } = req.session.user
     if (rol === "Usuario") return next()

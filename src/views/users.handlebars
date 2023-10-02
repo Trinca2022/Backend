@@ -5,10 +5,10 @@
         }).then(response => {
             if (response.ok) {
                 document.getElementById(`user-${id}`).remove()
-                // Manejar la respuesta exitosa aquí (si es necesario)
+
                 console.log('DELETE FUNCIONANDO');
             } else {
-                // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
+
                 console.error('Error en la solicitud DELETE:', response.status);
             }
         }).catch(error => {

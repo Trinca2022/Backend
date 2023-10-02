@@ -12,8 +12,6 @@
 
 <hr>
 
-<!--<div id="idCart"></div>
-<div id="prodsInCart"></div>-->
 
 <h2>Productos elegidos:</h2>
 
@@ -50,10 +48,9 @@
         }).then(response => {
             if (response.ok) {
                 document.getElementById(`prods`).remove()
-                //document.getElementById(`totalPrice`).remove()
+
                 console.log('DELETE FUNCIONANDO');
             } else {
-                // Manejar errores aquí (por ejemplo, mostrar un mensaje de error)
                 console.error('Error en la solicitud DELETE:', response.status);
             }
         }).catch(error => {

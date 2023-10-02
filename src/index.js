@@ -18,9 +18,7 @@ import { Server } from 'socket.io'
 import { ProductManager } from './services/productManager.js'
 import { ChatManager } from './services/chatManager.js'
 import './config/dbConfig.js'//Config mongoose
-import { productModel } from './persistencia/models/Products.js'
 import { CartManager } from './services/cartManager.js'
-
 import ticketRouter from './routes/ticket.routes.js'
 import { productMongo } from './persistencia/DAOs/productMongo.js'
 import { userModel } from './persistencia/models/Users.js'
@@ -30,8 +28,6 @@ import { addLogger } from './utils/logger.js'
 import loggerRouter from './routes/logger.routes.js'
 import swaggerJSDoc from 'swagger-jsdoc'//Config swagger
 import swaggerUiExpress from 'swagger-ui-express'
-import { UserManager } from './services/userManager.js'
-//import { SessionManager } from './services/sessionManager.js'
 import { transporter } from './utils/nodemailer.js'
 
 
@@ -39,14 +35,11 @@ import { transporter } from './utils/nodemailer.js'
 const productManager = new ProductManager()
 const chatManager = new ChatManager()
 const cartManager = new CartManager()
-const userManager = new UserManager()
-//const sessionManager = new SessionManager()
 
 
 //Creo y guardo productos/mensajes en mongodb
 await productManager.createProducts()
 await chatManager.createChats()
-//await cartManager.createCart()
 
 //Configuro express
 const app = express()
@@ -165,8 +158,6 @@ io.on('connection', async (socket) => {
         //Ejecuto el método addProduct de productManager y agrega el producto a los productos
         //Cargo prods en mongoose
         await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true, owner: usuario.email })
-        //const products = await productModel.find()
-        console.log("thum", thumbnail)
         const products = await productMongo.findAll()
         io.emit("allProducts", products)
     })
@@ -185,33 +176,17 @@ io.on('connection', async (socket) => {
     //AGREGAR PRODUCTO AL CARRITO
     socket.on("addProductCart", async (prod, userEmail) => {
         const { _id } = prod
-        console.log("ID PROD A COMPRAR", _id)
-        //const id = userDatos.id_cart
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
-        // console.log("usuario index", usuario)
         const id = usuario.id_cart.toString()
-        console.log("id cart QUE compra ", id)
         //Busco el rol del usuario actual
-        // const userSessionRol = userDatos.rol;
         const userSessionRol = usuario.rol
         //Busco el email del owner en la info del producto
         const product = await productManager.getProductById(_id)
         const prodOwnerEmailOrAdmin = product.owner
-        //Busco el rol del usuario que creó el producto
-        const users = await userModel.find()
-        const prodOwner = users.find(user => user.email === prodOwnerEmailOrAdmin || user.rol === prodOwnerEmailOrAdmin)
-
-        const prodOwnerRol = prodOwner.rol
-
         //SI EL MAIL DE LA SESIÓN ES DISTINTO AL DEL OWNER SE PUEDE COMPRAR, siempre y cuando el rol sea distinto a Amin
         if (userEmail !== prodOwnerEmailOrAdmin && userSessionRol !== "Administrador") {
-            //if (userSessionRol !== prodOwnerRol && userSessionRol !== "Administrador") {
-
             const message = await cartManager.addProductInCart(id, _id)
-            console.log("messageee", message)
-            // console.log("PROD COMPRADO CON EXITT")
             io.emit("prodInCart", message, _id)
-
         }
         else {
             socket.emit("productNotBuyed", "No tienes permisos para comprar este producto.");
@@ -223,8 +198,6 @@ io.on('connection', async (socket) => {
         const { _id } = prod
         //Busco el rol del usuario actual
         const usuario = await userModel.findOne({ email: userEmail }).lean().exec();
-        console.log("email QUE BORRA", userEmail)
-        // console.log("USUARIO QUE BORRA", 
         const userSessionRol = usuario.rol
         //Busco el email del owner en la info del producto
         const product = await productManager.getProductById(_id)
@@ -237,7 +210,6 @@ io.on('connection', async (socket) => {
         //Si la sesión es de Admin: borro prod
         if (userSessionRol === prodOwnerRol || userSessionRol === "Administrador") {
             await productManager.deleteProduct(_id)
-            console.log("ID PROD A ELIMINAR", _id)
             const products = await productMongo.findAll()
             const filteredProducts = products.filter((product) => product._id.toString() !== _id);
             io.emit("allProducts", filteredProducts)

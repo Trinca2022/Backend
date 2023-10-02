@@ -30,9 +30,13 @@ El proyecto ha sido desplegado y está disponible en el siguiente enlace:
 
 ## USUARIO ADMINISTRADOR
 
-Si necesitas acceder como usuario administrador, utiliza las siguientes credenciales:
+Si necesitás acceder como usuario administrador, utiliza las siguientes credenciales:
 
 - **Usuario:** adminCoder@coder.com
 - **Contraseña:** adminCod3r123
+
+## USUARIO PREMIUM
+
+Si querés ser usuario PREMIUM: podés registrarte, subir los tres documentos solicitados y clickear en el botón "cambiar a PREMIUM"
 
 ¡Gracias por ser parte de mi proyecto!
