@@ -50,7 +50,8 @@ socket.on("allProducts", products => {
         productList.innerHTML += `
             <div class="card" style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px; vertical-align: top; border: 1px solid #ccc; text-align: center;">
                 <h3 class="card-title">${prod.title}</h3>
-                ${prod.thumbnail ? `<img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}" class="card-img-top" alt="...">` : ''}
+                ${prod.thumbnail && esURL(prod.thumbnail) ? `<img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}" class="card-img-top" alt="...">` : ''}
+                
                 <div class="card-body">
                     <p class="card-text">Propietario/a: ${prod.owner}.<br>Código: ${prod.code}.<br>
                         Stock: ${prod.stock}.<br>
@@ -94,86 +95,15 @@ socket.on("redirectToUserProds", (path) => {
 
 });
 
-/*
-//Emito en el front alert de error de permiso
-socket.on("notGoToUser", (message) => {
-    alert(message);
-});*/
-
-
-
-/*
-// Manejar el evento 'renderEmail' para mostrar los datos del usuario
-socket.on("renderEmail", (user) => {
-    console.log('Datos del usuario recibidos en el cliente:', user);
-    // Actualizar el contenido del elemento del DOM con los datos del usuario
-    userInfo.innerHTML = `
-    <h1>HOLIS ${user.nombre}</h1>
-    <hr>
-    <!-- Agregar más campos según tus necesidades -->
-  `;
-});*/
-
-/*
-//Recibo el nombre y el rol del usuario logueado y los renderizo
-//Usuario de mongo
-socket.on("adminName", userDatos => {
-    adminName.innerHTML = `
-    <h1>Bienvenido/a ${userDatos.rol} ${userDatos.nombre} </h1>
-        <hr>
-        `;
-});*/
-
-
-/*//Envío evento al back para manejarlo
-const goToCart = () => {
-    socket.emit("goToCart")
-}*/
-
-
-
-
-/*//Cuando se escucha el evento envío información del prod a actualizar al servidor
-const actualizarProducto = document.getElementById(`actualizarProducto-${prod._id}`)
-actualizarProducto.addEventListener('click', (e) => {
-    e.preventDefault()
-    //Transformo un objeto HTML a un objeto Iterator
-    const prodsIterator = new FormData(e.target)
-    //Transformo de un objeto Iterator a un objeto Simple
-    const prod = Object.fromEntries(prodsIterator)
-    socket.emit("updatedProduct", {
-        title: prod.title,
-        description: prod.description,
-        price: prod.price,
-        thumbnail: prod.thumbnail,
-        code: prod.code,
-        stock: prod.stock
-    })
-})*/
+function esURL(url) {
+    // Expresión regular para validar URLs
+    const regex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+    return regex.test(url);
+}
 
 
 
 
 
-
-
-
-/*
-//Emito en el front alert de error de permiso
-socket.on("notGoToCart", (message) => {
-    alert(message);
-});*/
-
-/*
-//Redirecciono a carrito si es Premium
-socket.on("redirectToCart", (path) => {
-    window.location.href = path;
-});*/
-
-
-
-
-
-
-
+//${prod.thumbnail ? `<img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}" class="card-img-top" alt="...">` : ''}
 

@@ -34,8 +34,8 @@ socket.on("allProducts", products => {
     products.forEach(prod => {
         productList.innerHTML += `<div class="card" style="width: 15rem; display: inline-block; margin-right: 10px; margin-bottom: 10px;vertical-align: top; border: 1px solid #ccc; text-align: center;">
         <h3 class="card-title">${prod.title}</h3>
-        <img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}"
-        class="card-img-top" alt="...">
+        ${prod.thumbnail && esURL(prod.thumbnail) ? `<img style="width: 10rem; height: 10rem; object-fit: cover;" src="${prod.thumbnail}" class="card-img-top" alt="...">` : ''}
+        
         <div class="card-body">
         <p class="card-text">Código: ${prod.code}.<br>
             Stock: ${prod.stock}.<br>
@@ -70,5 +70,11 @@ socket.on("redirectToPremiumProds", (path) => {
 socket.on("prodInCart", (message) => {
     alert(message)
 });
+
+function esURL(url) {
+    // Expresión regular para validar URLs
+    const regex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+    return regex.test(url);
+}
 
 
