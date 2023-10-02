@@ -159,6 +159,7 @@ io.on('connection', async (socket) => {
         //Cargo prods en mongoose
         await productManager.addProduct({ title, description, price, thumbnail, code, stock, status: true, owner: usuario.email })
         const products = await productMongo.findAll()
+        console.log("PRODUCTO CREADO")
         io.emit("allProducts", products)
     })
 
@@ -210,6 +211,7 @@ io.on('connection', async (socket) => {
         //Si la sesión es de Admin: borro prod
         if (userSessionRol === prodOwnerRol || userSessionRol === "Administrador") {
             await productManager.deleteProduct(_id)
+            console.log("PRODUCTO BORRADO")
             const products = await productMongo.findAll()
             const filteredProducts = products.filter((product) => product._id.toString() !== _id);
             io.emit("allProducts", filteredProducts)

@@ -71,7 +71,6 @@ export class CartManager {
             const infoProdInCart = await productManager.getProductById(id_prod)
             const priceProdInCart = infoProdInCart.price
             const stockProdInCart = infoProdInCart.stock
-            console.log("stockkk", stockProdInCart)
             const product = cart.products.find(product => product.id_prod.toString() === id_prod)
 
             //Me fijo si existe el producto en el carrito
